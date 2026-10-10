@@ -26,7 +26,7 @@ Each version adds one feature on top of the last.
 
 | Version | Adds                                                                                      | Status      |
 | ------- | ----------------------------------------------------------------------------------------- | ----------- |
-| 1.0     | The editor screen from the mockup: open a preset, edit its prompts, save automatically. Undo and Redo. | Being checked |
+| 1.0     | The editor screen from the mockup: open a preset, edit its prompts, save automatically. Undo and Redo. | Done        |
 | 1.1     | Preview: the full prompt in order. Macros stay as typed.                                  | Next        |
 | 1.2     | Macro engine: variables and `{{if}}`/`{{else}}` worked out. New/Legacy switch works.      | Planned     |
 | 1.3     | Variables panel.                                                                          | Planned     |
@@ -45,11 +45,11 @@ Each version adds one feature on top of the last.
 
 ### 1.3 Where things stand (10 October 2026)
 
-**1.0 is being checked.** A preset edited in the plugin was loaded into SillyTavern, and every change came across. Then Undo was reworked into one timeline, with Redo and mobile buttons (E-6), still in 1.0. It's waiting for the product owner to check it.
+**1.0 is done** (v1.0.0). A preset edited in the plugin was loaded into SillyTavern, and every change came across. Undo and Redo (E-6) were checked on a phone.
 
 - Built: everything marked 1.0 below.
 - The Preview screen and Variables panel are there, but empty. Their content comes in 1.1 to 1.3.
-- Not yet checked: smooth dragging on a real phone (Q-1). Testing so far has been on desktop.
+- Not yet checked: smooth dragging on a real phone (Q-1).
 
 ### 1.4 Terms
 
