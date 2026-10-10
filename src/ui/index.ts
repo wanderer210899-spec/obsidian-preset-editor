@@ -9,18 +9,34 @@ import type { EditorDocument, SaveState } from './types';
 export type { EditorDocument, SaveState, UiRow } from './types';
 
 export interface EditorHandle {
+	/** E-6: undo or redo one step, showing the prompt it changed. */
+	undo(): void;
+	redo(): void;
 	setStatus(status: SaveState): void;
 	setTitle(title: string): void;
 	destroy(): void;
 }
 
+export interface EditorOptions {
+	/** E-6: show the Undo and Redo buttons (Obsidian mobile only, DECISIONS.md 2026-10-10). */
+	undoButton: boolean;
+}
+
 /**
- * Shows the editor in `target`. The mode switch and panel button go into
- * `header` (the Obsidian view header).
+ * Shows the editor in `target`. The mode switch, Undo and Redo buttons and panel
+ * button go into `header` (the Obsidian view header).
  */
-export function mountEditor(target: HTMLElement, header: HTMLElement, doc: EditorDocument, title: string): EditorHandle {
-	const editor = mount(Editor, { target, props: { doc, header, title } });
+export function mountEditor(
+	target: HTMLElement,
+	header: HTMLElement,
+	doc: EditorDocument,
+	title: string,
+	options: EditorOptions,
+): EditorHandle {
+	const editor = mount(Editor, { target, props: { doc, header, title, undoButton: options.undoButton } });
 	return {
+		undo: () => editor.undo(),
+		redo: () => editor.redo(),
 		setStatus: (status) => editor.setStatus(status),
 		setTitle: (t) => editor.setTitle(t),
 		destroy: () => void unmount(editor),

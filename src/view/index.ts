@@ -2,7 +2,7 @@
  * View module: the Obsidian tab that shows one preset in the editor. It joins
  * the preset, document, autosave and ui modules; none of them know each other.
  */
-import { type App, FileView, Notice, Scope, TFile, type WorkspaceLeaf } from 'obsidian';
+import { type App, FileView, Notice, Platform, Scope, TFile, type WorkspaceLeaf } from 'obsidian';
 import { Autosave } from '../autosave';
 import { PresetDocument } from '../document';
 import { readPreset, writePreset } from '../preset';
@@ -26,13 +26,16 @@ export class PresetEditorView extends FileView {
 
 	constructor(leaf: WorkspaceLeaf) {
 		super(leaf);
-		// E-6: Ctrl/Cmd+Z brings back the last deleted prompt. Inside a text
-		// box it is left to the box's own undo.
+		// E-6: one undo timeline for the whole preset, text boxes included.
 		this.scope = new Scope(this.app.scope);
-		this.scope.register(['Mod'], 'z', () => {
-			if (isEditing(activeDocument.activeElement)) return true;
-			return !this.doc?.undo();
-		});
+		const run = (action: (editor: EditorHandle) => void) => () => {
+			if (!this.editor) return true;
+			action(this.editor);
+			return false;
+		};
+		this.scope.register(['Mod'], 'z', run((e) => e.undo()));
+		this.scope.register(['Mod', 'Shift'], 'z', run((e) => e.redo()));
+		this.scope.register(['Mod'], 'y', run((e) => e.redo()));
 	}
 
 	getViewType(): string {
@@ -87,7 +90,7 @@ export class PresetEditorView extends FileView {
 		this.contentEl.empty();
 		this.contentEl.setCssStyles({ padding: '0', overflow: 'hidden' });
 		const header = this.containerEl.querySelector<HTMLElement>('.view-header .view-actions') ?? this.contentEl;
-		this.editor = mountEditor(this.contentEl, header, doc, file.basename);
+		this.editor = mountEditor(this.contentEl, header, doc, file.basename, { undoButton: Platform.isMobile });
 	}
 
 	async onUnloadFile(_file: TFile): Promise<void> {
@@ -120,9 +123,4 @@ export class PresetEditorView extends FileView {
 		await super.onRename(file);
 		this.editor?.setTitle(file.basename);
 	}
-}
-
-function isEditing(el: Element | null): boolean {
-	if (!el) return false;
-	return el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement || el instanceof HTMLSelectElement || el.closest('[contenteditable="true"]') !== null;
 }

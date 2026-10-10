@@ -56,15 +56,82 @@ test('insert adds a SillyTavern-shaped custom prompt', () => {
 	assert.equal(ids(doc).at(-1), end);
 });
 
-test('remove is undone in place', () => {
+test('remove is undone in place, and redone', () => {
 	const doc = new PresetDocument(sample());
 	const before = JSON.stringify(doc.content);
+	assert.equal(doc.canUndo(), false);
 	doc.remove('a');
+	const after = JSON.stringify(doc.content);
+	assert.equal(doc.canUndo(), true);
 	assert.deepEqual(ids(doc), ['main', 'chatHistory']);
 	assert.ok(!doc.content.prompts.some((p) => p.identifier === 'a'));
-	assert.equal(doc.undo(), true);
+	assert.equal(doc.undo(), 'a');
 	assert.equal(JSON.stringify(doc.content), before);
-	assert.equal(doc.undo(), false);
+	assert.equal(doc.canUndo(), false);
+	assert.equal(doc.undo(), null);
+	assert.equal(doc.redo(), 'a');
+	assert.equal(JSON.stringify(doc.content), after);
+	assert.equal(doc.redo(), null);
+});
+
+test('one timeline: typing, adding, moving and deleting undo in reverse order', () => {
+	let clock = 0;
+	const doc = new PresetDocument(sample(), () => clock);
+	const start = JSON.stringify(doc.content);
+	doc.update('main', { content: 'hi!' });
+	clock += 100;
+	doc.update('main', { content: 'hi!!' }); // same burst of typing
+	clock += 1000;
+	const added = doc.insert(1);
+	clock += 1000;
+	doc.update(added, { content: 'x' });
+	doc.move('a', 0);
+	doc.update('a', { role: 'user' });
+	doc.remove('chatHistory');
+	const end = JSON.stringify(doc.content);
+	const undone = [doc.undo(), doc.undo(), doc.undo(), doc.undo(), doc.undo(), doc.undo(), doc.undo()];
+	assert.deepEqual(undone, ['chatHistory', 'a', 'a', added, added, 'main', null]);
+	assert.equal(JSON.stringify(doc.content), start);
+	while (doc.redo());
+	assert.equal(JSON.stringify(doc.content), end);
+});
+
+test('typing after a pause, or in another field, is a new step', () => {
+	let clock = 0;
+	const doc = new PresetDocument(sample(), () => clock);
+	doc.update('a', { content: '1' });
+	clock += 600;
+	doc.update('a', { content: '12' });
+	clock += 100;
+	doc.update('a', { name: 'A2' });
+	doc.undo();
+	assert.equal(doc.content.prompts[2]?.name, 'A');
+	doc.undo();
+	assert.equal(doc.content.prompts[2]?.content, '1');
+	doc.undo();
+	assert.equal(doc.content.prompts[2]?.content, '');
+});
+
+test('on/off is not undone, and stays as it is through undo and redo', () => {
+	const doc = new PresetDocument(sample());
+	doc.setEnabled('a', false);
+	assert.equal(doc.canUndo(), false);
+	doc.update('a', { name: 'B' });
+	doc.setEnabled('a', true);
+	doc.undo();
+	assert.equal(doc.rows()[2]?.prompt.name, 'A');
+	assert.equal(doc.rows()[2]?.enabled, true);
+});
+
+test('a new change clears redo; a change to the same value is ignored', () => {
+	const doc = new PresetDocument(sample());
+	doc.update('a', { name: 'A' });
+	assert.equal(doc.canUndo(), false);
+	doc.update('a', { name: 'B' });
+	doc.undo();
+	assert.equal(doc.canRedo(), true);
+	doc.move('a', 0);
+	assert.equal(doc.canRedo(), false);
 });
 
 test('listeners hear every change', () => {
@@ -104,6 +171,7 @@ test('load replaces everything, clears undo and says so', () => {
 	doc.remove('a');
 	doc.load({ prompts: [{ identifier: 'x', name: 'X' }], order: [{ identifier: 'x', enabled: true }] });
 	assert.deepEqual(ids(doc), ['x']);
-	assert.equal(doc.undo(), false);
+	assert.equal(doc.canUndo(), false);
+	assert.equal(doc.undo(), null);
 	assert.deepEqual(causes, ['edit', 'load']);
 });

@@ -4,6 +4,29 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-10 · One undo timeline, with Redo
+
+**Decision:** Undo becomes one timeline for the whole preset, as in Google Docs or Notion, and Redo is added.
+- The timeline holds typing (text and names), adding, deleting, moving, role and settings changes. On/off is left out and stays as it is through Undo and Redo.
+- Undo works the same wherever you are, even inside a text box. Typing without a half-second pause is one step.
+- The prompt that Undo or Redo changes always flashes, so the change is easy to spot. If it's off screen, the editor scrolls to it first. (Changed the same day after testing: at first only off-screen prompts flashed.)
+- Desktop: Ctrl+Z, and Ctrl+Shift+Z or Ctrl+Y for Redo. Mobile: Undo and Redo buttons in the tab header. Both show once either can be used; the unusable one is greyed out.
+- The last 200 steps are kept. The timeline is cleared when the file changes outside the editor.
+
+This replaces "Undo stays narrow" below, and the "what it does" and "hidden" parts of the mobile undo button entry.
+
+**Context:** Testing the first mobile undo button on a phone. When typing and adding prompts were mixed, too few steps could be undone: each text box had its own undo, and adding a prompt couldn't be undone at all.
+
+## 2026-10-10 · Mobile undo button, in 1.0
+
+**Decision:** Version 1.0 gets an Undo button on mobile.
+- It does the same as Ctrl+Z. In a text box (prompt text or name), it undoes typing there. Anywhere else, it brings back the last deleted prompt.
+- It sits in Obsidian's tab header, next to the panel button.
+- It only shows in the Obsidian mobile app. Desktop keeps Ctrl+Z.
+- It's hidden when there's nothing to undo.
+
+**Context:** Open item 4 in the SRS. On mobile there was no way to bring back a deleted prompt. The mockup has no undo button.
+
 ## 2026-10-10 · Moving prompts between presets added to the roadmap
 
 **Decision:** A later version lets the user move a prompt from one preset to another, by cut and paste or by drag and drop, whichever is simpler to build.

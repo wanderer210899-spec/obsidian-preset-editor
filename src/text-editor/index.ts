@@ -2,8 +2,8 @@
  * Text-editor module: the CodeMirror 6 box used for a prompt's text
  * (SRS E-5, 2.4). The rest of the plugin only sees `createPromptEditor`.
  */
-import { history, defaultKeymap, historyKeymap } from '@codemirror/commands';
-import { type Extension, RangeSetBuilder } from '@codemirror/state';
+import { defaultKeymap } from '@codemirror/commands';
+import { Annotation, type Extension, RangeSetBuilder } from '@codemirror/state';
 import {
 	Decoration,
 	type DecorationSet,
@@ -16,7 +16,7 @@ import {
 import { macroSpans } from './highlight';
 
 export interface PromptEditor {
-	/** Replaces the text, unless it is already the same. */
+	/** Replaces the text, unless it is already the same. Doesn't call `onChange`. */
 	setText(text: string): void;
 	destroy(): void;
 }
@@ -27,27 +27,41 @@ export interface PromptEditorOptions {
 	onChange: (text: string) => void;
 }
 
-/** Elements get the classes `pe-macro`, `pe-variable` and `pe-control`. */
+/** Marks changes made by `setText`, so they aren't reported back as typing. */
+const fromOutside = Annotation.define<boolean>();
+
+/**
+ * Elements get the classes `pe-macro`, `pe-variable` and `pe-control`.
+ * The box has no undo of its own: the plugin's undo timeline covers it (SRS E-6).
+ */
 export function createPromptEditor(parent: HTMLElement, options: PromptEditorOptions): PromptEditor {
 	const view = new EditorView({
 		parent,
 		doc: options.text,
 		extensions: [
 			EditorView.lineWrapping,
-			history(),
-			keymap.of([...defaultKeymap, ...historyKeymap]),
+			keymap.of(defaultKeymap),
 			placeholder(options.placeholder),
 			EditorView.contentAttributes.of({ spellcheck: 'false', 'aria-label': 'Prompt content' }),
 			macroColours(),
 			EditorView.updateListener.of((u) => {
-				if (u.docChanged) options.onChange(u.state.doc.toString());
+				if (u.docChanged && !u.transactions.some((t) => t.annotation(fromOutside))) options.onChange(u.state.doc.toString());
 			}),
 		],
 	});
 	return {
 		setText(text) {
-			if (text === view.state.doc.toString()) return;
-			view.dispatch({ changes: { from: 0, to: view.state.doc.length, insert: text } });
+			const old = view.state.doc.toString();
+			if (text === old) return;
+			// Replace only the part that differs, so the cursor stays near the change.
+			let start = 0;
+			while (start < old.length && start < text.length && old[start] === text[start]) start++;
+			let end = 0;
+			while (end < old.length - start && end < text.length - start && old[old.length - 1 - end] === text[text.length - 1 - end]) end++;
+			view.dispatch({
+				changes: { from: start, to: old.length - end, insert: text.slice(start, text.length - end) },
+				annotations: fromOutside.of(true),
+			});
 		},
 		destroy() {
 			view.destroy();

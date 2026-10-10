@@ -1,6 +1,6 @@
 # Preset Editor: Software Requirements Specification
 
-Draft 0.3 · 10 October 2026
+Draft 0.4 · 10 October 2026
 
 Follows SRS standard principles: https://www.computer.org/resources/software-requirements-specifications#requirements-fundamentals
 
@@ -26,14 +26,13 @@ Each version adds one feature on top of the last.
 
 | Version | Adds                                                                                      | Status      |
 | ------- | ----------------------------------------------------------------------------------------- | ----------- |
-| 1.0     | The editor screen from the mockup: open a preset, edit its prompts, save automatically.   | Done        |
+| 1.0     | The editor screen from the mockup: open a preset, edit its prompts, save automatically. Undo and Redo. | Being checked |
 | 1.1     | Preview: the full prompt in order. Macros stay as typed.                                  | Next        |
 | 1.2     | Macro engine: variables and `{{if}}`/`{{else}}` worked out. New/Legacy switch works.      | Planned     |
 | 1.3     | Variables panel.                                                                          | Planned     |
 | 1.4     | Library panel, with New preset and rename. Ribbon button and plugin shortcuts.            | Planned     |
 | 1.5     | Move prompts between presets.                                                             | Planned     |
 | Later   | Snapshots or version history.                                                             | Planned     |
-| Not set | Undo on mobile (see E-6).                                                                 | Not placed  |
 
 **Not planned**
 
@@ -46,7 +45,7 @@ Each version adds one feature on top of the last.
 
 ### 1.3 Where things stand (10 October 2026)
 
-**1.0 is done.** A preset edited in the plugin was loaded into SillyTavern, and every change came across.
+**1.0 is being checked.** A preset edited in the plugin was loaded into SillyTavern, and every change came across. Then Undo was reworked into one timeline, with Redo and mobile buttons (E-6), still in 1.0. It's waiting for the product owner to check it.
 
 - Built: everything marked 1.0 below.
 - The Preview screen and Variables panel are there, but empty. Their content comes in 1.1 to 1.3.
@@ -130,9 +129,16 @@ The version each part arrives in is shown in brackets.
 - **E-3.** Switch each prompt on or off.
 - **E-4.** Add a custom prompt (at the end, between prompts, or above or below one), rename it, and delete it. A new prompt is called "Untitled prompt". It's switched on, sits where the user clicked, has no trigger, and is set to Relative.
 - **E-5.** Edit a prompt's name, role (System, User, Assistant) and text. Also its settings: position, depth, order, triggers and forbid overrides.
-- **E-6.** Deleting is instant. Undo only covers two things: bringing back deleted prompts, and typing inside a text box. Moving, switching on/off and settings changes can't be undone.
-  - Desktop: Ctrl+Z (Cmd+Z on Mac).
-  - Mobile: needs its own way to undo. _(Version and form not decided yet.)_
+- **E-6.** Deleting is instant. Undo and Redo work on one timeline for the whole preset.
+  - The timeline holds every change in the order it was made: typing (prompt text and names), adding, deleting, moving, role and settings changes.
+  - Switching a prompt on or off is not on the timeline. Undo and Redo leave on/off as it is.
+  - Undo works the same wherever you are, even inside a text box.
+  - Typing without a half-second pause is one step.
+  - A new change after an Undo clears the Redo steps.
+  - The last 200 steps are kept. The timeline is cleared when the file changes outside the editor (S-4).
+  - The prompt that Undo or Redo changes always flashes. If it's off screen, the editor scrolls to it first. In Preview it stays in Preview.
+  - Desktop: Ctrl+Z to undo; Ctrl+Shift+Z or Ctrl+Y to redo (Cmd on Mac).
+  - Mobile: Undo and Redo buttons in Obsidian's tab header, next to the panel button. Both show once either can be used; the one with nothing to do is greyed out. The buttons only show in the Obsidian mobile app (phones and tablets).
 - **E-7.** Clicking a prompt in the Order panel, Preview or Variables panel jumps to it in the editor. (1.0 only has the Order panel. The others come with their content.)
 
 ### 3.3 What each kind of prompt allows (1.0, follows SillyTavern)
@@ -199,6 +205,7 @@ In 1.0 the panel is empty.
   - Wide layout: every row's on/off switch lines up in one column.
   - The summary next to a prompt names its trigger if it has one (e.g. "Relative · Normal"), says "2 triggers" if it has several, and shows nothing if it has none.
   - No hover (narrow layout or touch screen): tap the gap between two prompts to show "Add prompt here", then tap that to add a prompt.
+  - Obsidian mobile: Undo and Redo buttons in the tab header (E-6). The mockup has none.
 
 ## 5. Quality
 
@@ -218,5 +225,5 @@ In 1.0 the panel is empty.
    - What if the other preset already has that prompt?
    - Where does it land?
    - Does Undo bring back a cut prompt?
-4. **Undo on mobile:** what it looks like, and which version it comes in.
+4. ~~**Undo on mobile:** what it looks like, and which version it comes in.~~ Settled: see E-6. (1.0)
 5. **In-chat prompts in the Preview:** does "roughly where SillyTavern would put them" mean grouped around the Chat History placeholder, in SillyTavern's order? (1.1)

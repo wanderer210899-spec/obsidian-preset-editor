@@ -15,29 +15,43 @@ export interface Row {
 /** 'edit': changed in the editor. 'load': replaced by `load()`. */
 export type ChangeCause = 'edit' | 'load';
 
-interface Removed {
-	prompt: PromptData;
-	promptIndex: number;
-	entry: OrderEntry;
-	orderIndex: number;
+/** One step of the undo timeline: how things were, and which prompt changed. */
+interface Step {
+	prompts: PromptData[];
+	order: OrderEntry[];
+	id: string;
 }
+
+/** E-6: the timeline keeps this many steps. */
+const MAX_STEPS = 200;
+/** E-6: typing in the same field with shorter pauses than this undoes as one step. */
+const GROUP_MS = 500;
 
 export class PresetDocument {
 	private prompts: PromptData[];
 	private order: OrderEntry[];
-	private removed: Removed[] = [];
+	private undoSteps: Step[] = [];
+	private redoSteps: Step[] = [];
+	/** The field last typed in, and when, to group typing into one step. */
+	private typing: { key: string; at: number } | null = null;
 	private listeners = new Set<(cause: ChangeCause) => void>();
 
-	constructor(content: PresetContent) {
+	/** `now` gives the time in ms; tests pass their own clock. */
+	constructor(
+		content: PresetContent,
+		private readonly now: () => number = Date.now,
+	) {
 		this.prompts = content.prompts.slice();
 		this.order = content.order.slice();
 	}
 
-	/** Replaces everything with `content` (e.g. the file changed on disk). Clears undo. */
+	/** Replaces everything with `content` (e.g. the file changed on disk). Clears undo and redo. */
 	load(content: PresetContent): void {
 		this.prompts = content.prompts.slice();
 		this.order = content.order.slice();
-		this.removed = [];
+		this.undoSteps = [];
+		this.redoSteps = [];
+		this.typing = null;
 		this.changed('load');
 	}
 
@@ -65,7 +79,7 @@ export class PresetDocument {
 		return () => this.listeners.delete(listener);
 	}
 
-	/** E-3 */
+	/** E-3. Not part of the undo timeline (E-6). */
 	setEnabled(id: string, enabled: boolean): void {
 		const i = this.order.findIndex((e) => e.identifier === id);
 		const entry = this.order[i];
@@ -74,11 +88,21 @@ export class PresetDocument {
 		this.changed();
 	}
 
-	/** E-5: changes some of a prompt's fields. Other fields stay as they are. */
+	/**
+	 * E-5: changes some of a prompt's fields. Other fields stay as they are.
+	 * Quick repeated changes to the same fields undo as one step (typing).
+	 */
 	update(id: string, patch: Partial<PromptData>): void {
 		const i = this.prompts.findIndex((p) => p.identifier === id);
 		const prompt = this.prompts[i];
 		if (!prompt) return;
+		const keys = (Object.keys(patch) as (keyof PromptData)[]).filter((k) => k !== 'identifier');
+		if (keys.every((k) => Object.is(prompt[k], patch[k]))) return;
+		const key = id + '\n' + keys.sort().join(',');
+		const now = this.now();
+		const sameTyping = this.typing?.key === key && now - this.typing.at < GROUP_MS;
+		if (!sameTyping) this.record(id);
+		this.typing = { key, at: now };
 		this.prompts[i] = { ...prompt, ...patch, identifier: prompt.identifier };
 		this.changed();
 	}
@@ -88,6 +112,7 @@ export class PresetDocument {
 		const from = this.order.findIndex((e) => e.identifier === id);
 		const entry = this.order[from];
 		if (!entry) return;
+		this.record(id);
 		this.order.splice(from, 1);
 		this.order.splice(this.orderIndexOfRow(to), 0, entry);
 		this.changed();
@@ -99,6 +124,7 @@ export class PresetDocument {
 	 */
 	insert(at: number): string {
 		const identifier = crypto.randomUUID();
+		this.record(identifier);
 		// Same fields, in the same order, as a prompt created in SillyTavern.
 		this.prompts.push({
 			identifier,
@@ -123,23 +149,63 @@ export class PresetDocument {
 	remove(id: string): void {
 		const promptIndex = this.prompts.findIndex((p) => p.identifier === id);
 		const orderIndex = this.order.findIndex((e) => e.identifier === id);
-		const prompt = this.prompts[promptIndex];
-		const entry = this.order[orderIndex];
-		if (!prompt || !entry) return;
+		if (promptIndex < 0 || orderIndex < 0) return;
+		this.record(id);
 		this.prompts.splice(promptIndex, 1);
 		this.order.splice(orderIndex, 1);
-		this.removed.push({ prompt, promptIndex, entry, orderIndex });
 		this.changed();
 	}
 
-	/** E-6: brings back the last deleted prompt. Returns false if there is none. */
-	undo(): boolean {
-		const last = this.removed.pop();
-		if (!last) return false;
-		this.prompts.splice(Math.min(last.promptIndex, this.prompts.length), 0, last.prompt);
-		this.order.splice(Math.min(last.orderIndex, this.order.length), 0, last.entry);
+	/** E-6 */
+	canUndo(): boolean {
+		return this.undoSteps.length > 0;
+	}
+
+	/** E-6 */
+	canRedo(): boolean {
+		return this.redoSteps.length > 0;
+	}
+
+	/**
+	 * E-6: goes back one step on the timeline. Returns the prompt that step
+	 * changed, or null if there is nothing to undo.
+	 */
+	undo(): string | null {
+		return this.travel(this.undoSteps, this.redoSteps);
+	}
+
+	/** E-6: goes forward again after `undo()`. Returns the prompt it changed, or null. */
+	redo(): string | null {
+		return this.travel(this.redoSteps, this.undoSteps);
+	}
+
+	/** Saves how things are now as an undo step, before a change to prompt `id`. A new change clears redo. */
+	private record(id: string): void {
+		this.undoSteps.push(this.snapshot(id));
+		if (this.undoSteps.length > MAX_STEPS) this.undoSteps.shift();
+		this.redoSteps = [];
+		this.typing = null;
+	}
+
+	private snapshot(id: string): Step {
+		return { prompts: this.prompts.slice(), order: this.order.slice(), id };
+	}
+
+	/** Moves one step from `from` to `to`. On/off states stay as they are now (E-6). */
+	private travel(from: Step[], to: Step[]): string | null {
+		const step = from.pop();
+		if (!step) return null;
+		to.push(this.snapshot(step.id));
+		const enabled = new Map(this.order.map((e) => [e.identifier, e.enabled]));
+		this.prompts = step.prompts.slice();
+		this.order = step.order.map((e) => {
+			if (!enabled.has(e.identifier)) return e;
+			const on = enabled.get(e.identifier);
+			return on === e.enabled ? e : { ...e, enabled: on };
+		});
+		this.typing = null;
 		this.changed();
-		return true;
+		return step.id;
 	}
 
 	private find(id: string): PromptData | undefined {

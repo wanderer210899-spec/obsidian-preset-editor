@@ -12,8 +12,10 @@
 		/** Obsidian's view header actions; the mode switch and panel button go there. */
 		header: HTMLElement;
 		title: string;
+		/** E-6: show the Undo and Redo buttons (Obsidian mobile only). */
+		undoButton: boolean;
 	}
-	let { doc, header, title }: Props = $props();
+	let { doc, header, title, undoButton }: Props = $props();
 
 	let rows = $state(untrack(() => doc.rows()));
 	let shownTitle = $state(untrack(() => title));
@@ -26,6 +28,8 @@
 	let pop = $state<string | null>(null);
 	let flash = $state<string | null>(null);
 	let narrow = $state(false);
+	let canUndo = $state(untrack(() => doc.canUndo()));
+	let canRedo = $state(untrack(() => doc.canRedo()));
 
 	const sizes = $derived(sizesFor(narrow));
 	const noHover = window.matchMedia('(hover: none)').matches;
@@ -42,7 +46,11 @@
 	}
 
 	onMount(() => {
-		const stop = doc.onChange(() => (rows = doc.rows()));
+		const stop = doc.onChange(() => {
+			rows = doc.rows();
+			canUndo = doc.canUndo();
+			canRedo = doc.canRedo();
+		});
 		const ro = new ResizeObserver(([entry]) => {
 			const n = (entry?.contentRect.width ?? 0) < 760;
 			if (n !== narrow) {
@@ -74,16 +82,41 @@
 		} else panelOpen = !panelOpen;
 	}
 
-	function showRow(id: string) {
+	function flashRow(id: string) {
 		flash = id;
 		clearTimeout(flashTimer);
 		flashTimer = setTimeout(() => {
 			if (flash === id) flash = null;
 		}, 1600);
+	}
+
+	function showRow(id: string) {
+		flashRow(id);
 		const el = scroller.querySelector<HTMLElement>(`[data-anchor="${CSS.escape(id)}"]`);
 		if (!el) return;
 		const top = el.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop - 12;
 		scroller.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+	}
+
+	/** E-6: Ctrl+Z and the Undo button. */
+	export function undo() {
+		void reveal(doc.undo());
+	}
+	/** E-6: Ctrl+Shift+Z, Ctrl+Y and the Redo button. */
+	export function redo() {
+		void reveal(doc.redo());
+	}
+
+	/** E-6: flashes the prompt an undo or redo changed, and scrolls to it if it is off screen. */
+	async function reveal(id: string | null) {
+		if (!id || mode !== 'edit') return;
+		await tick();
+		const el = scroller.querySelector<HTMLElement>(`[data-anchor="${CSS.escape(id)}"]`);
+		if (!el) return;
+		const box = el.getBoundingClientRect();
+		const view = scroller.getBoundingClientRect();
+		if (box.bottom > view.top && box.top < view.bottom) flashRow(id);
+		else showRow(id);
 	}
 
 	/** E-7 */
@@ -142,8 +175,40 @@
 			onpick={setMode}
 		/>
 	{/if}
+	{#if undoButton && (canUndo || canRedo)}
+		<!-- Both show once either can be used; the other is greyed out (DECISIONS.md, 2026-10-10).
+		     mousedown is cancelled so a text box keeps focus and the keyboard stays up. -->
+		<div
+			class="hbtn"
+			class:narrow
+			class:off={!canUndo}
+			role="button"
+			tabindex="-1"
+			title="Undo"
+			aria-label="Undo"
+			aria-disabled={!canUndo}
+			onmousedown={(e) => e.preventDefault()}
+			onclick={undo}
+		>
+			<svg width={narrow ? 20 : 17} height={narrow ? 20 : 17} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg>
+		</div>
+		<div
+			class="hbtn"
+			class:narrow
+			class:off={!canRedo}
+			role="button"
+			tabindex="-1"
+			title="Redo"
+			aria-label="Redo"
+			aria-disabled={!canRedo}
+			onmousedown={(e) => e.preventDefault()}
+			onclick={redo}
+		>
+			<svg width={narrow ? 20 : 17} height={narrow ? 20 : 17} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 14 5-5-5-5"></path><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"></path></svg>
+		</div>
+	{/if}
 	<div
-		class="panel-btn"
+		class="hbtn"
 		class:narrow
 		class:open={!narrow && panelOpen}
 		role="button"
@@ -259,7 +324,7 @@
 		font-size: 12.5px;
 		color: var(--text-muted);
 	}
-	.panel-btn {
+	.hbtn {
 		width: 30px;
 		height: 30px;
 		display: flex;
@@ -269,14 +334,17 @@
 		cursor: pointer;
 		color: var(--text-muted);
 	}
-	.panel-btn.open {
+	.hbtn.open {
 		background: var(--background-modifier-hover);
 	}
-	.panel-btn:hover {
+	.hbtn:hover {
 		background: var(--background-modifier-hover);
 		color: var(--text-normal);
 	}
-	.panel-btn.narrow {
+	.hbtn.off {
+		opacity: 0.35;
+	}
+	.hbtn.narrow {
 		width: 44px;
 		height: 44px;
 		border-radius: 8px;

@@ -16,6 +16,11 @@ export interface EditorDocument {
 	move(id: string, to: number): void;
 	insert(at: number): string;
 	remove(id: string): void;
+	/** E-6: the undo timeline. `undo` and `redo` return the prompt they changed, or null. */
+	canUndo(): boolean;
+	canRedo(): boolean;
+	undo(): string | null;
+	redo(): string | null;
 }
 
 export type SaveState = 'saved' | 'saving' | 'error';
