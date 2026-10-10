@@ -1,0 +1,16 @@
+# npm
+node_modules
+
+# Build output. Obsidian loads it from this folder, but it is never committed.
+main.js
+styles.css
+*.map
+
+# Plugin settings written by Obsidian
+data.json
+
+# editors / OS
+.vscode
+.idea
+*.iml
+.DS_Store

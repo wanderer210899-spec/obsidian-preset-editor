@@ -1,0 +1,28 @@
+{
+	"name": "obsidian-preset-editor",
+	"version": "0.1.0",
+	"description": "Edit the prompts in SillyTavern Chat Completion preset files.",
+	"main": "main.js",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"dev": "node esbuild.config.mjs",
+		"build": "svelte-check --tsconfig ./tsconfig.json --compiler-warnings a11y_click_events_have_key_events:ignore,a11y_no_static_element_interactions:ignore,a11y_label_has_associated_control:ignore --fail-on-warnings && node esbuild.config.mjs production",
+		"test": "esbuild tests/*.test.ts --bundle --platform=node --format=esm --outdir=.test --out-extension:.js=.mjs --log-level=warning && node --test .test/"
+	},
+	"license": "AGPL-3.0-only",
+	"devDependencies": {
+		"@codemirror/commands": "^6.11.1",
+		"@types/node": "^22.15.17",
+		"@types/sortablejs": "^1.15.9",
+		"esbuild": "0.25.5",
+		"esbuild-svelte": "^0.9.5",
+		"obsidian": "latest",
+		"svelte-check": "^4.7.6",
+		"typescript": "^5.8.3"
+	},
+	"dependencies": {
+		"sortablejs": "^1.15.7",
+		"svelte": "^5.57.2"
+	}
+}

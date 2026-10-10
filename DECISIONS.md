@@ -1,0 +1,107 @@
+# Behaviour decisions
+
+Decisions the product owner has made about how the plugin behaves, with the date and what prompted each one. Newest first. Code and tooling choices are not logged here.
+
+---
+
+## 2026-10-10 · Moving prompts between presets added to the roadmap
+
+**Decision:** A later version lets the user move a prompt from one preset to another, by cut and paste or by drag and drop, whichever is simpler to build.
+
+**Context:** New feature request during the roadmap discussion after 1.0 was tested.
+
+## 2026-10-10 · Undo stays narrow; mobile gets an equivalent
+
+**Decision:** Undo covers deleted prompts and typing in a text box only. Reorder, on/off and settings changes are not undone. Mobile must have an equivalent of Ctrl+Z. The form it takes is still open.
+
+**Context:** Open item 4 in the SRS. On mobile there is no Ctrl+Z, so a deleted prompt couldn't be brought back there.
+
+## 2026-10-10 · Rename and duplicate use Obsidian until the library panel
+
+**Decision:** Presets are renamed and duplicated with Obsidian's own file commands; the open editor follows a rename. The library panel will add renaming later.
+
+**Context:** Open item 3 in the SRS. The owner tested renaming a preset file in Obsidian, and it worked.
+
+## 2026-10-10 · New preset comes with the library panel
+
+**Decision:** New preset ships in the same version as the library panel. It can be started from the command palette or from the library panel. It is named "Untitled preset", then "Untitled preset 1", "Untitled preset 2" and so on. Its content is a copy of SillyTavern's Default preset with every prompt's text blank.
+
+**Context:** Open item 2 in the SRS.
+
+## 2026-10-10 · In-chat prompts in the Preview
+
+**Decision:** The Preview shows in-chat prompts in roughly the place SillyTavern would put them. Each one is labelled with its exact position, such as "4 messages from the end", so the Preview matches SillyTavern's assembly as closely as possible.
+
+**Context:** Open item 1 in the SRS. SillyTavern places in-chat prompts inside the chat history, which the Preview only shows as a placeholder.
+
+## 2026-10-10 · Trigger shown by name in the prompt summary
+
+**Decision:** The settings summary next to each prompt names its trigger when it has exactly one (e.g. "Relative · Normal"), shows "n triggers" when it has several, and shows nothing when it has none (none = every reply type).
+
+**Context:** "1 trigger" didn't say which one.
+
+## 2026-10-10 · New prompts start with no trigger, as in SillyTavern
+
+**Decision:** A new prompt starts with no trigger (it runs for every reply type) and position Relative, the same as SillyTavern.
+
+**Context:** The owner first asked for new prompts to start with "Normal". In SillyTavern, swipe, regenerate, continue, impersonate and quiet are separate trigger types, so a Normal-only prompt would be left out of swipes and regenerates. Once that was known, the owner chose SillyTavern's default.
+
+## 2026-10-10 · All on/off switches line up
+
+**Decision:** In the wide layout, every row's on/off switch sits in the same column. Placeholder rows keep an empty space where prompt rows show their lock or delete icon.
+
+**Context:** The owner noticed the switches were misaligned (the mockup has the same offset).
+
+## 2026-10-10 · Adding prompts on touch and narrow screens
+
+**Decision:** Where there is no hover (narrow layout or a touch screen), the divider between two prompts can be tapped. The first tap shows the mockup's "Add prompt here" line; tapping that line adds the prompt. Tapping anywhere else hides it again. With a mouse in the wide layout, hovering works as in the mockup.
+
+**Context:** On mobile there was no way to add a prompt between two placeholders without settings (e.g. Chat Examples and Chat History), and adding anywhere else meant opening a prompt's settings first.
+
+## 2026-10-10 · Placeholders with settings follow SillyTavern
+
+**Decision:** Char Description, Char Personality, Scenario, Persona Description and World Info (before/after) can be renamed and have a role and settings (position, depth, order, triggers), as in SillyTavern. Their text stays uneditable. They use the same role picker, settings button and settings popover as other prompts, so the interface stays consistent.
+
+**Context:** SRS 3.3 gives them settings, but the mockup showed no settings control for them (open question #6 after the first editor build).
+
+## 2026-10-10 · Settings page warns when JSON files are hidden
+
+**Decision:** While Obsidian's "Detect all file extensions" is off, the plugin's settings page shows a note saying it's needed for presets to appear in the file list.
+
+**Context:** Follows from the decision below.
+
+## 2026-10-10 · Narrow layout uses Obsidian's header
+
+**Decision:** In the narrow layout, Obsidian's own tab header (folder path and file name) is used instead of the mockup's large-title header; the Edit/Preview switch sits at the top of the editor.
+
+**Context:** Open question #9 after the first editor build. Preview and Variables content for 1.0 (open item 5) is deferred.
+
+## 2026-10-10 · Users turn on "Detect all file extensions"
+
+**Decision:** To see presets in Obsidian's file list (and right-click them, F-4), users turn on Obsidian's own setting "Detect all file extensions" (Settings → Files and links). The plugin does not register `.json` and does not list presets itself in 1.0.
+
+**Context:** Found while testing: with that setting off (Obsidian's default), Obsidian doesn't index `.json` files at all, so presets were invisible. Registering `.json` would have made a single click on any JSON file open the editor, which breaks F-2 and F-6. A plugin-made list would be a new feature.
+
+## 2026-10-10 · The file on disk always wins
+
+**Decision:** If a preset changes on disk while it is open in the editor (sync, git, another app), the editor reloads it. Any edit not yet saved is dropped.
+
+**Context:** Found while building the editor view: the editor kept its own copy and would have written it back over outside changes (risk to Q-3).
+
+## 2026-10-10 · Editor view basics confirmed
+
+**Decision:** The owner accepted these behaviours of the first editor build:
+- Subfolders of a preset folder count as preset folders.
+- "Open in Preset Editor" appears for every `.json` file in a preset folder; whether it is a valid preset is checked on click (F-3 message then).
+- A preset opens in the current tab, like a normal click.
+- A new prompt follows the mockup: named "Untitled prompt", switched on, placed where the user clicked. (SillyTavern instead adds it unnamed, switched off, at the top.)
+- Ctrl/Cmd+Z brings back deleted prompts only; inside a text box it undoes typing (open item 4).
+- The status line shows "Saving…", "Saved", or "Not saved" with a "Couldn't save" notice.
+
+**Context:** Raised as gaps after the editor view was first built.
+
+## 2026-10-10 · A file with no main prompt order is not a preset
+
+**Decision:** A preset file that has prompts but no main prompt order (SillyTavern's `character_id` 100001) is treated as not a preset. The plugin hides it and won't open it (F-3).
+
+**Context:** This came up while building the module that reads preset files. SillyTavern handles such a file differently: it fills in its default order when loading it. The owner judged the case rare. Revisit if real presets turn up without a main order.
