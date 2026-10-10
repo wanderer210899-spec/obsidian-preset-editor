@@ -1,6 +1,6 @@
 # Preset Editor: Software Requirements Specification
 
-Draft 0.4 · 10 October 2026
+Draft 0.5 · 10 October 2026
 
 Follows SRS standard principles: https://www.computer.org/resources/software-requirements-specifications#requirements-fundamentals
 
@@ -27,7 +27,7 @@ Each version adds one feature on top of the last.
 | Version | Adds                                                                                      | Status      |
 | ------- | ----------------------------------------------------------------------------------------- | ----------- |
 | 1.0     | The editor screen from the mockup: open a preset, edit its prompts, save automatically. Undo and Redo. | Done        |
-| 1.1     | Preview: the full prompt in order. Macros stay as typed.                                  | Next        |
+| 1.1     | Preview: the full prompt in order. Macros stay as typed.                                  | In progress |
 | 1.2     | Macro engine: variables and `{{if}}`/`{{else}}` worked out. New/Legacy switch works.      | Planned     |
 | 1.3     | Variables panel.                                                                          | Planned     |
 | 1.4     | Library panel, with New preset and rename. Ribbon button and plugin shortcuts.            | Planned     |
@@ -47,9 +47,12 @@ Each version adds one feature on top of the last.
 
 **1.0 is done** (v1.0.0). A preset edited in the plugin was loaded into SillyTavern, and every change came across. Undo and Redo (E-6) were checked on a phone.
 
+**1.1 is being built** (Preview content).
+
 - Built: everything marked 1.0 below.
-- The Preview screen and Variables panel are there, but empty. Their content comes in 1.1 to 1.3.
-- Not yet checked: smooth dragging on a real phone (Q-1).
+- The Variables panel is there, but empty. Its content comes in 1.3.
+- Dragging (Q-1) was checked on a phone, through a test copy of Obsidian.
+- Not yet checked: a full test in the Obsidian phone app. This can only happen once the plugin can be installed. Scrolling, for example, feels different in the test copy.
 
 ### 1.4 Terms
 
@@ -155,15 +158,23 @@ The version each part arrives in is shown in brackets.
 
 ### 3.4 Preview (screen 1.0 · content 1.1 · macros 1.2)
 
-In 1.0 the Preview screen is empty.
-
 - **V-1.** _(1.1)_ Shows the full prompt as close as possible to what SillyTavern would put together, as in the mockup.
 - **V-2.** _(1.1)_ Assumes a normal reply. Leaves out prompts that are off, or whose triggers don't include a normal reply.
 - **V-3.** _(1.1)_ Anything that comes from SillyTavern stays as typed or as a placeholder. This includes character data, persona, chat history, `{{char}}` and `{{user}}`. In `{{if}}`, these count as "true".
-- **V-7.** _(1.1)_ In-chat prompts show roughly where SillyTavern would put them. Each one says exactly where it goes, e.g. "4 messages from the end".
+- **V-7.** _(1.1)_ In-chat prompts show where SillyTavern would put them.
+  - The Chat History placeholder is split at each depth used, e.g. "Chat History · earlier messages", then the in-chat prompts, then "Chat History · last 4 messages".
+  - Each in-chat prompt says exactly where it goes, e.g. "4 messages from the end", or "After the last message" for depth 0.
+  - SillyTavern joins in-chat prompts with the same depth, order and role into one message. The Preview shows them as separate blocks, in SillyTavern's order.
+  - When Chat History is off, SillyTavern sends no in-chat prompts. The Preview leaves them out too, with no note.
+- **V-8.** _(1.1)_ Prompts with no text are left out, as SillyTavern does. So are prompts SillyTavern would skip for any other reason. Placeholders always show.
+- **V-9.** _(1.1)_ Each block shows its role (System, User, Assistant). This includes placeholders with settings. Chat History and Chat Examples show "Inserted".
+- **V-10.** _(1.1)_ The Preview only shows what the preset holds.
+  - Main Prompt and Post-History Instructions show the preset's own text. A character card can replace them in SillyTavern, but that is character data (V-3).
+  - Things SillyTavern adds from outside the preset are left out: Author's Note, Summary, extension prompts.
+  - Prompt text shows exactly as typed. The Preview updates while you edit.
 - **V-4.** _(1.2)_ Local variables and `{{if}}`/`{{else}}` are worked out exactly as SillyTavern would.
 - **V-5.** _(1.2)_ Global variables, and macros that can't sensibly be worked out in Obsidian (dice, random picks, date and time, etc.), stay as typed.
-- **V-6.** _(1.2)_ A switch picks the **New** or **Legacy** macro engine. Results follow the chosen engine.
+- **V-6.** _(1.2)_ A switch picks the **New** or **Legacy** macro engine. Results follow the chosen engine. The switch, and "Worked-out value" in the colour key, only show from 1.2. Until then nothing is worked out.
 
 ### 3.5 Variables panel (panel 1.0 · content 1.3)
 
@@ -206,6 +217,7 @@ In 1.0 the panel is empty.
   - The summary next to a prompt names its trigger if it has one (e.g. "Relative · Normal"), says "2 triggers" if it has several, and shows nothing if it has none.
   - No hover (narrow layout or touch screen): tap the gap between two prompts to show "Add prompt here", then tap that to add a prompt.
   - Obsidian mobile: Undo and Redo buttons in the tab header (E-6). The mockup has none.
+  - Preview: placeholders with settings show their role, not "Inserted" (V-9). The Chat History placeholder is split around in-chat prompts, and each in-chat prompt shows where it goes (V-7). The engine switch and "Worked-out value" wait for 1.2 (V-6).
 
 ## 5. Quality
 
@@ -226,4 +238,4 @@ In 1.0 the panel is empty.
    - Where does it land?
    - Does Undo bring back a cut prompt?
 4. ~~**Undo on mobile:** what it looks like, and which version it comes in.~~ Settled: see E-6. (1.0)
-5. **In-chat prompts in the Preview:** does "roughly where SillyTavern would put them" mean grouped around the Chat History placeholder, in SillyTavern's order? (1.1)
+5. ~~**In-chat prompts in the Preview:** does "roughly where SillyTavern would put them" mean grouped around the Chat History placeholder, in SillyTavern's order?~~ Settled: see V-7. (1.1)

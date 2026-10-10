@@ -5,7 +5,7 @@
 	import PreviewPane from './PreviewPane.svelte';
 	import Segmented from './Segmented.svelte';
 	import SidePanel from './SidePanel.svelte';
-	import { type EditorDocument, type Engine, type Mode, type SaveState, sizesFor, type Tab } from './types';
+	import { type EditorDocument, type Mode, type SaveState, sizesFor, type Tab } from './types';
 
 	interface Props {
 		doc: EditorDocument;
@@ -21,7 +21,6 @@
 	let shownTitle = $state(untrack(() => title));
 	let status = $state<SaveState>('saved');
 	let mode = $state<Mode>('edit');
-	let engine = $state<Engine>('new');
 	let tab = $state<Tab>('order');
 	let panelOpen = $state(true);
 	let drawer = $state(false);
@@ -154,17 +153,6 @@
 <svelte:window onpointerdown={onPointerDown} onkeydown={onKeyDown} />
 
 <div class="pe-vars header" use:portal={header}>
-	{#if !narrow && mode === 'preview'}
-		<span class="engine-label">Macro engine</span>
-		<Segmented
-			options={[
-				{ value: 'new' as Engine, label: 'New' },
-				{ value: 'legacy' as Engine, label: 'Legacy' },
-			]}
-			value={engine}
-			onpick={(v) => (engine = v)}
-		/>
-	{/if}
 	{#if !narrow}
 		<Segmented
 			options={[
@@ -253,7 +241,7 @@
 					oninsert={insert}
 				/>
 			{:else}
-				<PreviewPane {sizes} {engine} onpickengine={(v) => (engine = v)} />
+				<PreviewPane {rows} {sizes} onjump={jump} />
 			{/if}
 		</div>
 		{#if narrow && drawer}
@@ -318,10 +306,6 @@
 		display: flex;
 		align-items: center;
 		gap: 10px;
-		color: var(--text-muted);
-	}
-	.engine-label {
-		font-size: 12.5px;
 		color: var(--text-muted);
 	}
 	.hbtn {

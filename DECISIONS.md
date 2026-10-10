@@ -4,6 +4,25 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-10 · How the Preview shows the prompt (1.1)
+
+**Decision:**
+- In-chat prompts: the Chat History placeholder is split at each depth used, with the in-chat prompts between the parts. If this doesn't look right once built, the owner will design this part of the screen.
+- In-chat prompts that SillyTavern joins into one message (same depth, order and role) show as separate blocks, in SillyTavern's order.
+- When Chat History is off, in-chat prompts are left out, as in SillyTavern. No note explains it.
+- Prompts with no text are left out, as in SillyTavern.
+- Placeholders with settings show their role, not the mockup's "Inserted".
+- The macro engine switch and "Worked-out value" in the colour key are hidden until 1.2, when they do something.
+- Also accepted: the Preview shows only what the preset holds (no character card overrides, Author's Note or extension prompts), shows text exactly as typed, and updates while you edit.
+
+**Context:** Questions raised before building 1.1. Settles open item 5 in the SRS.
+
+## 2026-10-10 · Dragging on a phone counts as checked
+
+**Decision:** Q-1 (smooth dragging) counts as checked on mobile. A full test in the Obsidian phone app waits until the plugin can be installed.
+
+**Context:** The owner tested on a phone through the Obsidian test instance. Some things, like scrolling, feel different there than in the real app.
+
 ## 2026-10-10 · One undo timeline, with Redo
 
 **Decision:** Undo becomes one timeline for the whole preset, as in Google Docs or Notion, and Redo is added.
