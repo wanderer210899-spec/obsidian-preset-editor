@@ -128,7 +128,7 @@ The version each part arrives in is shown in brackets.
 - **E-2.** Drag to reorder, in the main list and in the Order panel.
 - **E-3.** Switch each prompt on or off.
 - **E-4.** Add a custom prompt (at the end, between prompts, or above or below one), rename it, and delete it. A new prompt is called "Untitled prompt". It's switched on, sits where the user clicked, has no trigger, and is set to Relative.
-- **E-5.** Edit a prompt's name, role (System, User, Assistant) and text. Also its settings: position, depth, order, triggers and forbid overrides.
+- **E-5.** Edit a prompt's name, role (System, User, Assistant) and text. Also its settings: position, depth, order, triggers and forbid overrides. Switching a prompt to In-chat also saves depth 4 and order 100 if it has none, as SillyTavern's edit form does.
 - **E-6.** Deleting is instant. Undo and Redo work on one timeline for the whole preset.
   - The timeline holds every change in the order it was made: typing (prompt text and names), adding, deleting, moving, role and settings changes.
   - Switching a prompt on or off is not on the timeline. Undo and Redo leave on/off as it is.
