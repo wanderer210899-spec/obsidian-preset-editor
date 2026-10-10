@@ -4,6 +4,14 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-10 · 1.1 released with fix 1.0.1 inside
+
+**Decision:**
+- The Chat History block's assumed cases are kept: one prompt reads "1 in-chat prompt inside"; with no in-chat prompts, the count and "End of chat history" are hidden.
+- Fix 1.0.1 is not released on its own. It goes to main inside v1.1.0, and the merge note says so.
+
+**Context:** The owner tested the Chat History block (light and dark), fix 1.0.1 and 1.1, and said all three work.
+
 ## 2026-10-10 · Chat History block follows the owner's mockup
 
 **Decision:** The Chat History block in the Preview follows a mockup the owner supplied (dark theme, and light theme on a phone):
