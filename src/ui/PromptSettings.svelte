@@ -16,10 +16,27 @@
 	}
 	let { prompt, sizes, update, onclose, oninsert, ondelete }: Props = $props();
 
+	/** SillyTavern's defaults (PromptManager.js). */
+	const DEFAULT_DEPTH = 4;
+	const DEFAULT_ORDER = 100;
+
 	const inChat = $derived(prompt.injection_position === 1);
 	const triggers = $derived(prompt.injection_trigger ?? []);
 	const removable = $derived(rulesFor(prompt.identifier).remove);
 
+	/**
+	 * E-5: switching to In-chat also saves the depth and order shown, if the
+	 * prompt has none. SillyTavern needs a depth to send an in-chat prompt,
+	 * and its own edit form always saves both.
+	 */
+	function setPosition(position: number) {
+		const patch: Partial<PromptData> = { injection_position: position };
+		if (position === 1) {
+			if (prompt.injection_depth == null) patch.injection_depth = DEFAULT_DEPTH;
+			if (prompt.injection_order == null) patch.injection_order = DEFAULT_ORDER;
+		}
+		update(patch);
+	}
 	function toNumber(value: string): number {
 		return parseInt(value || '0', 10) || 0;
 	}
@@ -45,7 +62,7 @@
 				{ value: 1, label: 'In-chat' },
 			]}
 			value={inChat ? 1 : 0}
-			onpick={(v) => update({ injection_position: v })}
+			onpick={setPosition}
 			height={sizes.ctlH}
 		/>
 	</div>
@@ -56,7 +73,7 @@
 			inputmode="numeric"
 			aria-label="Depth"
 			style:font-size={sizes.inFs}
-			value={prompt.injection_depth ?? 4}
+			value={prompt.injection_depth ?? DEFAULT_DEPTH}
 			onchange={(e) => update({ injection_depth: toNumber(e.currentTarget.value) })}
 		/>
 		<input
@@ -64,7 +81,7 @@
 			inputmode="numeric"
 			aria-label="Order"
 			style:font-size={sizes.inFs}
-			value={prompt.injection_order ?? 100}
+			value={prompt.injection_order ?? DEFAULT_ORDER}
 			onchange={(e) => update({ injection_order: toNumber(e.currentTarget.value) })}
 		/>
 	</div>

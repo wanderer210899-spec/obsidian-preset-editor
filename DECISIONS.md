@@ -4,6 +4,61 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-10 · 1.1 released with fix 1.0.1 inside
+
+**Decision:**
+- The Chat History block's assumed cases are kept: one prompt reads "1 in-chat prompt inside"; with no in-chat prompts, the count and "End of chat history" are hidden.
+- Fix 1.0.1 is not released on its own. It goes to main inside v1.1.0, and the merge note says so.
+
+**Context:** The owner tested the Chat History block (light and dark), fix 1.0.1 and 1.1, and said all three work.
+
+## 2026-10-10 · Chat History block follows the owner's mockup
+
+**Decision:** The Chat History block in the Preview follows a mockup the owner supplied (dark theme, and light theme on a phone):
+- A shaded block (no border), between two divider lines.
+- First row: the Chat History placeholder, then "3 in-chat prompts inside".
+- Each in-chat prompt gets an accent-coloured tag: "4 from the end", "2 from the end", "At the end" (depth 0).
+- It ends with "End of chat history".
+
+Assumed, not in the mockup: one prompt reads "1 in-chat prompt inside"; with no in-chat prompts, the count and the ending are left out.
+
+This replaces the look in the entry below. Prompts still sit inside the block, deepest first.
+
+**Context:** Testing the bordered block.
+
+## 2026-10-10 · In-chat prompts sit inside a bordered Chat History block
+
+**Decision:** Chat History is one block in the Preview, with a border in the theme's accent colour (first tried as a tint; the owner preferred a border). The in-chat prompts sit inside it, deepest first, in SillyTavern's order. Each keeps its label, e.g. "4 messages from the end". The split parts ("Chat History · 2 messages", "… last 2 messages") are gone. The owner chose this instead of making a new design.
+
+This replaces the first point of "How the Preview shows the prompt (1.1)" below.
+
+**Context:** Testing 1.1. With prompts at depths 4 and 2, the split parts showed the gaps between prompts ("2 messages"), which read like depths. The depth-4 prompts seemed to be missing.
+
+## 2026-10-10 · Switching to In-chat saves a depth and order
+
+**Decision:** When a prompt is switched to In-chat and has no depth or order saved, the editor saves depth 4 and order 100, the values it already shows. SillyTavern's own edit form does the same. Shipped as fix 1.0.1.
+
+**Context:** Found while building the 1.1 Preview. Switching to In-chat only saved the position. SillyTavern never sends an in-chat prompt with no depth, and its prompt list reads the depth to show it.
+
+## 2026-10-10 · How the Preview shows the prompt (1.1)
+
+**Decision:**
+- In-chat prompts: the Chat History placeholder is split at each depth used, with the in-chat prompts between the parts. If this doesn't look right once built, the owner will design this part of the screen.
+- In-chat prompts that SillyTavern joins into one message (same depth, order and role) show as separate blocks, in SillyTavern's order.
+- When Chat History is off, in-chat prompts are left out, as in SillyTavern. No note explains it.
+- Prompts with no text are left out, as in SillyTavern.
+- Placeholders with settings show their role, not the mockup's "Inserted".
+- The macro engine switch and "Worked-out value" in the colour key are hidden until 1.2, when they do something.
+- Also accepted: the Preview shows only what the preset holds (no character card overrides, Author's Note or extension prompts), shows text exactly as typed, and updates while you edit.
+
+**Context:** Questions raised before building 1.1. Settles open item 5 in the SRS.
+
+## 2026-10-10 · Dragging on a phone counts as checked
+
+**Decision:** Q-1 (smooth dragging) counts as checked on mobile. A full test in the Obsidian phone app waits until the plugin can be installed.
+
+**Context:** The owner tested on a phone through the Obsidian test instance. Some things, like scrolling, feel different there than in the real app.
+
 ## 2026-10-10 · One undo timeline, with Redo
 
 **Decision:** Undo becomes one timeline for the whole preset, as in Google Docs or Notion, and Redo is added.

@@ -26,7 +26,6 @@ export interface EditorDocument {
 export type SaveState = 'saved' | 'saving' | 'error';
 
 export type Mode = 'edit' | 'preview';
-export type Engine = 'new' | 'legacy';
 export type Tab = 'order' | 'vars';
 
 /** Sizes that differ between the wide and narrow layouts (from the mockup). */
