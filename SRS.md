@@ -162,8 +162,9 @@ The version each part arrives in is shown in brackets.
 - **V-2.** _(1.1)_ Assumes a normal reply. Leaves out prompts that are off, or whose triggers don't include a normal reply.
 - **V-3.** _(1.1)_ Anything that comes from SillyTavern stays as typed or as a placeholder. This includes character data, persona, chat history, `{{char}}` and `{{user}}`. In `{{if}}`, these count as "true".
 - **V-7.** _(1.1)_ In-chat prompts show where SillyTavern would put them.
-  - Chat History is one block, with a border in the theme's accent colour. The in-chat prompts sit inside it, deepest first, in SillyTavern's order.
-  - Each in-chat prompt says exactly where it goes, e.g. "4 messages from the end", or "After the last message" for depth 0.
+  - Chat History is one shaded block, as in the Chat History mockup the owner supplied (dark and light). The in-chat prompts sit inside it, deepest first, in SillyTavern's order.
+  - The block's first row shows the Chat History placeholder and how many in-chat prompts it holds, e.g. "3 in-chat prompts inside". It ends with "End of chat history". With no in-chat prompts, the count and the ending are left out.
+  - Each in-chat prompt has an accent-coloured tag saying where it goes, e.g. "4 from the end", or "At the end" for depth 0.
   - SillyTavern joins in-chat prompts with the same depth, order and role into one message. The Preview shows them as separate blocks, in SillyTavern's order.
   - When Chat History is off, SillyTavern sends no in-chat prompts. The Preview leaves them out too, with no note.
 - **V-8.** _(1.1)_ Prompts with no text are left out, as SillyTavern does. So are prompts SillyTavern would skip for any other reason. Placeholders always show.
@@ -217,7 +218,7 @@ In 1.0 the panel is empty.
   - The summary next to a prompt names its trigger if it has one (e.g. "Relative · Normal"), says "2 triggers" if it has several, and shows nothing if it has none.
   - No hover (narrow layout or touch screen): tap the gap between two prompts to show "Add prompt here", then tap that to add a prompt.
   - Obsidian mobile: Undo and Redo buttons in the tab header (E-6). The mockup has none.
-  - Preview: placeholders with settings show their role, not "Inserted" (V-9). Chat History is a bordered block that holds the in-chat prompts, and each in-chat prompt shows where it goes (V-7). The engine switch and "Worked-out value" wait for 1.2 (V-6).
+  - Preview: placeholders with settings show their role, not "Inserted" (V-9). Chat History is a shaded block that holds the in-chat prompts, and each in-chat prompt has a tag saying where it goes (V-7). This follows the owner's Chat History mockup. The engine switch and "Worked-out value" wait for 1.2 (V-6).
 
 ## 5. Quality
 

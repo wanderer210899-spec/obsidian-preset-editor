@@ -28,11 +28,14 @@
 		return (b.type !== 'history' && b.role && ROLE_DOT[b.role]) || 'var(--text-faint)';
 	}
 
-	const messages = (n: number) => (n === 1 ? '1 message' : `${n} messages`);
-
 	/** V-7: where an in-chat prompt goes. */
 	function whereOf(depth: number): string {
-		return depth === 0 ? 'After the last message' : `${messages(depth)} from the end`;
+		return depth === 0 ? 'At the end' : `${depth} from the end`;
+	}
+
+	/** V-7: how many in-chat prompts the chat history holds. */
+	function insideOf(n: number): string {
+		return `${n} in-chat ${n === 1 ? 'prompt' : 'prompts'} inside`;
 	}
 
 	/** V-3: splits text into plain parts and macros, which stay as typed. */
@@ -57,12 +60,15 @@
 	</div>
 	{#each blocks as b, i (i)}
 		{#if b.type === 'history'}
-			<!-- V-7: the chat history is one bordered block that holds the in-chat prompts. -->
-			<div class="history">
-				<div class="blk">{@render block(b)}</div>
-				{#each b.inChat as p, j (j)}
-					<div class="blk">{@render block(p)}</div>
-				{/each}
+			<!-- V-7: the chat history is one shaded block that holds the in-chat prompts. -->
+			<div class="history-slot">
+				<div class="history">
+					<div class="blk">{@render block(b)}</div>
+					{#each b.inChat as p, j (j)}
+						<div class="blk">{@render block(p)}</div>
+					{/each}
+					{#if b.inChat.length}<div class="history-end">End of chat history</div>{/if}
+				</div>
 			</div>
 		{:else}
 			<div class="blk">{@render block(b)}</div>
@@ -84,7 +90,10 @@
 		{#if b.type === 'text'}
 			<div class="txt">{#each segments(b.text) as s}<span class:kept={s.kept}>{s.text}</span>{/each}</div>
 		{:else}
-			<div class="ph">{b.name}</div>
+			<div class="ph-line">
+				<div class="ph">{b.name}</div>
+				{#if b.type === 'history' && b.inChat.length}<span class="inside">{insideOf(b.inChat.length)}</span>{/if}
+			</div>
 		{/if}
 	</div>
 {/snippet}
@@ -135,21 +144,42 @@
 		grid-template-columns: minmax(0, 1fr);
 		gap: 8px;
 	}
-	/* Bordered in the theme's accent colour; reaches a little past the
-	   columns so the text inside lines up with the blocks around it. */
+	/* The chat history sits between two divider lines, on a shaded block
+	   that reaches a little past the columns, so the text inside lines up
+	   with the blocks around it. */
+	.history-slot {
+		padding: 12px 0;
+		border-top: 1px solid var(--background-modifier-border);
+	}
 	.history {
 		margin: 0 -12px;
-		padding: 0 11px;
-		border: 1px solid var(--interactive-accent);
-		border-radius: 8px;
+		padding: 0 12px;
+		border-radius: 10px;
+		background: var(--background-secondary);
 	}
 	.narrow .history {
 		margin: 0 -10px;
-		padding: 0 9px;
+		padding: 0 10px;
 	}
-	.history > .blk:first-child,
-	.history + .blk {
+	.history > .blk:first-child {
 		border-top-color: transparent;
+	}
+	.ph-line {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		column-gap: 12px;
+		row-gap: 6px;
+	}
+	.inside {
+		font-size: 13px;
+		color: var(--text-faint);
+	}
+	.history-end {
+		padding: 12px 0 14px;
+		border-top: 1px solid var(--background-modifier-border);
+		font-size: 13px;
+		color: var(--text-faint);
 	}
 	.lab {
 		display: flex;
@@ -199,10 +229,18 @@
 		flex: none;
 		opacity: 0.7;
 	}
+	/* V-7: the depth pill, tinted with the theme's accent colour. */
 	.where {
+		padding: 2px 9px;
+		border-radius: 999px;
 		font-size: 12px;
-		line-height: 1.35;
-		color: var(--text-faint);
+		font-weight: 600;
+		line-height: 1.5;
+		color: var(--text-accent);
+		background: hsla(var(--interactive-accent-hsl), 0.14);
+	}
+	:global(body.theme-dark) .where {
+		background: hsla(var(--interactive-accent-hsl), 0.24);
 	}
 	.content {
 		min-width: 0;

@@ -4,6 +4,20 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-10 · Chat History block follows the owner's mockup
+
+**Decision:** The Chat History block in the Preview follows a mockup the owner supplied (dark theme, and light theme on a phone):
+- A shaded block (no border), between two divider lines.
+- First row: the Chat History placeholder, then "3 in-chat prompts inside".
+- Each in-chat prompt gets an accent-coloured tag: "4 from the end", "2 from the end", "At the end" (depth 0).
+- It ends with "End of chat history".
+
+Assumed, not in the mockup: one prompt reads "1 in-chat prompt inside"; with no in-chat prompts, the count and the ending are left out.
+
+This replaces the look in the entry below. Prompts still sit inside the block, deepest first.
+
+**Context:** Testing the bordered block.
+
 ## 2026-10-10 · In-chat prompts sit inside a bordered Chat History block
 
 **Decision:** Chat History is one block in the Preview, with a border in the theme's accent colour (first tried as a tint; the owner preferred a border). The in-chat prompts sit inside it, deepest first, in SillyTavern's order. Each keeps its label, e.g. "4 messages from the end". The split parts ("Chat History · 2 messages", "… last 2 messages") are gone. The owner chose this instead of making a new design.
