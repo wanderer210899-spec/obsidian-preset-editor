@@ -57,7 +57,7 @@
 	</div>
 	{#each blocks as b, i (i)}
 		{#if b.type === 'history'}
-			<!-- V-7: the chat history is one tinted block that holds the in-chat prompts. -->
+			<!-- V-7: the chat history is one bordered block that holds the in-chat prompts. -->
 			<div class="history">
 				<div class="blk">{@render block(b)}</div>
 				{#each b.inChat as p, j (j)}
@@ -135,17 +135,17 @@
 		grid-template-columns: minmax(0, 1fr);
 		gap: 8px;
 	}
-	/* Tinted with the theme's accent colour; reaches a little past the
+	/* Bordered in the theme's accent colour; reaches a little past the
 	   columns so the text inside lines up with the blocks around it. */
 	.history {
 		margin: 0 -12px;
-		padding: 0 12px;
+		padding: 0 11px;
+		border: 1px solid var(--interactive-accent);
 		border-radius: 8px;
-		background: hsla(var(--interactive-accent-hsl), 0.08);
 	}
 	.narrow .history {
 		margin: 0 -10px;
-		padding: 0 10px;
+		padding: 0 9px;
 	}
 	.history > .blk:first-child,
 	.history + .blk {

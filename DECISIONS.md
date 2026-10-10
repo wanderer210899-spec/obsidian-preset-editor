@@ -4,9 +4,9 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
-## 2026-10-10 · In-chat prompts sit inside a tinted Chat History block
+## 2026-10-10 · In-chat prompts sit inside a bordered Chat History block
 
-**Decision:** Chat History is one block in the Preview, tinted with the theme's accent colour. The in-chat prompts sit inside it, deepest first, in SillyTavern's order. Each keeps its label, e.g. "4 messages from the end". The split parts ("Chat History · 2 messages", "… last 2 messages") are gone. The owner chose this instead of making a new design.
+**Decision:** Chat History is one block in the Preview, with a border in the theme's accent colour (first tried as a tint; the owner preferred a border). The in-chat prompts sit inside it, deepest first, in SillyTavern's order. Each keeps its label, e.g. "4 messages from the end". The split parts ("Chat History · 2 messages", "… last 2 messages") are gone. The owner chose this instead of making a new design.
 
 This replaces the first point of "How the Preview shows the prompt (1.1)" below.
 
