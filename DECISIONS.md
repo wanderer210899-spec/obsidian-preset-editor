@@ -4,6 +4,14 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-10 · In-chat prompts sit inside a tinted Chat History block
+
+**Decision:** Chat History is one block in the Preview, tinted with the theme's accent colour. The in-chat prompts sit inside it, deepest first, in SillyTavern's order. Each keeps its label, e.g. "4 messages from the end". The split parts ("Chat History · 2 messages", "… last 2 messages") are gone. The owner chose this instead of making a new design.
+
+This replaces the first point of "How the Preview shows the prompt (1.1)" below.
+
+**Context:** Testing 1.1. With prompts at depths 4 and 2, the split parts showed the gaps between prompts ("2 messages"), which read like depths. The depth-4 prompts seemed to be missing.
+
 ## 2026-10-10 · Switching to In-chat saves a depth and order
 
 **Decision:** When a prompt is switched to In-chat and has no depth or order saved, the editor saves depth 4 and order 100, the values it already shows. SillyTavern's own edit form does the same. Shipped as fix 1.0.1.

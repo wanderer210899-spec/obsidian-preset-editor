@@ -15,20 +15,19 @@ export interface OrderedPrompt {
 }
 
 /**
- * One block of the Preview.
+ * One prompt in the Preview.
  * - text: a prompt's text, as typed.
  * - placeholder: something SillyTavern fills in (V-3). `role` is null for
  *   Chat Examples, which has no role.
- * - history: one part of the chat history (V-7). `part` says which:
- *   'all' (no in-chat prompts), 'earlier' (before the deepest in-chat prompt),
- *   or a number of messages between in-chat prompts or after the last one.
  *
- * `depth` is set on in-chat blocks: how many chat messages come after them.
+ * `depth` is set on in-chat prompts: how many chat messages come after them.
  */
-export type PreviewBlock =
+export type PromptBlock =
 	| { type: 'text'; id: string; name: string; role: string; text: string; depth: number | null }
-	| { type: 'placeholder'; id: string; name: string; role: string | null; depth: number | null }
-	| { type: 'history'; id: string; name: string; part: 'all' | 'earlier' | { messages: number; last: boolean } };
+	| { type: 'placeholder'; id: string; name: string; role: string | null; depth: number | null };
+
+/** One block of the Preview. The chat history holds the in-chat prompts, deepest first (V-7). */
+export type PreviewBlock = PromptBlock | { type: 'history'; id: string; name: string; inChat: PromptBlock[] };
 
 /** SillyTavern's injection_position for In-chat. */
 const IN_CHAT = 1;
@@ -59,7 +58,7 @@ export function assemble(rows: readonly OrderedPrompt[]): PreviewBlock[] {
 
 	const blocks: PreviewBlock[] = [];
 	for (const row of sent) {
-		if (row.id === 'chatHistory') blocks.push(...history(row, inChat));
+		if (row.id === 'chatHistory') blocks.push(history(row, inChat));
 		else if (!isInChat(row) && isRelativeSent(row) && hasContent(row)) blocks.push(block(row, null));
 	}
 	return blocks;
@@ -70,25 +69,15 @@ function isInChat(row: OrderedPrompt): boolean {
 	return row.prompt.injection_position === IN_CHAT && kindOf(row.id) !== 'placeholder';
 }
 
-/** The chat history, split around the in-chat prompts (V-7). */
-function history(row: OrderedPrompt, inChat: OrderedPrompt[]): PreviewBlock[] {
-	const name = row.prompt.name ?? 'Chat History';
-	const part = (p: Extract<PreviewBlock, { type: 'history' }>['part']): PreviewBlock => ({
+/** The chat history, with the in-chat prompts in the order they end up in the chat (V-7). */
+function history(row: OrderedPrompt, inChat: OrderedPrompt[]): PreviewBlock {
+	const depths = [...new Set(inChat.map((r) => r.prompt.injection_depth as number))].sort((a, b) => b - a);
+	return {
 		type: 'history',
 		id: row.id,
-		name,
-		part: p,
-	});
-	const depths = [...new Set(inChat.map((r) => r.prompt.injection_depth as number))].sort((a, b) => b - a);
-	if (!depths.length) return [part('all')];
-
-	const out: PreviewBlock[] = [part('earlier')];
-	depths.forEach((depth, i) => {
-		out.push(...atDepth(inChat, depth).map((r) => block(r, depth)));
-		const next = depths[i + 1] ?? 0;
-		if (depth > next) out.push(part({ messages: depth - next, last: i === depths.length - 1 }));
-	});
-	return out;
+		name: row.prompt.name ?? 'Chat History',
+		inChat: depths.flatMap((depth) => atDepth(inChat, depth).map((r) => block(r, depth))),
+	};
 }
 
 /**
@@ -111,7 +100,7 @@ function atDepth(inChat: OrderedPrompt[], depth: number): OrderedPrompt[] {
 	return groups.reverse().flat();
 }
 
-function block(row: OrderedPrompt, depth: number | null): PreviewBlock {
+function block(row: OrderedPrompt, depth: number | null): PromptBlock {
 	const { id, prompt } = row;
 	const name = prompt.name ?? id;
 	const kind = kindOf(id);

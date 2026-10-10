@@ -14,7 +14,7 @@ const inChat = (identifier: string, depth: number, fields: Partial<PromptData> =
 /** A short picture of each block, to compare whole lists at once. */
 function shape(blocks: PreviewBlock[]): string[] {
 	return blocks.map((b) => {
-		if (b.type === 'history') return typeof b.part === 'string' ? `history:${b.part}` : `history:${b.part.messages}${b.part.last ? ':last' : ''}`;
+		if (b.type === 'history') return `history(${shape(b.inChat).join(' ')})`;
 		const at = b.depth === null ? '' : `@${b.depth}`;
 		return `${b.type === 'text' ? b.id : `[${b.id}]`}${at}`;
 	});
@@ -39,7 +39,7 @@ test('relative prompts follow the list; off, non-normal and empty ones are left 
 		'spaces',
 		'[charDescription]',
 		'[dialogueExamples]',
-		'history:all',
+		'history()',
 		'jailbreak',
 	]);
 	assert.deepEqual(
@@ -53,7 +53,7 @@ test('SillyTavern skips custom prompts not marked system_prompt: false', () => {
 	assert.deepEqual(shape(blocks), ['c']);
 });
 
-test('the chat history is split at each in-chat depth', () => {
+test('the chat history holds the in-chat prompts, deepest first', () => {
 	const blocks = assemble([
 		row('main'),
 		inChat('deep', 4),
@@ -65,17 +65,7 @@ test('the chat history is split at each in-chat depth', () => {
 		inChat('tooDeep', 10001),
 		row('after'),
 	]);
-	assert.deepEqual(shape(blocks), [
-		'main',
-		'history:earlier',
-		'deep@4',
-		'history:3',
-		'one@1',
-		'history:1',
-		'zero@0',
-		'after',
-	]);
-	assert.deepEqual(shape(assemble([row('chatHistory'), inChat('x', 2)])), ['history:earlier', 'x@2', 'history:2:last']);
+	assert.deepEqual(shape(blocks), ['main', 'history(deep@4 one@1 zero@0)', 'after']);
 });
 
 test('one depth: low orders first, then assistant, user, system; list order inside a group', () => {
@@ -87,7 +77,7 @@ test('one depth: low orders first, then assistant, user, system; list order insi
 		inChat('E', 2, { role: 'assistant', injection_order: 100 }),
 		row('chatHistory'),
 	]);
-	assert.deepEqual(shape(blocks), ['history:earlier', 'C@2', 'E@2', 'B@2', 'A@2', 'D@2', 'history:2:last']);
+	assert.deepEqual(shape(blocks), ['history(C@2 E@2 B@2 A@2 D@2)']);
 });
 
 test('in-chat prompts are dropped when Chat History is off or missing', () => {
@@ -101,7 +91,8 @@ test('placeholders with settings can go in-chat; Chat Examples cannot', () => {
 		inChat('dialogueExamples', 3, { system_prompt: true }),
 		row('chatHistory'),
 	]);
-	assert.deepEqual(shape(blocks), ['[dialogueExamples]', 'history:earlier', '[scenario]@3', 'history:3:last']);
-	const scenario = blocks.find((b) => b.id === 'scenario');
+	assert.deepEqual(shape(blocks), ['[dialogueExamples]', 'history([scenario]@3)']);
+	const history = blocks.find((b) => b.type === 'history');
+	const scenario = history?.type === 'history' ? history.inChat[0] : undefined;
 	assert.equal(scenario?.type === 'placeholder' && scenario.role, 'system');
 });

@@ -35,13 +35,6 @@
 		return depth === 0 ? 'After the last message' : `${messages(depth)} from the end`;
 	}
 
-	/** V-7: which part of the chat history a history block stands for. */
-	function historyText(b: Extract<PreviewBlock, { type: 'history' }>): string {
-		if (b.part === 'all') return b.name;
-		if (b.part === 'earlier') return `${b.name} · earlier messages`;
-		return `${b.name} · ${b.part.last ? 'last ' : ''}${messages(b.part.messages)}`;
-	}
-
 	/** V-3: splits text into plain parts and macros, which stay as typed. */
 	function segments(text: string): { text: string; kept: boolean }[] {
 		const out: { text: string; kept: boolean }[] = [];
@@ -63,26 +56,38 @@
 		<span><span class="key-ph"></span>Placeholder</span>
 	</div>
 	{#each blocks as b, i (i)}
-		<div class="blk">
-			<div class="lab">
-				<div class="role"><span class="dot" style:background={dotOf(b)}></span>{roleOf(b)}</div>
-				<div class="chip" role="button" tabindex="0" title="Edit this prompt" onclick={() => onjump(b.id)}>
-					{b.name}<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"></path></svg>
-				</div>
-				{#if b.type !== 'history' && b.depth !== null}
-					<div class="where">{whereOf(b.depth)}</div>
-				{/if}
+		{#if b.type === 'history'}
+			<!-- V-7: the chat history is one tinted block that holds the in-chat prompts. -->
+			<div class="history">
+				<div class="blk">{@render block(b)}</div>
+				{#each b.inChat as p, j (j)}
+					<div class="blk">{@render block(p)}</div>
+				{/each}
 			</div>
-			<div class="content">
-				{#if b.type === 'text'}
-					<div class="txt">{#each segments(b.text) as s}<span class:kept={s.kept}>{s.text}</span>{/each}</div>
-				{:else}
-					<div class="ph">{b.type === 'history' ? historyText(b) : b.name}</div>
-				{/if}
-			</div>
-		</div>
+		{:else}
+			<div class="blk">{@render block(b)}</div>
+		{/if}
 	{/each}
 </div>
+
+{#snippet block(b: PreviewBlock)}
+	<div class="lab">
+		<div class="role"><span class="dot" style:background={dotOf(b)}></span>{roleOf(b)}</div>
+		<div class="chip" role="button" tabindex="0" title="Edit this prompt" onclick={() => onjump(b.id)}>
+			{b.name}<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"></path></svg>
+		</div>
+		{#if b.type !== 'history' && b.depth !== null}
+			<div class="where">{whereOf(b.depth)}</div>
+		{/if}
+	</div>
+	<div class="content">
+		{#if b.type === 'text'}
+			<div class="txt">{#each segments(b.text) as s}<span class:kept={s.kept}>{s.text}</span>{/each}</div>
+		{:else}
+			<div class="ph">{b.name}</div>
+		{/if}
+	</div>
+{/snippet}
 
 <style>
 	.pane {
@@ -129,6 +134,22 @@
 	.narrow .blk {
 		grid-template-columns: minmax(0, 1fr);
 		gap: 8px;
+	}
+	/* Tinted with the theme's accent colour; reaches a little past the
+	   columns so the text inside lines up with the blocks around it. */
+	.history {
+		margin: 0 -12px;
+		padding: 0 12px;
+		border-radius: 8px;
+		background: hsla(var(--interactive-accent-hsl), 0.08);
+	}
+	.narrow .history {
+		margin: 0 -10px;
+		padding: 0 10px;
+	}
+	.history > .blk:first-child,
+	.history + .blk {
+		border-top-color: transparent;
 	}
 	.lab {
 		display: flex;
