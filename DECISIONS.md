@@ -4,6 +4,27 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-11 · Select mode joins 1.5
+
+**Decision:** Version 1.5 gets a select mode, next to moving prompts between presets. A button turns it on, and several prompts can then be picked at once. The picked prompts can be deleted together, or moved to another preset together. It must work on desktop and mobile. Details are still open (SRS M-2, open item 3).
+
+**Context:** New feature request after testing the 1.3 editor changes.
+
+## 2026-10-11 · Folding and search accepted as built
+
+**Decision:** The owner tested folding and search and said they work. These details were raised with the build and kept:
+- "12 lines" counts lines as typed, not as wrapped on screen.
+- An empty folded prompt shows "Empty" with no line count.
+- Preview search also looks at prompt names, as Edit does.
+- Switching between Edit and Preview keeps the search; the count starts again at "1 of …".
+- Undo/Redo, jumping from the Order panel and adding a prompt open that prompt.
+- "2 of 5" counts prompts, not single matches. Next goes to the next prompt that matches.
+- A match in a prompt's name counts but isn't highlighted (names sit in a text box).
+- Typing in the search bar jumps straight to the first match.
+- Esc closes the search bar, even while typing in a prompt.
+
+**Context:** Built on `feature/1.3-editor-tweak` and merged into `version-1.3`.
+
 ## 2026-10-11 · Each view searches what it shows
 
 **Decision:** Edit searches the typed text. Preview searches the worked-out text. Example: a prompt has `Mood: {{getvar::mood}}` and Preview shows `Mood: calm`. In Preview, "calm" finds it and "getvar" doesn't. In Edit, it's the other way round.

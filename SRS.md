@@ -1,6 +1,6 @@
 # Preset Editor: Software Requirements Specification
 
-Draft 0.8 · 11 October 2026
+Draft 0.9 · 11 October 2026
 
 Follows SRS standard principles: https://www.computer.org/resources/software-requirements-specifications#requirements-fundamentals
 
@@ -31,7 +31,7 @@ Each version adds one feature on top of the last.
 | 1.2     | Macro engine: variables and `{{if}}`/`{{else}}` worked out, with SillyTavern's New engine. | Done        |
 | 1.3     | Variables panel. Closing tags while typing (3.9). Folding prompts and search (3.10).      | Planned     |
 | 1.4     | Library panel, with New preset and rename. Ribbon button and plugin shortcuts.            | Planned     |
-| 1.5     | Move prompts between presets.                                                             | Planned     |
+| 1.5     | Move prompts between presets. Select several prompts at once (M-2).                       | Planned     |
 | Later   | Snapshots or version history.                                                             | Planned     |
 
 **Not planned**
@@ -51,7 +51,9 @@ Each version adds one feature on top of the last.
 
 **1.2 is done** (v1.2.0). The Preview works out local variables, `{{if}}`/`{{else}}` and simple text macros with a port of SillyTavern's New macro engine. Everything else stays as typed, and an `{{if}}` that can't be decided stays as typed, whole. Checked by the owner on desktop and mobile.
 
-- Built: everything marked 1.0, 1.1 and 1.2 below.
+**1.3 is in progress.** Folding prompts and search (3.10) are built and checked by the owner. Still to come: closing tags (3.9) and the Variables panel (3.5).
+
+- Built: everything marked 1.0, 1.1 and 1.2 below, plus 3.10.
 - The Variables panel is there, but empty. Its content comes in 1.3.
 - Dragging (Q-1) was checked on a phone, through a test copy of Obsidian.
 - Not yet checked: a full test in the Obsidian phone app. This can only happen once the plugin can be installed. Scrolling, for example, feels different in the test copy.
@@ -199,9 +201,10 @@ In 1.0 the panel is empty.
 - **S-4.** If the file changes outside the editor while it's open (sync, git, another app), the editor reloads it. Any edit not yet saved is dropped. The file on disk always wins.
 - **S-5.** A status line shows "Saving…", "Saved" or "Not saved". If saving fails, a "Couldn't save" message also shows.
 
-### 3.7 Moving prompts between presets (1.5)
+### 3.7 Moving and selecting prompts (1.5)
 
 - **M-1.** The user can move a prompt from one preset to another. Cut and paste is the likely way: it works on desktop and mobile. Drag and drop needs both presets side by side, which mobile can't do. Details are in open item 3.
+- **M-2.** A button turns on a select mode, where several prompts can be picked at once. The picked prompts can be deleted together, or moved to another preset together (M-1). Works on desktop and mobile. Details are in open item 3.
 
 ### 3.8 Library panel and New preset (1.4)
 
@@ -263,12 +266,16 @@ Details are in open item 8.
 
 1. **Library panel:** design and behaviour. Needs a mockup. (1.4)
 2. **New preset from the command palette:** which folder does it go in when there are several preset folders? (1.4)
-3. **Moving prompts:** (1.5)
+3. **Moving and selecting prompts:** (1.5)
    - Cut and paste, or drag and drop?
    - Which kinds of prompt can be moved? Only custom ones?
    - What if the other preset already has that prompt?
    - Where does it land?
    - Does Undo bring back a cut prompt?
+   - Select mode (M-2): where is its button, and how are prompts picked?
+   - Can every kind of prompt be picked, or only ones that can be deleted or moved?
+   - Is deleting several prompts one Undo step?
+   - Needs a mockup?
 4. ~~**Undo on mobile:** what it looks like, and which version it comes in.~~ Settled: see E-6. (1.0)
 6. ~~**Starting values of local variables:** in SillyTavern, local variables live in the chat and carry over from earlier replies. The Preview has no chat. Do they start empty every time?~~ Settled: see V-11. (1.2)
 7. **Closing tags:** (1.3)
