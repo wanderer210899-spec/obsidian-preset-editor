@@ -29,10 +29,9 @@ Each version adds one feature on top of the last.
 | 1.0     | The editor screen from the mockup: open a preset, edit its prompts, save automatically. Undo and Redo. | Done        |
 | 1.1     | Preview: the full prompt in order. Macros stay as typed.                                  | Done        |
 | 1.2     | Macro engine: variables and `{{if}}`/`{{else}}` worked out, with SillyTavern's New engine. | Done        |
-| 1.3     | Variables panel.                                                                          | Planned     |
+| 1.3     | Variables panel. Closing tags while typing (3.9). Collapsing and grouping prompts (3.10). | Planned     |
 | 1.4     | Library panel, with New preset and rename. Ribbon button and plugin shortcuts.            | Planned     |
 | 1.5     | Move prompts between presets.                                                             | Planned     |
-| Later   | Closing tags while writing prompts. See 3.9.                                              | Planned     |
 | Later   | Snapshots or version history.                                                             | Planned     |
 
 **Not planned**
@@ -210,7 +209,7 @@ In 1.0 the panel is empty.
 - **L-4.** A new preset is called "Untitled preset". If that name is taken: "Untitled preset 1", "Untitled preset 2", and so on.
 - **L-5.** A new preset is a copy of SillyTavern's Default preset with every prompt's text left blank.
 
-### 3.9 Closing tags (later, version to be set)
+### 3.9 Closing tags (1.3)
 
 Help with closing tags while typing prompt text. No suggestion lists: they would clutter the screen on mobile.
 
@@ -220,6 +219,16 @@ Help with closing tags while typing prompt text. No suggestion lists: they would
 - **W-4.** The matching XML tag shows when the cursor is in a tag.
 
 Details are in open item 7.
+
+### 3.10 Collapsing and grouping prompts (1.3)
+
+Long presets get a minimal view, so many prompts are easier to scan.
+
+- **C-1.** Prompts can be collapsed to a short form.
+- **C-2.** Prompts can be put in visual folders, shown in the Order panel and the editor.
+- **C-3.** Collapsing and folders only change how the editor looks. They never change what SillyTavern sends.
+
+Which approach, or both, is open item 8.
 
 ---
 
@@ -256,9 +265,12 @@ Details are in open item 7.
    - Does Undo bring back a cut prompt?
 4. ~~**Undo on mobile:** what it looks like, and which version it comes in.~~ Settled: see E-6. (1.0)
 6. ~~**Starting values of local variables:** in SillyTavern, local variables live in the chat and carry over from earlier replies. The Preview has no chat. Do they start empty every time?~~ Settled: see V-11. (1.2)
-7. **Closing tags:** (version to be set)
-   - Which version?
+7. **Closing tags:** (1.3)
    - Does typing `{{` also add `}}`?
    - Which macros close by themselves: only `{{if}}`, or every macro that can wrap text?
    - Should W-4 also work for `{{if}}` and `{{/if}}`?
+8. **Collapsing and grouping:** (1.3)
+   - Collapsible prompts, visual folders, or both?
+   - Where are folders saved? SillyTavern presets have no folders.
+   - Is collapsed or open remembered when the preset is reopened?
 5. ~~**In-chat prompts in the Preview:** does "roughly where SillyTavern would put them" mean grouped around the Chat History placeholder, in SillyTavern's order?~~ Settled: see V-7. (1.1)
