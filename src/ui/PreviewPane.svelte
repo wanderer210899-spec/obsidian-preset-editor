@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { assemble, type PreviewBlock } from '../assemble';
-	import { macroSpans } from '../text-editor';
+	import { workOutMacros, type WorkedOut } from '../macros';
 	import type { Sizes, UiRow } from './types';
 
 	interface Props {
@@ -10,7 +10,8 @@
 	}
 	let { rows, sizes, onjump }: Props = $props();
 
-	const blocks = $derived(assemble(rows));
+	// V-4: macros are worked out with SillyTavern's New engine (V-6).
+	const blocks = $derived(assemble(rows, workOutMacros));
 
 	const ROLE_DOT: Record<string, string> = {
 		system: 'var(--text-faint)',
@@ -19,12 +20,12 @@
 	};
 
 	/** V-9: the role, or "Inserted" for Chat History and Chat Examples. */
-	function roleOf(b: PreviewBlock): string {
+	function roleOf(b: PreviewBlock<WorkedOut>): string {
 		const role = b.type === 'history' ? null : b.role;
 		return role ? role.charAt(0).toUpperCase() + role.slice(1) : 'Inserted';
 	}
 
-	function dotOf(b: PreviewBlock): string {
+	function dotOf(b: PreviewBlock<WorkedOut>): string {
 		return (b.type !== 'history' && b.role && ROLE_DOT[b.role]) || 'var(--text-faint)';
 	}
 
@@ -37,24 +38,12 @@
 	function insideOf(n: number): string {
 		return `${n} in-chat ${n === 1 ? 'prompt' : 'prompts'} inside`;
 	}
-
-	/** V-3: splits text into plain parts and macros, which stay as typed. */
-	function segments(text: string): { text: string; kept: boolean }[] {
-		const out: { text: string; kept: boolean }[] = [];
-		let at = 0;
-		for (const span of macroSpans(text)) {
-			if (span.from > at) out.push({ text: text.slice(at, span.from), kept: false });
-			out.push({ text: text.slice(span.from, span.to), kept: true });
-			at = span.to;
-		}
-		if (at < text.length) out.push({ text: text.slice(at), kept: false });
-		return out;
-	}
 </script>
 
-<!-- Preview screen (SRS 3.4). Macros are worked out from 1.2 on (V-4 to V-6). -->
+<!-- Preview screen (SRS 3.4). -->
 <div class="pane" class:narrow={sizes.narrow}>
 	<div class="legend">
+		<span><span class="key-val"></span>Worked-out value</span>
 		<span><span class="key-kept">{'{ }'}</span>Left as typed</span>
 		<span><span class="key-ph"></span>Placeholder</span>
 	</div>
@@ -76,7 +65,7 @@
 	{/each}
 </div>
 
-{#snippet block(b: PreviewBlock)}
+{#snippet block(b: PreviewBlock<WorkedOut>)}
 	<div class="lab">
 		<div class="role"><span class="dot" style:background={dotOf(b)}></span>{roleOf(b)}</div>
 		<div class="chip" role="button" tabindex="0" title="Edit this prompt" onclick={() => onjump(b.id)}>
@@ -88,7 +77,8 @@
 	</div>
 	<div class="content">
 		{#if b.type === 'text'}
-			<div class="txt">{#each segments(b.text) as s}<span class:kept={s.kept}>{s.text}</span>{/each}</div>
+			<!-- V-11: a variable that isn't set shows the "empty" tag. -->
+			<div class="txt">{#each b.text.parts as p}{#if p.value && !p.text}<span class="empty">empty</span>{:else}<span class:val={p.value} class:kept={p.kept}>{p.text}</span>{/if}{/each}</div>
 		{:else}
 			<div class="ph-line">
 				<div class="ph">{b.name}</div>
@@ -121,6 +111,12 @@
 		display: flex;
 		align-items: center;
 		gap: 6px;
+	}
+	.key-val {
+		width: 18px;
+		height: 12px;
+		border-radius: 3px;
+		background: var(--pe-val-bg);
 	}
 	.key-kept {
 		font-family: var(--font-monospace);
@@ -256,6 +252,17 @@
 	}
 	.kept {
 		color: var(--pe-macro);
+	}
+	.val {
+		padding: 0 2px;
+		border-radius: 3px;
+		background: var(--pe-val-bg);
+	}
+	.empty {
+		padding: 0 4px;
+		border-radius: 3px;
+		color: var(--text-faint);
+		background: var(--background-modifier-hover);
 	}
 	.ph {
 		display: inline-flex;

@@ -15,8 +15,6 @@ import {
 } from '@codemirror/view';
 import { macroSpans } from './highlight';
 
-export { type MacroSpan, macroSpans } from './highlight';
-
 export interface PromptEditor {
 	/** Replaces the text, unless it is already the same. Doesn't call `onChange`. */
 	setText(text: string): void;
