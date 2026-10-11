@@ -4,6 +4,12 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-11 · Each view searches what it shows
+
+**Decision:** Edit searches the typed text. Preview searches the worked-out text. Example: a prompt has `Mood: {{getvar::mood}}` and Preview shows `Mood: calm`. In Preview, "calm" finds it and "getvar" doesn't. In Edit, it's the other way round.
+
+**Context:** Follows from search working in Preview (entry below). A match then always lands on text you can see.
+
 ## 2026-10-11 · Folding and search details
 
 **Decision:**
