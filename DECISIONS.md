@@ -4,6 +4,12 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-11 · A variable that isn't set yet shows as empty
+
+**Decision:** In the Preview, a variable read before any prompt sets it is empty, as in a brand-new SillyTavern chat. Example: `Mood: {{getvar::mood}}` shows `Mood: ` with the mockup's "empty" tag. In `{{if}}`, an unset variable counts as "no", so the `{{else}}` part shows.
+
+**Context:** SRS open item 6. In SillyTavern, local variables live in the chat and can carry over from earlier replies. The Preview has no chat. The other choice was to keep the code as typed.
+
 ## 2026-10-11 · Only the New macro engine
 
 **Decision:** The plugin only uses SillyTavern's New macro engine. There is no Legacy engine and no engine switch, in the Preview or on the settings page. The mockup's "Not run by Legacy" highlight and note are dropped too.
