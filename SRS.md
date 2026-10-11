@@ -1,6 +1,6 @@
 # Preset Editor: Software Requirements Specification
 
-Draft 0.7 · 11 October 2026
+Draft 0.8 · 11 October 2026
 
 Follows SRS standard principles: https://www.computer.org/resources/software-requirements-specifications#requirements-fundamentals
 
@@ -29,7 +29,7 @@ Each version adds one feature on top of the last.
 | 1.0     | The editor screen from the mockup: open a preset, edit its prompts, save automatically. Undo and Redo. | Done        |
 | 1.1     | Preview: the full prompt in order. Macros stay as typed.                                  | Done        |
 | 1.2     | Macro engine: variables and `{{if}}`/`{{else}}` worked out, with SillyTavern's New engine. | Done        |
-| 1.3     | Variables panel. Closing tags while typing (3.9). Collapsing and grouping prompts (3.10). | Planned     |
+| 1.3     | Variables panel. Closing tags while typing (3.9). Folding prompts and search (3.10).      | Planned     |
 | 1.4     | Library panel, with New preset and rename. Ribbon button and plugin shortcuts.            | Planned     |
 | 1.5     | Move prompts between presets.                                                             | Planned     |
 | Later   | Snapshots or version history.                                                             | Planned     |
@@ -222,13 +222,14 @@ Help with closing tags while typing prompt text. No suggestion lists: they would
 
 Details are in open item 7.
 
-### 3.10 Collapsing and grouping prompts (1.3)
+### 3.10 Folding prompts and search (1.3)
 
-Long presets get a minimal view, so many prompts are easier to scan.
+Long presets get a minimal view, so many prompts are easier to scan. The look follows the "Outline" design in `UI design mock/main editor tweak/`.
 
-- **C-1.** Prompts can be collapsed to a short form. This only changes how the editor looks.
-- **C-2.** Empty prompts can act as dividers. A divider groups the prompts under it, up to the next divider, in the Order panel and the editor.
-- **C-3.** Dividers are real prompts, so they also show in SillyTavern. Being empty, they send nothing.
+- **C-1.** Prompts fold down to a short form. This only changes how the editor looks. Nothing is saved to the preset.
+- **C-2.** ~~Empty prompts act as dividers.~~ Dropped: the new mockup replaces dividers.
+- **C-3.** ~~Dividers show in SillyTavern.~~ Dropped with C-2.
+- **C-4.** A "Find in prompts" search bar finds text in prompt names and text.
 
 Details are in open item 8.
 
@@ -245,6 +246,7 @@ Details are in open item 8.
   - The summary next to a prompt names its trigger if it has one (e.g. "Relative · Normal"), says "2 triggers" if it has several, and shows nothing if it has none.
   - No hover (narrow layout or touch screen): tap the gap between two prompts to show "Add prompt here", then tap that to add a prompt.
   - Obsidian mobile: Undo and Redo buttons in the tab header (E-6). The mockup has none.
+  - _(1.3)_ The editor follows the "Outline" design in `UI design mock/main editor tweak/`: folding prompts and a "Find in prompts" search bar (3.10).
   - Preview: placeholders with settings show their role, not "Inserted" (V-9). Chat History is a shaded block that holds the in-chat prompts, and each in-chat prompt has a tag saying where it goes (V-7). This follows the owner's Chat History mockup. There is no engine switch and no "Not run by Legacy" note (V-6). "Worked-out value" waits for 1.2.
 
 ## 5. Quality
@@ -271,9 +273,10 @@ Details are in open item 8.
    - Does typing `{{` also add `}}`?
    - Which macros close by themselves: only `{{if}}`, or every macro that can wrap text?
    - Should W-4 also work for `{{if}}` and `{{/if}}`?
-8. **Collapsing and grouping:** (1.3)
-   - ~~Collapsible prompts, visual folders, or both?~~ Settled: collapsible prompts and divider prompts (C-1, C-2).
-   - How is a prompt recognised as a divider?
-   - What does a divider look like, without cluttering the editor?
-   - Is collapsed or open remembered when the preset is reopened?
+8. **Folding and search:** (1.3)
+   - ~~Collapsible prompts, visual folders, or both?~~ Settled: the new mockup's folding prompts and search (C-1, C-4). Dividers are dropped.
+   - Can several prompts be open at once, or only one?
+   - Can prompts still be dragged in the main list, or only in the Order panel?
+   - Is the open prompt remembered when the preset is reopened?
+   - Does search also look in Preview?
 5. ~~**In-chat prompts in the Preview:** does "roughly where SillyTavern would put them" mean grouped around the Chat History placeholder, in SillyTavern's order?~~ Settled: see V-7. (1.1)

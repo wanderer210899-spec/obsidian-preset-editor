@@ -4,6 +4,14 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-11 · New editor mockup replaces divider prompts; search joins 1.3
+
+**Decision:** The owner's new mockup (`UI design mock/main editor tweak/`, the "Outline" design) sets how the editor looks in 1.3. Prompts fold down to a short form, and there's a "Find in prompts" search bar. Divider prompts (old C-2, C-3) are dropped: the new design replaces them. The search bar goes into the SRS as an approved change to the look.
+
+This replaces the divider part of "Collapsing prompts, and empty prompts as dividers" below.
+
+**Context:** The owner made the mockup with a designer after open item 8 was raised. They asked for the editor changes, closing tags and the Variables panel to be built side by side in 1.3.
+
 ## 2026-10-11 · Collapsing prompts, and empty prompts as dividers
 
 **Decision:** Long presets are decluttered two ways. Prompts can be collapsed; collapsing only changes the editor's look. Empty prompts act as dividers that group the prompts under them. Visual folders saved outside the preset are not used. How a prompt is recognised as a divider, and how dividers look, are still being discussed. The owner doesn't want divider controls to clutter the editor.
