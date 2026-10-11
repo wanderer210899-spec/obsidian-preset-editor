@@ -4,6 +4,12 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-11 · Collapsing prompts, and empty prompts as dividers
+
+**Decision:** Long presets are decluttered two ways. Prompts can be collapsed; collapsing only changes the editor's look. Empty prompts act as dividers that group the prompts under them. Visual folders saved outside the preset are not used. How a prompt is recognised as a divider, and how dividers look, are still being discussed. The owner doesn't want divider controls to clutter the editor.
+
+**Context:** SRS open item 8. Options offered: collapsible prompts, visual folders, heading prompts, one-at-a-time, filter.
+
 ## 2026-10-11 · 1.3 also gets closing tags, collapsing and grouping
 
 **Decision:** Version 1.3 holds the Variables panel, closing tags while typing (SRS 3.9), and a way to declutter long presets: collapsing prompts and grouping them into visual folders (SRS 3.10). Folders and collapsing only change how the editor looks. Whether to build folders, collapsing, or both is still open (SRS open item 8).

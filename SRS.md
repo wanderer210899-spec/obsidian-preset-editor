@@ -224,11 +224,11 @@ Details are in open item 7.
 
 Long presets get a minimal view, so many prompts are easier to scan.
 
-- **C-1.** Prompts can be collapsed to a short form.
-- **C-2.** Prompts can be put in visual folders, shown in the Order panel and the editor.
-- **C-3.** Collapsing and folders only change how the editor looks. They never change what SillyTavern sends.
+- **C-1.** Prompts can be collapsed to a short form. This only changes how the editor looks.
+- **C-2.** Empty prompts can act as dividers. A divider groups the prompts under it, up to the next divider, in the Order panel and the editor.
+- **C-3.** Dividers are real prompts, so they also show in SillyTavern. Being empty, they send nothing.
 
-Which approach, or both, is open item 8.
+Details are in open item 8.
 
 ---
 
@@ -270,7 +270,8 @@ Which approach, or both, is open item 8.
    - Which macros close by themselves: only `{{if}}`, or every macro that can wrap text?
    - Should W-4 also work for `{{if}}` and `{{/if}}`?
 8. **Collapsing and grouping:** (1.3)
-   - Collapsible prompts, visual folders, or both?
-   - Where are folders saved? SillyTavern presets have no folders.
+   - ~~Collapsible prompts, visual folders, or both?~~ Settled: collapsible prompts and divider prompts (C-1, C-2).
+   - How is a prompt recognised as a divider?
+   - What does a divider look like, without cluttering the editor?
    - Is collapsed or open remembered when the preset is reopened?
 5. ~~**In-chat prompts in the Preview:** does "roughly where SillyTavern would put them" mean grouped around the Chat History placeholder, in SillyTavern's order?~~ Settled: see V-7. (1.1)
