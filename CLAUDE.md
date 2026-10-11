@@ -74,6 +74,9 @@ Tell me:
 
 - main = only versions I tested and said yes to.
 - New version = new branch, like version 1.1
+- One feature inside a version = its own branch off the
+  version branch, like feature/1.3-closing-tags.
+  It merges back into the version branch once I say it works.
 - Fixing a finished version = branch like fix/1.0.1-what-broke
 
 ## Starting a version
