@@ -16,12 +16,16 @@ export interface EditorHandle {
 	openSearch(): void;
 	setStatus(status: SaveState): void;
 	setTitle(title: string): void;
+	/** W-5: the "Auto complete" setting changed. */
+	setAutoComplete(on: boolean): void;
 	destroy(): void;
 }
 
 export interface EditorOptions {
 	/** E-6: show the Undo and Redo buttons (Obsidian mobile only, DECISIONS.md 2026-10-10). */
 	undoButton: boolean;
+	/** W-5: close tags while typing. */
+	autoComplete: boolean;
 }
 
 /**
@@ -35,13 +39,14 @@ export function mountEditor(
 	title: string,
 	options: EditorOptions,
 ): EditorHandle {
-	const editor = mount(Editor, { target, props: { doc, header, title, undoButton: options.undoButton } });
+	const editor = mount(Editor, { target, props: { doc, header, title, undoButton: options.undoButton, autoComplete: options.autoComplete } });
 	return {
 		undo: () => editor.undo(),
 		redo: () => editor.redo(),
 		openSearch: () => editor.openSearch(),
 		setStatus: (status) => editor.setStatus(status),
 		setTitle: (t) => editor.setTitle(t),
+		setAutoComplete: (on) => editor.setAutoComplete(on),
 		destroy: () => void unmount(editor),
 	};
 }

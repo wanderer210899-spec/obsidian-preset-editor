@@ -13,6 +13,7 @@ import {
 	ViewPlugin,
 	type ViewUpdate,
 } from '@codemirror/view';
+import { autoComplete, autoCompleteSlot, tagMarks } from './closing';
 import { macroSpans } from './highlight';
 
 export interface PromptEditor {
@@ -20,12 +21,16 @@ export interface PromptEditor {
 	setText(text: string): void;
 	/** Marks these parts of the text (class `pe-hit`), e.g. search matches. Replaces the last marks. */
 	setHits(ranges: readonly { from: number; to: number }[]): void;
+	/** W-5: switches auto complete (closing tags while typing) on or off. */
+	setAutoComplete(on: boolean): void;
 	destroy(): void;
 }
 
 export interface PromptEditorOptions {
 	text: string;
 	placeholder: string;
+	/** W-5: close tags while typing (W-1 to W-3). */
+	autoComplete: boolean;
 	onChange: (text: string) => void;
 }
 
@@ -33,7 +38,8 @@ export interface PromptEditorOptions {
 const fromOutside = Annotation.define<boolean>();
 
 /**
- * Elements get the classes `pe-macro`, `pe-variable` and `pe-control`.
+ * Elements get the classes `pe-macro`, `pe-variable`, `pe-control`, `pe-hit`
+ * (search) and `pe-pair` (the tag pair the cursor is in).
  * The box has no undo of its own: the plugin's undo timeline covers it (SRS E-6).
  */
 export function createPromptEditor(parent: HTMLElement, options: PromptEditorOptions): PromptEditor {
@@ -47,6 +53,8 @@ export function createPromptEditor(parent: HTMLElement, options: PromptEditorOpt
 			EditorView.contentAttributes.of({ spellcheck: 'false', 'aria-label': 'Prompt content' }),
 			macroColours(),
 			hits,
+			autoCompleteSlot.of(autoComplete(options.autoComplete)),
+			tagMarks(),
 			EditorView.updateListener.of((u) => {
 				if (u.docChanged && !u.transactions.some((t) => t.annotation(fromOutside))) options.onChange(u.state.doc.toString());
 			}),
@@ -68,6 +76,9 @@ export function createPromptEditor(parent: HTMLElement, options: PromptEditorOpt
 		},
 		setHits(ranges) {
 			view.dispatch({ effects: setHitsEffect.of(ranges) });
+		},
+		setAutoComplete(on) {
+			view.dispatch({ effects: autoCompleteSlot.reconfigure(autoComplete(on)) });
 		},
 		destroy() {
 			view.destroy();

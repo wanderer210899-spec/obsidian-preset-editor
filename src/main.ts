@@ -14,7 +14,15 @@ export default class PresetEditorPlugin extends Plugin {
 		await this.settings.init();
 		this.addSettingTab(new SettingsTab(this.app, this, this.settings));
 
-		this.registerView(VIEW_TYPE, (leaf) => new PresetEditorView(leaf));
+		this.registerView(VIEW_TYPE, (leaf) => new PresetEditorView(leaf, () => this.settings.autoComplete));
+		// W-5: open editors follow the "Auto complete" switch straight away.
+		this.register(
+			this.settings.onChange(() => {
+				for (const leaf of this.app.workspace.getLeavesOfType(VIEW_TYPE)) {
+					if (leaf.view instanceof PresetEditorView) leaf.view.setAutoComplete(this.settings.autoComplete);
+				}
+			}),
+		);
 		registerFileMenu(
 			this,
 			() => this.settings.presetFolders,
