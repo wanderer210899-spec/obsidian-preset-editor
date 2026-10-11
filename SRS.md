@@ -132,7 +132,7 @@ The version each part arrives in is shown in brackets.
 ### 3.2 Editing prompts (1.0)
 
 - **E-1.** Shows every prompt in the preset's order, as in the mockup.
-- **E-2.** Drag to reorder, in the main list and in the Order panel.
+- **E-2.** Drag to reorder in the Order panel. _(Until 1.3, also in the main list. From 1.3 the main list has no drag handle, as in the new mockup.)_
 - **E-3.** Switch each prompt on or off.
 - **E-4.** Add a custom prompt (at the end, between prompts, or above or below one), rename it, and delete it. A new prompt is called "Untitled prompt". It's switched on, sits where the user clicked, has no trigger, and is set to Relative.
 - **E-5.** Edit a prompt's name, role (System, User, Assistant) and text. Also its settings: position, depth, order, triggers and forbid overrides. Switching a prompt to In-chat also saves depth 4 and order 100 if it has none, as SillyTavern's edit form does.
@@ -227,9 +227,11 @@ Details are in open item 7.
 Long presets get a minimal view, so many prompts are easier to scan. The look follows the "Outline" design in `UI design mock/main editor tweak/`.
 
 - **C-1.** Prompts fold down to a short form. This only changes how the editor looks. Nothing is saved to the preset.
+- **C-5.** Only one prompt is open at a time. Opening a prompt folds the one that was open.
+- **C-6.** When a preset is opened, every prompt is folded.
 - **C-2.** ~~Empty prompts act as dividers.~~ Dropped: the new mockup replaces dividers.
 - **C-3.** ~~Dividers show in SillyTavern.~~ Dropped with C-2.
-- **C-4.** A "Find in prompts" search bar finds text in prompt names and text.
+- **C-4.** A "Find in prompts" search bar finds text in prompt names and text. It works in Edit and in Preview. In Preview, matches are highlighted there.
 
 Details are in open item 8.
 
@@ -275,8 +277,9 @@ Details are in open item 8.
    - Should W-4 also work for `{{if}}` and `{{/if}}`?
 8. **Folding and search:** (1.3)
    - ~~Collapsible prompts, visual folders, or both?~~ Settled: the new mockup's folding prompts and search (C-1, C-4). Dividers are dropped.
-   - Can several prompts be open at once, or only one?
-   - Can prompts still be dragged in the main list, or only in the Order panel?
-   - Is the open prompt remembered when the preset is reopened?
-   - Does search also look in Preview?
+   - ~~Can several prompts be open at once, or only one?~~ Settled: only one (C-5).
+   - ~~Can prompts still be dragged in the main list, or only in the Order panel?~~ Settled: only in the Order panel (E-2).
+   - ~~Is the open prompt remembered when the preset is reopened?~~ Settled: no, every prompt starts folded (C-6).
+   - ~~Does search also look in Preview?~~ Settled: yes (C-4).
+   - In Preview, does search find the typed text or the worked-out text?
 5. ~~**In-chat prompts in the Preview:** does "roughly where SillyTavern would put them" mean grouped around the Chat History placeholder, in SillyTavern's order?~~ Settled: see V-7. (1.1)

@@ -4,6 +4,16 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-11 · Folding and search details
+
+**Decision:**
+- Only one prompt is open at a time. Opening a prompt folds the one that was open, as in the mockup.
+- Prompts are dragged only in the Order panel. The main list has no drag handle, as in the mockup. This changes SRS E-2.
+- When a preset is opened, every prompt is folded. The open prompt is not remembered.
+- Search works in Preview too, and highlights matches there. The mockup only searched in Edit and switched to Edit to show a match.
+
+**Context:** SRS open item 8, raised after reading the "Outline" mockup.
+
 ## 2026-10-11 · New editor mockup replaces divider prompts; search joins 1.3
 
 **Decision:** The owner's new mockup (`UI design mock/main editor tweak/`, the "Outline" design) sets how the editor looks in 1.3. Prompts fold down to a short form, and there's a "Find in prompts" search bar. Divider prompts (old C-2, C-3) are dropped: the new design replaces them. The search bar goes into the SRS as an approved change to the look.
