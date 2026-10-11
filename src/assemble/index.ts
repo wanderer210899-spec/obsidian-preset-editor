@@ -1,8 +1,10 @@
 /**
  * Assemble module: works out what the Preview shows, in the order SillyTavern
- * would send it for a normal reply (SRS V-1, V-2, V-7 to V-10). Follows
+ * would send it for a normal reply (SRS V-1, V-2, V-4, V-7 to V-10). Follows
+ * getPromptCollection in public/scripts/PromptManager.js, then
  * populateChatCompletion and populationInjectionPrompts in
- * public/scripts/openai.js. It has no Obsidian or UI code, and runs no macros.
+ * public/scripts/openai.js. It has no Obsidian or UI code. Macros are worked
+ * out by the function passed in.
  */
 import { kindOf } from '../kinds';
 import type { PromptData } from '../preset';
@@ -14,20 +16,33 @@ export interface OrderedPrompt {
 	enabled: boolean;
 }
 
+/** A prompt's text with its macros worked out. `text` is what SillyTavern would send. */
+export interface Worked {
+	text: string;
+}
+
+/**
+ * Works out the macros in each text, in the order given (V-4). Variables set
+ * in one text can be read in the next.
+ */
+export type WorkOut<W extends Worked> = (texts: string[]) => W[];
+
 /**
  * One prompt in the Preview.
- * - text: a prompt's text, as typed.
+ * - text: a prompt's text, with its macros worked out.
  * - placeholder: something SillyTavern fills in (V-3). `role` is null for
  *   Chat Examples, which has no role.
  *
  * `depth` is set on in-chat prompts: how many chat messages come after them.
  */
-export type PromptBlock =
-	| { type: 'text'; id: string; name: string; role: string; text: string; depth: number | null }
+export type PromptBlock<W extends Worked> =
+	| { type: 'text'; id: string; name: string; role: string; text: W; depth: number | null }
 	| { type: 'placeholder'; id: string; name: string; role: string | null; depth: number | null };
 
 /** One block of the Preview. The chat history holds the in-chat prompts, deepest first (V-7). */
-export type PreviewBlock = PromptBlock | { type: 'history'; id: string; name: string; inChat: PromptBlock[] };
+export type PreviewBlock<W extends Worked> =
+	| PromptBlock<W>
+	| { type: 'history'; id: string; name: string; inChat: PromptBlock<W>[] };
 
 /** SillyTavern's injection_position for In-chat. */
 const IN_CHAT = 1;
@@ -51,15 +66,21 @@ const PLACED_BY_NAME = [
 /** In-chat roles, in the order SillyTavern lists them inside one depth and order. */
 const ROLES = ['system', 'user', 'assistant'];
 
-export function assemble(rows: readonly OrderedPrompt[]): PreviewBlock[] {
+export function assemble<W extends Worked>(rows: readonly OrderedPrompt[], workOut: WorkOut<W>): PreviewBlock<W>[] {
 	// V-2: only prompts that are on and run for a normal reply.
 	const sent = rows.filter((r) => r.enabled && runsOnNormal(r.prompt));
-	const inChat = sent.filter((r) => isInChat(r) && hasContent(r) && isSentInChat(r));
+	// V-4: SillyTavern works out every one of these in list order, before placing
+	// them, so a prompt that ends up hidden can still set a variable.
+	const results = workOut(sent.map((r) => r.prompt.content ?? ''));
+	const worked = new Map(sent.map((r, i) => [r, results[i]!]));
+	const textOf = (row: OrderedPrompt) => worked.get(row)!;
 
-	const blocks: PreviewBlock[] = [];
+	const inChat = sent.filter((r) => isInChat(r) && hasContent(r, textOf(r)) && isSentInChat(r));
+	const blocks: PreviewBlock<W>[] = [];
 	for (const row of sent) {
-		if (row.id === 'chatHistory') blocks.push(history(row, inChat));
-		else if (!isInChat(row) && isRelativeSent(row) && hasContent(row)) blocks.push(block(row, null));
+		if (row.id === 'chatHistory') blocks.push(history(row, inChat, textOf));
+		else if (!isInChat(row) && isRelativeSent(row) && hasContent(row, textOf(row)))
+			blocks.push(block(row, null, textOf(row)));
 	}
 	return blocks;
 }
@@ -70,13 +91,17 @@ function isInChat(row: OrderedPrompt): boolean {
 }
 
 /** The chat history, with the in-chat prompts in the order they end up in the chat (V-7). */
-function history(row: OrderedPrompt, inChat: OrderedPrompt[]): PreviewBlock {
+function history<W extends Worked>(
+	row: OrderedPrompt,
+	inChat: OrderedPrompt[],
+	textOf: (row: OrderedPrompt) => W,
+): PreviewBlock<W> {
 	const depths = [...new Set(inChat.map((r) => r.prompt.injection_depth as number))].sort((a, b) => b - a);
 	return {
 		type: 'history',
 		id: row.id,
 		name: row.prompt.name ?? 'Chat History',
-		inChat: depths.flatMap((depth) => atDepth(inChat, depth).map((r) => block(r, depth))),
+		inChat: depths.flatMap((depth) => atDepth(inChat, depth).map((r) => block(r, depth, textOf(r)))),
 	};
 }
 
@@ -100,14 +125,14 @@ function atDepth(inChat: OrderedPrompt[], depth: number): OrderedPrompt[] {
 	return groups.reverse().flat();
 }
 
-function block(row: OrderedPrompt, depth: number | null): PromptBlock {
+function block<W extends Worked>(row: OrderedPrompt, depth: number | null, worked: W): PromptBlock<W> {
 	const { id, prompt } = row;
 	const name = prompt.name ?? id;
 	const kind = kindOf(id);
 	if (kind === 'placeholder') return { type: 'placeholder', id, name, role: null, depth };
 	const role = roleOf(row) ?? 'system';
 	if (kind === 'placeholder-settings') return { type: 'placeholder', id, name, role, depth };
-	return { type: 'text', id, name, role, text: prompt.content ?? '', depth };
+	return { type: 'text', id, name, role, text: worked, depth };
 }
 
 function runsOnNormal(prompt: Readonly<PromptData>): boolean {
@@ -120,10 +145,10 @@ function isRelativeSent(row: OrderedPrompt): boolean {
 	return PLACED_BY_NAME.includes(row.id) || row.prompt.system_prompt === false;
 }
 
-/** V-8: empty prompts aren't sent. Placeholders count as filled (V-3). */
-function hasContent(row: OrderedPrompt): boolean {
+/** V-8: prompts that are empty once their macros are worked out aren't sent. Placeholders count as filled (V-3). */
+function hasContent(row: OrderedPrompt, worked: Worked): boolean {
 	if (kindOf(row.id) !== 'custom' && kindOf(row.id) !== 'builtin') return true;
-	const text = row.prompt.content ?? '';
+	const { text } = worked;
 	// SillyTavern trims in-chat text before checking it.
 	return isInChat(row) ? text.trim() !== '' : text !== '';
 }

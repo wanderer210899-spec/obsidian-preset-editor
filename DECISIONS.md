@@ -4,6 +4,48 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-11 · Closing tags, but no suggestion lists
+
+**Decision:** A later version helps with closing tags while typing prompt text. Scoped macros close by themselves (`{{if}}` adds `{{/if}}`). XML tags close by themselves, rename together, and show their matching pair. There are no macro or variable suggestion lists. Version and details are still open (SRS open item 7).
+
+**Context:** The owner asked what autocomplete could look like. SillyTavern's own prompt editor shows a macro list when typing `{{`. The owner judged that such lists would clutter the screen on mobile.
+
+## 2026-10-11 · An {{if}} that can't be decided stays as typed
+
+**Decision:** If an `{{if}}` condition uses something the Preview can't work out, the whole block stays as typed and nothing inside it runs. This includes SillyTavern data such as `{{char}}` and `{{description}}`, and also dice, dates and global variables. Example: `{{if $flag}}A{{else}}B{{/if}}` shows exactly as typed.
+
+This replaces the V-3 rule that SillyTavern data counts as "true" in `{{if}}`.
+
+**Context:** Raised while building the 1.2 engine. The owner tested the engine on desktop and mobile first.
+
+## 2026-10-11 · The Preview works out simple text macros
+
+**Decision:** Besides variables and `{{if}}`/`{{else}}`, the Preview works out macros whose result comes only from the prompt text: `{{// comment}}`, `{{newline}}`, `{{space}}`, `{{trim}}`, `{{noop}}`, `{{reverse}}` (and `{{banned}}`, which SillyTavern removes in Chat Completion). A comment, for example, disappears as it does in SillyTavern.
+
+**Context:** Raised while building the 1.2 engine. The SRS only named variables and `{{if}}`/`{{else}}`.
+
+## 2026-10-11 · A variable that isn't set yet shows as empty
+
+**Decision:** In the Preview, a variable read before any prompt sets it is empty, as in a brand-new SillyTavern chat. Example: `Mood: {{getvar::mood}}` shows `Mood: ` with the mockup's "empty" tag. In `{{if}}`, an unset variable counts as "no", so the `{{else}}` part shows.
+
+**Context:** SRS open item 6. In SillyTavern, local variables live in the chat and can carry over from earlier replies. The Preview has no chat. The other choice was to keep the code as typed.
+
+## 2026-10-11 · Only the New macro engine
+
+**Decision:** The plugin only uses SillyTavern's New macro engine. There is no Legacy engine and no engine switch, in the Preview or on the settings page. The mockup's "Not run by Legacy" highlight and note are dropped too.
+
+This replaces the entry below (switch moves to the settings page).
+
+Accepted trade-off: users who still run Legacy in SillyTavern may see a Preview that differs from what their SillyTavern sends. This happens with `{{if}}` blocks, with `setvar` and `getvar` in the same prompt, and with macros inside macros. Legacy could be added later as its own module if needed.
+
+**Context:** New understands all of Legacy's macros. It is SillyTavern's default (1.19), and SillyTavern's code marks the old system as on its way out. One engine keeps the plugin simpler.
+
+## 2026-10-11 · Macro engine switch moves to the settings page
+
+**Decision:** The New/Legacy macro engine switch goes on the plugin's settings page, not in the Preview as the mockup shows. This keeps the editor screen uncluttered. It changes SRS V-6 and adds an approved change to I-4.
+
+**Context:** Planning 1.2. SillyTavern also keeps its engine choice in its settings ("Experimental Macro Engine" in User Settings), not next to the prompts.
+
 ## 2026-10-10 · 1.1 released with fix 1.0.1 inside
 
 **Decision:**
