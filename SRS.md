@@ -29,7 +29,7 @@ Each version adds one feature on top of the last.
 | 1.0     | The editor screen from the mockup: open a preset, edit its prompts, save automatically. Undo and Redo. | Done        |
 | 1.1     | Preview: the full prompt in order. Macros stay as typed.                                  | Done        |
 | 1.2     | Macro engine: variables and `{{if}}`/`{{else}}` worked out, with SillyTavern's New engine. | Done        |
-| 1.3     | Variables panel. Closing tags while typing (3.9). Folding prompts and search (3.10).      | Planned     |
+| 1.3     | Variables panel. Closing tags while typing (3.9). Folding prompts and search (3.10).      | Done        |
 | 1.4     | Library panel, with New preset and rename. Ribbon button and plugin shortcuts.            | Planned     |
 | 1.5     | Move prompts between presets. Select several prompts at once (M-2).                       | Planned     |
 | Later   | Snapshots or version history.                                                             | Planned     |
@@ -51,9 +51,9 @@ Each version adds one feature on top of the last.
 
 **1.2 is done** (v1.2.0). The Preview works out local variables, `{{if}}`/`{{else}}` and simple text macros with a port of SillyTavern's New macro engine. Everything else stays as typed, and an `{{if}}` that can't be decided stays as typed, whole. Checked by the owner on desktop and mobile.
 
-**1.3 is in progress.** Folding prompts and search (3.10) and closing tags (3.9) are built and checked by the owner. The Variables panel (3.5) is built and waits for the owner's check.
+**1.3 is done** (v1.3.0). The Variables panel (3.5) lists each local variable with its final value and where it is set and read. Closing tags while typing (3.9). Folding prompts and search (3.10). All checked by the owner.
 
-- Built: everything marked 1.0, 1.1 and 1.2 below, plus 3.5, 3.9 and 3.10.
+- Built: everything marked 1.0 to 1.3 below.
 - Dragging (Q-1) was checked on a phone, through a test copy of Obsidian.
 - Not yet checked: a full test in the Obsidian phone app. This can only happen once the plugin can be installed. Scrolling, for example, feels different in the test copy.
 
