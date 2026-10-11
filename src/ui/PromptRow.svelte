@@ -1,7 +1,8 @@
 <script lang="ts">
 	import type { PromptData } from '../preset';
 	import { rulesFor } from '../kinds';
-	import Grip from './Grip.svelte';
+	import FoldChevron from './FoldChevron.svelte';
+	import FoldSummary from './FoldSummary.svelte';
 	import PromptMeta from './PromptMeta.svelte';
 	import PromptSettings from './PromptSettings.svelte';
 	import PromptText from './PromptText.svelte';
@@ -12,20 +13,24 @@
 		row: UiRow;
 		sizes: Sizes;
 		popOpen: boolean;
+		/** C-1: open shows the text, role and settings; folded shows a one-line summary. */
+		open: boolean;
+		ontoggleopen: () => void;
 		update: (patch: Partial<PromptData>) => void;
 		ontoggle: () => void;
 		ontogglepop: () => void;
 		oninsert: (offset: 0 | 1) => void;
 		ondelete: () => void;
 	}
-	let { row, sizes, popOpen, update, ontoggle, ontogglepop, oninsert, ondelete }: Props = $props();
+	let { row, sizes, popOpen, open, ontoggleopen, update, ontoggle, ontogglepop, oninsert, ondelete }: Props = $props();
 
 	const p = $derived(row.prompt);
 	const removable = $derived(rulesFor(row.id).remove);
 </script>
 
-<div class="head" class:narrow={sizes.narrow}>
-	<Grip width={sizes.gripW} height={sizes.gripH} />
+<!-- C-1: an open prompt's title row stays at the top while its text scrolls. -->
+<div class="head" class:narrow={sizes.narrow} class:sticky={open}>
+	<FoldChevron {open} width={sizes.narrow ? '36px' : '24px'} height={sizes.gripH} onclick={ontoggleopen} />
 	<input
 		class="name"
 		data-name
@@ -35,7 +40,7 @@
 		value={p.name ?? ''}
 		oninput={(e) => update({ name: e.currentTarget.value })}
 	/>
-	<div class="meta">
+	<div class="meta" class:folded={!open}>
 		<PromptMeta prompt={p} {sizes} {popOpen} {update} {ontogglepop} />
 		{#if sizes.narrow}
 			<div style:flex="1"></div>
@@ -47,22 +52,26 @@
 		<Toggle on={row.enabled} {ontoggle} flushLeft title={row.enabled ? 'On — click to switch off' : 'Off — click to switch on'} />
 	</div>
 </div>
-<div class="body" style:padding-left={sizes.narrow ? '0' : '28px'}>
-	<div class="text" style:font-size={sizes.monoFs} style:opacity={row.enabled ? 1 : 0.45}>
-		<PromptText text={p.content ?? ''} onchange={(content) => update({ content })} />
+{#if open}
+	<div class="body" style:padding-left={sizes.narrow ? '0' : '28px'}>
+		<div class="text" style:font-size={sizes.monoFs} style:opacity={row.enabled ? 1 : 0.45}>
+			<PromptText text={p.content ?? ''} onchange={(content) => update({ content })} />
+		</div>
 	</div>
-</div>
-{#if popOpen}
+{:else}
+	<FoldSummary text={p.content ?? ''} indent={sizes.narrow ? '0' : '28px'} dimmed={!row.enabled} onopen={ontoggleopen} />
+{/if}
+{#if open && popOpen}
 	<PromptSettings prompt={p} {sizes} {update} onclose={ontogglepop} {oninsert} {ondelete} />
 {/if}
 
 {#snippet deleteOrLock(size: string, trashPx: number, lockPx: number)}
 	{#if removable}
-		<div class="del" role="button" tabindex="0" title="Delete prompt" aria-label="Delete prompt" style:width={size} style:height={size} onclick={ondelete}>
+		<div class="del" class:folded={!open} role="button" tabindex="0" title="Delete prompt" aria-label="Delete prompt" style:width={size} style:height={size} onclick={ondelete}>
 			<svg width={trashPx} height={trashPx} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
 		</div>
 	{:else}
-		<div class="lock" title="Built-in prompts can’t be deleted" style:width={size} style:height={size}>
+		<div class="lock" class:folded={!open} title="Built-in prompts can’t be deleted" style:width={size} style:height={size}>
 			<svg width={lockPx} height={lockPx} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
 		</div>
 	{/if}
@@ -100,6 +109,22 @@
 		align-items: center;
 		gap: 2px;
 		min-width: 0;
+	}
+	.meta.folded {
+		display: none;
+	}
+	/* Wide: the icon keeps its space while folded, so the switches still line up. */
+	.del.folded,
+	.lock.folded {
+		visibility: hidden;
+	}
+	.head.sticky {
+		position: sticky;
+		top: 0;
+		z-index: 3;
+		background: var(--background-primary);
+		margin: -14px -12px 0;
+		padding: 10px 12px 6px;
 	}
 	.narrow .meta {
 		order: 3;

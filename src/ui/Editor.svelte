@@ -2,6 +2,7 @@
 	import { onMount, tick, untrack } from 'svelte';
 	import { portal } from './actions';
 	import EditPane from './EditPane.svelte';
+	import { toggleOpen } from './folding';
 	import PreviewPane from './PreviewPane.svelte';
 	import Segmented from './Segmented.svelte';
 	import SidePanel from './SidePanel.svelte';
@@ -26,6 +27,8 @@
 	let drawer = $state(false);
 	let pop = $state<string | null>(null);
 	let flash = $state<string | null>(null);
+	/** C-5, C-6: the one open prompt. Starts with none, so every prompt is folded. */
+	let openId = $state<string | null>(null);
 	let narrow = $state(false);
 	let canUndo = $state(untrack(() => doc.canUndo()));
 	let canRedo = $state(untrack(() => doc.canRedo()));
@@ -66,12 +69,30 @@
 		};
 	});
 
-	function setMode(next: Mode) {
+	async function setMode(next: Mode) {
 		if (next === mode) return;
 		mode = next;
 		tab = next === 'edit' ? 'order' : 'vars';
 		pop = null;
 		scroller.scrollTop = 0;
+		// Edit and Preview both land on the prompt that's open (from the 1.3 mockup).
+		if (!openId) return;
+		await tick();
+		const attr = next === 'edit' ? 'data-anchor' : 'data-pv';
+		const el = scroller.querySelector<HTMLElement>(`[${attr}="${CSS.escape(openId)}"]`);
+		if (el) scroller.scrollTop = Math.max(0, el.getBoundingClientRect().top - scroller.getBoundingClientRect().top - 12);
+	}
+
+	/** C-1, C-5: opens a prompt (folding the open one) or folds it. Its settings close with it. */
+	function toggleRow(id: string) {
+		openId = toggleOpen(openId, id);
+		if (pop !== openId) pop = null;
+	}
+
+	/** Opens a prompt so a jump, Undo or a new prompt lands on its text. */
+	function openRow(id: string) {
+		openId = id;
+		if (pop !== id) pop = null;
 	}
 
 	function togglePanel() {
@@ -109,6 +130,7 @@
 	/** E-6: flashes the prompt an undo or redo changed, and scrolls to it if it is off screen. */
 	async function reveal(id: string | null) {
 		if (!id || mode !== 'edit') return;
+		openRow(id);
 		await tick();
 		const el = scroller.querySelector<HTMLElement>(`[data-anchor="${CSS.escape(id)}"]`);
 		if (!el) return;
@@ -123,6 +145,7 @@
 		mode = 'edit';
 		drawer = false;
 		pop = null;
+		openRow(id);
 		await tick();
 		showRow(id);
 	}
@@ -132,6 +155,7 @@
 		const id = doc.insert(at);
 		pop = null;
 		mode = 'edit';
+		openRow(id);
 		await tick();
 		showRow(id);
 		const name = scroller.querySelector<HTMLInputElement>(`[data-anchor="${CSS.escape(id)}"] input[data-name]`);
@@ -236,6 +260,8 @@
 					{sizes}
 					{pop}
 					{flash}
+					{openId}
+					ontoggleopen={toggleRow}
 					tapToReveal={narrow || noHover}
 					ontogglepop={(id) => (pop = pop === id ? null : id)}
 					oninsert={insert}
@@ -254,6 +280,7 @@
 				{sizes}
 				{tab}
 				{flash}
+				{openId}
 				onpicktab={(t) => (tab = t)}
 				onjump={jump}
 				onclose={() => (drawer = false)}

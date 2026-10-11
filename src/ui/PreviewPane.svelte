@@ -52,15 +52,15 @@
 			<!-- V-7: the chat history is one shaded block that holds the in-chat prompts. -->
 			<div class="history-slot">
 				<div class="history">
-					<div class="blk">{@render block(b)}</div>
+					<div class="blk" data-pv={b.id}>{@render block(b)}</div>
 					{#each b.inChat as p, j (j)}
-						<div class="blk">{@render block(p)}</div>
+						<div class="blk" data-pv={p.id}>{@render block(p)}</div>
 					{/each}
 					{#if b.inChat.length}<div class="history-end">End of chat history</div>{/if}
 				</div>
 			</div>
 		{:else}
-			<div class="blk">{@render block(b)}</div>
+			<div class="blk" data-pv={b.id}>{@render block(b)}</div>
 		{/if}
 	{/each}
 </div>

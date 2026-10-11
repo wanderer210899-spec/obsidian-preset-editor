@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PromptData } from '../preset';
 	import { rulesFor } from '../kinds';
-	import Grip from './Grip.svelte';
+	import FoldChevron from './FoldChevron.svelte';
 	import PromptMeta from './PromptMeta.svelte';
 	import PromptSettings from './PromptSettings.svelte';
 	import Toggle from './Toggle.svelte';
@@ -11,12 +11,15 @@
 		row: UiRow;
 		sizes: Sizes;
 		popOpen: boolean;
+		/** C-1: a placeholder with settings opens to show its role and settings. */
+		open: boolean;
+		ontoggleopen: () => void;
 		update: (patch: Partial<PromptData>) => void;
 		ontoggle: () => void;
 		ontogglepop: () => void;
 		oninsert: (offset: 0 | 1) => void;
 	}
-	let { row, sizes, popOpen, update, ontoggle, ontogglepop, oninsert }: Props = $props();
+	let { row, sizes, popOpen, open, ontoggleopen, update, ontoggle, ontogglepop, oninsert }: Props = $props();
 
 	/**
 	 * SRS 3.3, as in SillyTavern: placeholders with settings can be renamed and
@@ -27,7 +30,12 @@
 </script>
 
 <div class="line" class:narrow={sizes.narrow}>
-	<Grip width={sizes.gripW} height={sizes.gripH} />
+	{#if editable}
+		<FoldChevron {open} width={sizes.narrow ? '36px' : '24px'} height={sizes.gripH} onclick={ontoggleopen} />
+	{:else}
+		<!-- Nothing to open; keeps the name in line with the others. -->
+		<div class="chev-slot" style:width={sizes.narrow ? '36px' : '24px'}></div>
+	{/if}
 	<div class="box" style:opacity={row.enabled ? 1 : 0.45}>
 		<span class="name">
 			<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.8" stroke-dasharray="3 3" style="flex:none"><rect x="4" y="4" width="16" height="16" rx="3"></rect></svg>
@@ -46,7 +54,7 @@
 		</span>
 		<span class="note">Inserted by SillyTavern</span>
 	</div>
-	{#if editable}
+	{#if editable && open}
 		<div class="meta">
 			<PromptMeta prompt={row.prompt} {sizes} {popOpen} {update} {ontogglepop} />
 		</div>
@@ -59,7 +67,7 @@
 		<div class="icon-slot"></div>
 	{/if}
 </div>
-{#if editable && popOpen}
+{#if editable && open && popOpen}
 	<PromptSettings prompt={row.prompt} {sizes} {update} onclose={ontogglepop} {oninsert} ondelete={() => {}} />
 {/if}
 
@@ -71,6 +79,10 @@
 		column-gap: 8px;
 		row-gap: 2px;
 		min-height: 32px;
+	}
+	.chev-slot {
+		flex: none;
+		margin-left: -6px;
 	}
 	.box {
 		order: 1;

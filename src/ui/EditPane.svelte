@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { kindOf } from '../kinds';
-	import { sortable } from './actions';
 	import PlaceholderRow from './PlaceholderRow.svelte';
 	import PromptRow from './PromptRow.svelte';
 	import type { EditorDocument, SaveState, Sizes, UiRow } from './types';
@@ -15,12 +14,15 @@
 		sizes: Sizes;
 		pop: string | null;
 		flash: string | null;
+		/** C-5: the one open prompt, or null when all are folded. */
+		openId: string | null;
+		ontoggleopen: (id: string) => void;
 		/** No hover (narrow layout or touch): the first tap on a divider shows "Add prompt here". */
 		tapToReveal: boolean;
 		ontogglepop: (id: string) => void;
 		oninsert: (at: number) => void;
 	}
-	let { doc, rows, title, status, sizes, pop, flash, tapToReveal, ontogglepop, oninsert }: Props = $props();
+	let { doc, rows, title, status, sizes, pop, flash, openId, ontoggleopen, tapToReveal, ontogglepop, oninsert }: Props = $props();
 
 	/** The divider shown by a first tap (DECISIONS.md, 2026-10-10). */
 	let revealed = $state<number | null>(null);
@@ -46,7 +48,8 @@
 <div class="pane" class:narrow={sizes.narrow} class:tap={tapToReveal}>
 	<div class="h1">{title}</div>
 	<div class="status">{onCount} of {rows.length} prompts on · {STATUS[status]}</div>
-	<div use:sortable={{ handle: '.pe-grip', onMove: (id, to) => doc.move(id, to) }}>
+	<!-- E-2: no dragging here from 1.3; prompts are dragged in the Order panel. -->
+	<div>
 		{#each rows as row, i (row.id)}
 			<div
 				class="row"
@@ -63,6 +66,8 @@
 						{row}
 						{sizes}
 						popOpen={pop === row.id}
+						open={openId === row.id}
+						ontoggleopen={() => ontoggleopen(row.id)}
 						update={(patch) => doc.update(row.id, patch)}
 						ontoggle={() => doc.setEnabled(row.id, !row.enabled)}
 						ontogglepop={() => ontogglepop(row.id)}
@@ -73,6 +78,8 @@
 						{row}
 						{sizes}
 						popOpen={pop === row.id}
+						open={openId === row.id}
+						ontoggleopen={() => ontoggleopen(row.id)}
 						update={(patch) => doc.update(row.id, patch)}
 						ontoggle={() => doc.setEnabled(row.id, !row.enabled)}
 						ontogglepop={() => ontogglepop(row.id)}
@@ -127,15 +134,6 @@
 	}
 	.row.pop-open {
 		z-index: 10;
-	}
-	.row:global(.pe-lifted) {
-		background: var(--background-primary);
-		box-shadow: var(--pe-lift);
-		border-radius: 8px;
-		z-index: 4;
-	}
-	:global(.pe-drag-clone) {
-		opacity: 0 !important;
 	}
 	.add-here {
 		position: absolute;
