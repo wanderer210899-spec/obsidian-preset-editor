@@ -1,6 +1,6 @@
 # Preset Editor: Software Requirements Specification
 
-Draft 0.10 · 11 October 2026
+Draft 0.11 · 11 October 2026
 
 Follows SRS standard principles: https://www.computer.org/resources/software-requirements-specifications#requirements-fundamentals
 
@@ -51,10 +51,9 @@ Each version adds one feature on top of the last.
 
 **1.2 is done** (v1.2.0). The Preview works out local variables, `{{if}}`/`{{else}}` and simple text macros with a port of SillyTavern's New macro engine. Everything else stays as typed, and an `{{if}}` that can't be decided stays as typed, whole. Checked by the owner on desktop and mobile.
 
-**1.3 is in progress.** Folding prompts and search (3.10) and closing tags (3.9) are built and checked by the owner. Still to come: the Variables panel (3.5).
+**1.3 is in progress.** Folding prompts and search (3.10) and closing tags (3.9) are built and checked by the owner. The Variables panel (3.5) is built and waits for the owner's check.
 
-- Built: everything marked 1.0, 1.1 and 1.2 below, plus 3.9 and 3.10.
-- The Variables panel is there, but empty. Its content comes in 1.3.
+- Built: everything marked 1.0, 1.1 and 1.2 below, plus 3.5, 3.9 and 3.10.
 - Dragging (Q-1) was checked on a phone, through a test copy of Obsidian.
 - Not yet checked: a full test in the Obsidian phone app. This can only happen once the plugin can be installed. Scrolling, for example, feels different in the test copy.
 
@@ -111,7 +110,7 @@ Obsidian desktop and mobile. Both use the mockup's two layouts: wide and narrow.
 ### 2.4 Limits
 
 - Licence: AGPL-3.0. SillyTavern's macro engine code is reused.
-- Tools: TypeScript, Svelte (as the Obsidian docs suggest), CodeMirror 6, SortableJS.
+- Tools: TypeScript, Svelte (as the Obsidian docs suggest), CodeMirror 6, SortableJS, and Chevrotain (reads `{{…}}` for the macro engine, as in SillyTavern).
 - Simple look, like Notion and Apple Notes. Follows Obsidian's light and dark themes.
 
 ---
@@ -181,17 +180,20 @@ The version each part arrives in is shown in brackets.
   - Prompt text shows exactly as typed. The Preview updates while you edit.
 - **V-4.** _(1.2)_ Local variables, `{{if}}`/`{{else}}`, and text macros whose result comes only from the prompt text (comments, `{{newline}}`, `{{space}}`, `{{trim}}`, `{{noop}}`, `{{reverse}}`) are worked out exactly as SillyTavern's New macro engine would.
 - **V-5.** _(1.2)_ Global variables, and macros that can't sensibly be worked out in Obsidian (dice, random picks, date and time, etc.), stay as typed.
-- **V-6.** _(1.2)_ Only the **New** macro engine is used. There is no Legacy engine and no engine switch. "Worked-out value" in the colour key only shows from 1.2. Until then nothing is worked out.
+- **V-6.** _(1.2)_ Only the **New** macro engine is used. There is no Legacy engine and no engine switch.
 - **V-11.** _(1.2)_ A variable read before any prompt sets it is empty, as in a brand-new SillyTavern chat. The Preview marks it as empty. In `{{if}}` it counts as "no".
 - **V-12.** _(1.2)_ An `{{if}}` whose condition uses something that can't be worked out (V-3, V-5) stays as typed, the whole block. Nothing inside it is worked out.
 
 ### 3.5 Variables panel (panel 1.0 · content 1.3)
 
-In 1.0 the panel is empty.
+It looks like the Variables tab in the `first draft/` mockup. Until 1.3 the panel was empty.
 
-- **T-1.** Lists every local variable used by prompts that are on, in the order they're first used.
-- **T-2.** For each variable: its final value, which prompts set it, and which prompts read it.
-- **T-3.** Flags a variable that's read but never set.
+- **T-1.** Lists every local variable in the prompts the Preview works out: prompts that are on and run for a normal reply (V-2). They're listed in the order they're first used, going down the prompt list.
+- **T-2.** For each variable: its final value as the Preview works it out, which prompts set it, and which prompts read it. Clicking a prompt jumps to it (E-7).
+- **T-3.** Flags a variable that's read but never set ("Never set — reads empty").
+- **T-4.** Every variable macro as typed counts, even one inside an `{{if}}` part that doesn't run. Example: `{{if .flag}}{{getvar::x}}{{/if}}` lists `x` as read, even when `flag` is empty. The final value only comes from what runs.
+- **T-5.** A variable read before a later prompt sets it gets no extra warning. The Preview already shows it as empty there (V-11).
+- **T-6.** Global variables never show (see "Never in scope" in 1.2).
 
 ### 3.6 Saving (1.0)
 
@@ -255,7 +257,8 @@ Details are in open item 8.
   - No hover (narrow layout or touch screen): tap the gap between two prompts to show "Add prompt here", then tap that to add a prompt.
   - Obsidian mobile: Undo and Redo buttons in the tab header (E-6). The mockup has none.
   - _(1.3)_ The editor follows the "Outline" design in `UI design mock/main editor tweak/`: folding prompts and a "Find in prompts" search bar (3.10).
-  - Preview: placeholders with settings show their role, not "Inserted" (V-9). Chat History is a shaded block that holds the in-chat prompts, and each in-chat prompt has a tag saying where it goes (V-7). This follows the owner's Chat History mockup. There is no engine switch and no "Not run by Legacy" note (V-6). "Worked-out value" waits for 1.2.
+  - _(1.3)_ Variables panel: no hint line at the top ("In the order they were first used…").
+  - Preview: placeholders with settings show their role, not "Inserted" (V-9). Chat History is a shaded block that holds the in-chat prompts, and each in-chat prompt has a tag saying where it goes (V-7). This follows the owner's Chat History mockup. There is no engine switch and no "Not run by Legacy" note (V-6).
 
 ## 5. Quality
 

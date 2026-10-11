@@ -57,7 +57,6 @@
 				class="row"
 				class:flash={flash === row.id}
 				class:pop-open={pop === row.id}
-				data-row={row.id}
 				data-anchor={row.id}
 			>
 				<div class="add-here" class:revealed={revealed === i} role="button" tabindex="-1" onclick={() => tapDivider(i)}>

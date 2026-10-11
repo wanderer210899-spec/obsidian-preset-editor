@@ -1,13 +1,17 @@
 <script lang="ts">
 	import { kindOf } from '../kinds';
+	import type { VariableInfo } from '../variables';
 	import { sortable } from './actions';
 	import Grip from './Grip.svelte';
 	import Segmented from './Segmented.svelte';
 	import type { EditorDocument, Sizes, Tab, UiRow } from './types';
+	import VariablesPanel from './VariablesPanel.svelte';
 
 	interface Props {
 		doc: EditorDocument;
 		rows: UiRow[];
+		/** SRS 3.5 */
+		vars: VariableInfo[];
 		sizes: Sizes;
 		tab: Tab;
 		flash: string | null;
@@ -17,7 +21,7 @@
 		onjump: (id: string) => void;
 		onclose: () => void;
 	}
-	let { doc, rows, sizes, tab, flash, openId, onpicktab, onjump, onclose }: Props = $props();
+	let { doc, rows, vars, sizes, tab, flash, openId, onpicktab, onjump, onclose }: Props = $props();
 </script>
 
 <div class="hd" style:height={sizes.narrow ? '56px' : '48px'}>
@@ -25,7 +29,7 @@
 		fill
 		options={[
 			{ value: 'order' as Tab, label: 'Order', count: rows.length },
-			{ value: 'vars' as Tab, label: 'Variables', count: '' },
+			{ value: 'vars' as Tab, label: 'Variables', count: vars.length },
 		]}
 		value={tab}
 		onpick={onpicktab}
@@ -49,7 +53,7 @@
 				data-row={row.id}
 				style:height={sizes.oRowH}
 			>
-				<Grip plain width={sizes.gripW} height="100%" />
+				<Grip width={sizes.gripW} height="100%" />
 				<span class="n">{i + 1}</span>
 				<div
 					class="name"
@@ -76,8 +80,7 @@
 		{/each}
 	</div>
 {:else}
-	<!-- Variables tab: logic arrives in 1.1+ (SRS 3.5); what 1.0 shows is open item 5. -->
-	<div class="list vars"></div>
+	<VariablesPanel {vars} narrow={sizes.narrow} {onjump} />
 {/if}
 
 <style>
@@ -109,9 +112,6 @@
 		overflow-y: auto;
 		overscroll-behavior: contain;
 		padding: 0 8px 16px;
-	}
-	.list.vars {
-		padding: 2px 16px 24px;
 	}
 	.orow {
 		display: flex;

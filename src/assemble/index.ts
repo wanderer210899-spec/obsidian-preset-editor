@@ -67,8 +67,7 @@ const PLACED_BY_NAME = [
 const ROLES = ['system', 'user', 'assistant'];
 
 export function assemble<W extends Worked>(rows: readonly OrderedPrompt[], workOut: WorkOut<W>): PreviewBlock<W>[] {
-	// V-2: only prompts that are on and run for a normal reply.
-	const sent = rows.filter((r) => r.enabled && runsOnNormal(r.prompt));
+	const sent = sentForNormalReply(rows);
 	// V-4: SillyTavern works out every one of these in list order, before placing
 	// them, so a prompt that ends up hidden can still set a variable.
 	const results = workOut(sent.map((r) => r.prompt.content ?? ''));
@@ -83,6 +82,11 @@ export function assemble<W extends Worked>(rows: readonly OrderedPrompt[], workO
 			blocks.push(block(row, null, textOf(row)));
 	}
 	return blocks;
+}
+
+/** V-2: the prompts SillyTavern works out for a normal reply: on, with no trigger or the Normal one. */
+export function sentForNormalReply<R extends OrderedPrompt>(rows: readonly R[]): R[] {
+	return rows.filter((r) => r.enabled && runsOnNormal(r.prompt));
 }
 
 /** Chat History and Chat Examples always stay at their place in the list. */

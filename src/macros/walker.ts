@@ -465,7 +465,7 @@ function isRecoveryToken(token: IToken | undefined): boolean {
 	);
 }
 
-function getArgumentLocation(argNode: CstNode): Range | null {
+export function getArgumentLocation(argNode: CstNode): Range | null {
 	let startOffset = Number.POSITIVE_INFINITY;
 	let endOffset = Number.NEGATIVE_INFINITY;
 	for (const key of Object.keys(argNode.children)) {

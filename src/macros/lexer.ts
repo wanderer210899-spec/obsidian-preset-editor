@@ -7,9 +7,6 @@ import { createToken, Lexer, type CustomPatternMatcherFunc, type TokenType } fro
 
 const IDENTIFIER_LEXER_PATTERN = /[a-zA-Z][\w-_]*/;
 
-/** Valid macro names. */
-export const MACRO_IDENTIFIER_PATTERN = /^[a-zA-Z][\w-_]*$/;
-
 /** Variable shorthand names, as in `.varName` or `$varName`. */
 export const MACRO_VARIABLE_SHORTHAND_PATTERN = /[a-zA-Z](?:[\w\-_]*[\w])?/;
 
