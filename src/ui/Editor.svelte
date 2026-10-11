@@ -11,6 +11,7 @@
 	import { editSearchables, previewSearchables } from './searchables';
 	import Segmented from './Segmented.svelte';
 	import SidePanel from './SidePanel.svelte';
+	import { setTextSettings } from './text-settings';
 	import { type EditorDocument, type Mode, type SaveState, sizesFor, type Tab } from './types';
 
 	interface Props {
@@ -20,8 +21,10 @@
 		title: string;
 		/** E-6: show the Undo and Redo buttons (Obsidian mobile only). */
 		undoButton: boolean;
+		/** W-5: close tags while typing. */
+		autoComplete: boolean;
 	}
-	let { doc, header, title, undoButton }: Props = $props();
+	let { doc, header, title, undoButton, autoComplete: startAutoComplete }: Props = $props();
 
 	let rows = $state(untrack(() => doc.rows()));
 	let shownTitle = $state(untrack(() => title));
@@ -42,6 +45,12 @@
 	let narrow = $state(false);
 	let canUndo = $state(untrack(() => doc.canUndo()));
 	let canRedo = $state(untrack(() => doc.canRedo()));
+	let autoComplete = $state(untrack(() => startAutoComplete));
+	setTextSettings({
+		get autoComplete() {
+			return autoComplete;
+		},
+	});
 
 	const sizes = $derived(sizesFor(narrow));
 	// V-4: macros are worked out with SillyTavern's New engine (V-6).
@@ -63,6 +72,9 @@
 	}
 	export function setTitle(next: string) {
 		shownTitle = next;
+	}
+	export function setAutoComplete(on: boolean) {
+		autoComplete = on;
 	}
 
 	onMount(() => {
@@ -392,6 +404,7 @@
 		--pe-lift: 0 12px 30px rgba(0, 0, 0, 0.12), 0 0 0 1px #8a5cf5;
 		--pe-scrim: rgba(0, 0, 0, 0.28);
 		--pe-hit: rgba(255, 190, 0, 0.42);
+		--pe-pair: rgba(56, 132, 255, 0.16);
 	}
 	:global(body.theme-dark) .pe-vars {
 		--pe-macro: #b49cfb;
@@ -412,6 +425,7 @@
 		--pe-lift: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px #8a5cf5;
 		--pe-scrim: rgba(0, 0, 0, 0.5);
 		--pe-hit: rgba(255, 190, 0, 0.32);
+		--pe-pair: rgba(96, 165, 255, 0.22);
 	}
 	.header {
 		display: flex;

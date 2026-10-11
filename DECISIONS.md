@@ -4,6 +4,29 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-11 · Closing tags, after the first test
+
+**Decision:**
+- Typing `{{if` adds `{{/if}}` straight away: `{{if|}}{{/if}}`. The cursor stays inside `{{if}}`. Before, `{{/if}}` only came after typing the closing `}}`, which never happens because `}}` is already there.
+- Matching tags get a light blue tint, with no outline. The grey was ugly, and the outline wasn't needed: macros already have their own colour.
+- The owner thinks the automatic `{{/if}}` may not be needed at all. It stays for now, to test.
+- After testing: the automatic `{{/if}}` stays. `{{if}}` and `{{/if}}` are no longer marked when the cursor is in them. Their macro colour is enough. This replaces the earlier choice to mark them.
+- XML tags get no lasting colour of their own. Only the blue pair mark shows, while the cursor is in a tag. The owner was happy with it as it is.
+- Closing tags accepted as built.
+
+**Context:** First test of closing tags on `feature/1.3-closing-tags`.
+
+## 2026-10-11 · Closing tags details
+
+**Decision:**
+- Typing `{{` adds `}}`, with the cursor in between.
+- Only `{{if}}` closes by itself: finishing `{{if mood}}` adds `{{/if}}`. This is a trial. Other macros that can wrap text, like `{{trim}}`, stay as they are for now.
+- With the cursor on `{{if}}`, its `{{/if}}` is marked too, as XML tags are.
+- The plugin settings have one switch for all of this, called "Auto complete". It covers `{{ }}`, `{{if}}`, XML tags and renaming the partner tag. The matching-tag marks always show.
+- Smaller details, proposed and not changed by the owner: typing `}` in front of an added `}}` steps over it; Backspace in an empty `{{}}` removes both pairs; `{{/if}}` and `</tag>` are only added when the tag isn't closed yet; the cursor lands between the two tags; `<br/>` and closing tags add nothing; `{{else}}` is not marked.
+
+**Context:** SRS open item 7, before building closing tags on `feature/1.3-closing-tags`.
+
 ## 2026-10-11 · Select mode joins 1.5
 
 **Decision:** Version 1.5 gets a select mode, next to moving prompts between presets. A button turns it on, and several prompts can then be picked at once. The picked prompts can be deleted together, or moved to another preset together. It must work on desktop and mobile. Details are still open (SRS M-2, open item 3).
