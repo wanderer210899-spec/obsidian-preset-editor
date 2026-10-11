@@ -4,6 +4,22 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-11 · Esc only acts in the Preset Editor
+
+**Decision:** Esc closes the search bar, the settings popover and the phone panel only while the Preset Editor is the tab in use. Before, Esc anywhere in Obsidian did it, e.g. closing the command palette also closed the editor's search bar.
+
+**Context:** Found in the health check before the Variables panel. The owner asked for it to be fixed.
+
+## 2026-10-11 · Variables panel rules
+
+**Decision:**
+- The panel uses the same prompts as the Preview: prompts that are on and run for a normal reply. A prompt that only runs on Continue is left out, so the final values match the Preview (SRS T-1).
+- Every variable macro as typed counts, even inside an `{{if}}` part that doesn't run. Example: `{{if .nsfw}}{{getvar::kink}}{{/if}}` with `nsfw` never set still lists `kink` as read in that prompt. The list stays the same when prompts are switched on and off. The final value only comes from what runs (T-4).
+- A variable read before a later prompt sets it gets no extra warning. Only "never set" is flagged, as the SRS already said (T-3, T-5).
+- Proposed and not changed by the owner: the panel follows the first-draft mockup's Variables tab. "Set in" covers `setvar`, `addvar`, `incvar`, `decvar`, `deletevar`, `{{.x = …}}` and `{{.x++}}`. "Read in" covers `getvar`, `hasvar`, `{{.x}}` and `{{if .x}}`. Global variables never show.
+
+**Context:** Before building the Variables panel on `feature/1.3-variables-panel`. Options were shown with examples; the owner picked the recommended one each time.
+
 ## 2026-10-11 · Closing tags, after the first test
 
 **Decision:**
