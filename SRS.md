@@ -173,7 +173,7 @@ The version each part arrives in is shown in brackets.
   - Main Prompt and Post-History Instructions show the preset's own text. A character card can replace them in SillyTavern, but that is character data (V-3).
   - Things SillyTavern adds from outside the preset are left out: Author's Note, Summary, extension prompts.
   - Prompt text shows exactly as typed. The Preview updates while you edit.
-- **V-4.** _(1.2)_ Local variables and `{{if}}`/`{{else}}` are worked out exactly as SillyTavern's New macro engine would.
+- **V-4.** _(1.2)_ Local variables, `{{if}}`/`{{else}}`, and text macros whose result comes only from the prompt text (comments, `{{newline}}`, `{{space}}`, `{{trim}}`, `{{noop}}`, `{{reverse}}`) are worked out exactly as SillyTavern's New macro engine would.
 - **V-5.** _(1.2)_ Global variables, and macros that can't sensibly be worked out in Obsidian (dice, random picks, date and time, etc.), stay as typed.
 - **V-6.** _(1.2)_ Only the **New** macro engine is used. There is no Legacy engine and no engine switch. "Worked-out value" in the colour key only shows from 1.2. Until then nothing is worked out.
 - **V-11.** _(1.2)_ A variable read before any prompt sets it is empty, as in a brand-new SillyTavern chat. The Preview marks it as empty. In `{{if}}` it counts as "no".

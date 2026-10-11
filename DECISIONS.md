@@ -4,6 +4,12 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-11 · The Preview works out simple text macros
+
+**Decision:** Besides variables and `{{if}}`/`{{else}}`, the Preview works out macros whose result comes only from the prompt text: `{{// comment}}`, `{{newline}}`, `{{space}}`, `{{trim}}`, `{{noop}}`, `{{reverse}}` (and `{{banned}}`, which SillyTavern removes in Chat Completion). A comment, for example, disappears as it does in SillyTavern.
+
+**Context:** Raised while building the 1.2 engine. The SRS only named variables and `{{if}}`/`{{else}}`.
+
 ## 2026-10-11 · A variable that isn't set yet shows as empty
 
 **Decision:** In the Preview, a variable read before any prompt sets it is empty, as in a brand-new SillyTavern chat. Example: `Mood: {{getvar::mood}}` shows `Mood: ` with the mockup's "empty" tag. In `{{if}}`, an unset variable counts as "no", so the `{{else}}` part shows.
