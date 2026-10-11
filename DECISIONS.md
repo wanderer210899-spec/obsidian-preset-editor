@@ -4,6 +4,12 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-11 · 1.3 also gets closing tags, collapsing and grouping
+
+**Decision:** Version 1.3 holds the Variables panel, closing tags while typing (SRS 3.9), and a way to declutter long presets: collapsing prompts and grouping them into visual folders (SRS 3.10). Folders and collapsing only change how the editor looks. Whether to build folders, collapsing, or both is still open (SRS open item 8).
+
+**Context:** 1.2 was tested and released. The owner wants long presets with many prompts to have a minimal view.
+
 ## 2026-10-11 · Closing tags, but no suggestion lists
 
 **Decision:** A later version helps with closing tags while typing prompt text. Scoped macros close by themselves (`{{if}}` adds `{{/if}}`). XML tags close by themselves, rename together, and show their matching pair. There are no macro or variable suggestion lists. Version and details are still open (SRS open item 7).
