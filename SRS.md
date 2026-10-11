@@ -74,7 +74,9 @@ Each version adds one feature on top of the last.
 
 ### 1.5 References
 
-- **Looks:** `Preset Editor UI Brief/` (the mockup)
+- **Looks:** the mockups in `UI design mock/`. Git doesn't save this folder.
+  - `first draft/`: the editor screen (1.0 to 1.2)
+  - `main editor tweak/`: the 1.3 editor changes
 - **Behaviour:** SillyTavern source code (`/workspace/Sillytavern-reference`)
 - **Platform:** docs.obsidian.md
 - **Ground rules and git rules:** `CLAUDE.md`
