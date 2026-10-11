@@ -14,6 +14,8 @@ export interface EditorHandle {
 	redo(): void;
 	/** C-4: Ctrl+F opens the search bar. */
 	openSearch(): void;
+	/** Esc closes the search bar, the settings popover and the phone panel. */
+	escape(): void;
 	setStatus(status: SaveState): void;
 	setTitle(title: string): void;
 	/** W-5: the "Auto complete" setting changed. */
@@ -44,6 +46,7 @@ export function mountEditor(
 		undo: () => editor.undo(),
 		redo: () => editor.redo(),
 		openSearch: () => editor.openSearch(),
+		escape: () => editor.escape(),
 		setStatus: (status) => editor.setStatus(status),
 		setTitle: (t) => editor.setTitle(t),
 		setAutoComplete: (on) => editor.setAutoComplete(on),

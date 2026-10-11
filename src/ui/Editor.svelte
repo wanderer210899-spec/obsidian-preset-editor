@@ -236,15 +236,15 @@
 		if (pop && !narrow && !(e.target as Element | null)?.closest?.('[data-pop-keep]')) pop = null;
 	}
 
-	function onKeyDown(e: KeyboardEvent) {
-		if (e.key !== 'Escape') return;
+	/** Esc, while the Preset Editor is the tab in use. */
+	export function escape() {
 		pop = null;
 		drawer = false;
 		closeSearch();
 	}
 </script>
 
-<svelte:window onpointerdown={onPointerDown} onkeydown={onKeyDown} />
+<svelte:window onpointerdown={onPointerDown} />
 
 <div class="pe-vars header" use:portal={header}>
 	{#if !narrow}

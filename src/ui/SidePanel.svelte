@@ -49,7 +49,7 @@
 				data-row={row.id}
 				style:height={sizes.oRowH}
 			>
-				<Grip plain width={sizes.gripW} height="100%" />
+				<Grip width={sizes.gripW} height="100%" />
 				<span class="n">{i + 1}</span>
 				<div
 					class="name"
@@ -76,7 +76,7 @@
 		{/each}
 	</div>
 {:else}
-	<!-- Variables tab: logic arrives in 1.1+ (SRS 3.5); what 1.0 shows is open item 5. -->
+	<!-- Variables tab: its content comes in 1.3 (SRS 3.5). -->
 	<div class="list vars"></div>
 {/if}
 

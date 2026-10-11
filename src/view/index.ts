@@ -42,6 +42,11 @@ export class PresetEditorView extends FileView {
 		this.scope.register(['Mod'], 'y', run((e) => e.redo()));
 		// C-4: Ctrl+F opens "Find in prompts" while the Preset Editor is in use.
 		this.scope.register(['Mod'], 'f', run((e) => e.openSearch()));
+		// Esc only acts while this tab is in use (DECISIONS.md, 2026-10-11). Obsidian still gets the key too.
+		this.scope.register([], 'Escape', () => {
+			this.editor?.escape();
+			return true;
+		});
 	}
 
 	getViewType(): string {
