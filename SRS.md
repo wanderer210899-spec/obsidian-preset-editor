@@ -224,7 +224,7 @@ Help with closing tags while typing prompt text. No suggestion lists: they would
 - **W-2.** An XML tag closes by itself: typing `<rules>` adds `</rules>`.
 - **W-3.** Renaming an XML tag renames its partner too.
 - **W-4.** The matching tag shows when the cursor is in a tag. This works for XML tags, and for `{{if}}` and `{{/if}}`.
-- **W-5.** The closing help (W-1, W-2, W-3) can be switched off in the plugin settings.
+- **W-5.** The plugin settings have one switch, "Auto complete", that turns W-1, W-2 and W-3 on or off. It starts on. The matching-tag marks (W-4) always show.
 
 Details are in open item 7.
 
@@ -285,7 +285,7 @@ Details are in open item 8.
    - ~~Does typing `{{` also add `}}`?~~ Settled: yes (W-1).
    - ~~Which macros close by themselves: only `{{if}}`, or every macro that can wrap text?~~ Settled: only `{{if}}`, as a trial (W-1).
    - ~~Should W-4 also work for `{{if}}` and `{{/if}}`?~~ Settled: yes (W-4).
-   - Settings (W-5): one switch for all closing help, or one switch for each kind?
+   - ~~Settings (W-5): one switch for all closing help, or one switch for each kind?~~ Settled: one switch, "Auto complete" (W-5).
 8. **Folding and search:** (1.3)
    - ~~Collapsible prompts, visual folders, or both?~~ Settled: the new mockup's folding prompts and search (C-1, C-4). Dividers are dropped.
    - ~~Can several prompts be open at once, or only one?~~ Settled: only one (C-5).

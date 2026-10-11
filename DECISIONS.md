@@ -10,7 +10,8 @@ Decisions the product owner has made about how the plugin behaves, with the date
 - Typing `{{` adds `}}`, with the cursor in between.
 - Only `{{if}}` closes by itself: finishing `{{if mood}}` adds `{{/if}}`. This is a trial. Other macros that can wrap text, like `{{trim}}`, stay as they are for now.
 - With the cursor on `{{if}}`, its `{{/if}}` is marked too, as XML tags are.
-- The closing help can be switched off in the plugin settings.
+- The plugin settings have one switch for all of this, called "Auto complete". It covers `{{ }}`, `{{if}}`, XML tags and renaming the partner tag. The matching-tag marks always show.
+- Smaller details, proposed and not changed by the owner: typing `}` in front of an added `}}` steps over it; Backspace in an empty `{{}}` removes both pairs; `{{/if}}` and `</tag>` are only added when the tag isn't closed yet; the cursor lands between the two tags; `<br/>` and closing tags add nothing; `{{else}}` is not marked.
 
 **Context:** SRS open item 7, before building closing tags on `feature/1.3-closing-tags`.
 
