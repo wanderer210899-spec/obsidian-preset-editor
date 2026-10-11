@@ -80,9 +80,6 @@ export function ifTags(text: string): Tag[] {
 	return out;
 }
 
-export function allTags(text: string): Tag[] {
-	return [...xmlTags(text), ...ifTags(text)].sort((a, b) => a.from - b.from);
-}
 
 /**
  * Pairs each closing tag with the nearest open tag of the same name before it.
@@ -104,10 +101,13 @@ export function pairTags(tags: readonly Tag[]): [Tag, Tag][] {
 	return pairs;
 }
 
-/** W-4: the tag pair the cursor touches, if any (the innermost one). */
+/**
+ * W-4: the XML tag pair the cursor touches, if any (the innermost one).
+ * `{{if}}` pairs aren't marked: macro colours already show them.
+ */
 export function pairAt(text: string, pos: number): [Span, Span] | null {
 	let best: [Tag, Tag] | null = null;
-	for (const pair of pairTags(allTags(text))) {
+	for (const pair of pairTags(xmlTags(text))) {
 		const touches = pair.some((t) => t.from <= pos && pos <= t.to);
 		if (touches && (!best || pair[0].from > best[0].from)) best = pair;
 	}

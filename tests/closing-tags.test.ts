@@ -77,7 +77,7 @@ test('W-3: nested tags with the same name rename the right partner', () => {
 	assert.deepEqual(renamePartner(text, 5, 5, 'b'), { from: 9, to: 10, insert: 'ab' });
 });
 
-test('W-4: the cursor in a tag finds its partner, for XML and {{if}}', () => {
+test('W-4: the cursor in an XML tag finds its partner; {{if}} pairs are not marked', () => {
 	const xml = '<rules>xyz</rules>';
 	assert.deepEqual(pairAt(xml, 3), [
 		{ from: 0, to: 7 },
@@ -85,10 +85,7 @@ test('W-4: the cursor in a tag finds its partner, for XML and {{if}}', () => {
 	]);
 	assert.equal(pairAt(xml, 8), null);
 	const ifs = '{{if a}}x{{else}}y{{/if}}';
-	assert.deepEqual(pairAt(ifs, 20), [
-		{ from: 0, to: 8 },
-		{ from: 18, to: 25 },
-	]);
-	assert.equal(pairAt(ifs, 12), null);
+	assert.equal(pairAt(ifs, 20), null);
+	assert.equal(pairAt(ifs, 3), null);
 	assert.equal(pairAt('<rules>x', 3), null);
 });
