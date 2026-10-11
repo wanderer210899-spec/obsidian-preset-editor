@@ -84,7 +84,6 @@
 	/* W-4: the tag pair the cursor is in. */
 	.pe-text :global(.pe-pair) {
 		background-color: var(--pe-pair);
-		box-shadow: 0 0 0 1px var(--text-faint);
 		border-radius: 3px;
 	}
 	.pe-text :global(.pe-control) {

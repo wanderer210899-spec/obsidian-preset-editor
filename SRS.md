@@ -220,7 +220,7 @@ Help with closing tags while typing prompt text. No suggestion lists: they would
 
 - **W-1.** Macros close by themselves.
   - Typing `{{` adds `}}`, with the cursor in between.
-  - Finishing `{{if …}}` adds `{{/if}}`. Only `{{if}}` does this, as a trial. Other macros that can wrap text, like `{{trim}}`, may join later.
+  - Typing `{{if` adds `{{/if}}` straight after it. The cursor stays where it was, inside `{{if}}`. Only `{{if}}` does this, as a trial. Other macros that can wrap text, like `{{trim}}`, may join later.
 - **W-2.** An XML tag closes by itself: typing `<rules>` adds `</rules>`.
 - **W-3.** Renaming an XML tag renames its partner too.
 - **W-4.** The matching tag shows when the cursor is in a tag. This works for XML tags, and for `{{if}}` and `{{/if}}`.

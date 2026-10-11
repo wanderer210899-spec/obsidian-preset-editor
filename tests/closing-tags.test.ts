@@ -31,20 +31,19 @@ test('W-1: typing } in front of an added }} steps over it', () => {
 	assert.equal(type('{{char|}}', '}'), '{{char}|}}');
 });
 
-test('W-1: finishing {{if …}} adds {{/if}}, only when it is not closed yet', () => {
-	const added = [{ from: 0, to: 11 }];
-	assert.equal(type('{{if mood}|}', '}', added), '{{if mood}}|{{/if}}');
-	assert.equal(type('{{if mood}|', '}'), '{{if mood}}|{{/if}}');
-	assert.equal(type('{{if::mood}|', '}'), '{{if::mood}}|{{/if}}');
-	assert.equal(type('{{if mood}| calm {{/if}}', '}'), '{{if mood}}| calm {{/if}}');
-	assert.equal(type('{{if a}} {{if b}| x {{/if}}', '}'), '{{if a}} {{if b}}|{{/if}} x {{/if}}');
+test('W-1: typing {{if adds {{/if}} after it, and the cursor stays put', () => {
+	assert.equal(type('{{i|}}', 'f'), '{{if|}}{{/if}}');
+	assert.equal(type('{{ i|}}', 'f'), '{{ if|}}{{/if}}');
+	assert.equal(type('{{if a}} {{i|}} x {{/if}}', 'f'), '{{if a}} {{if|}}{{/if}} x {{/if}}');
+	// Then } steps over the }} that was added, landing between the two tags.
+	assert.equal(type('{{if mood|}}{{/if}}', '}', [{ from: 0, to: 11 }]), '{{if mood}|}{{/if}}');
 });
 
-test('W-1: inline {{if}}, other macros and {{/if}} add nothing (only {{if}}, as a trial)', () => {
-	assert.equal(type('{{if mood::calm}|', '}'), '{{if mood::calm}}|');
-	assert.equal(type('{{trim}|', '}'), '{{trim}}|');
-	assert.equal(type('{{if {{getvar::x}}}|', '}'), '{{if {{getvar::x}}}}|{{/if}}');
-	assert.equal(type('{{if a}}x{{/if}|', '}'), '{{if a}}x{{/if}}|');
+test('W-1: no {{/if}} for a spare {{/if}}, other macros, or {{/if}} itself (only {{if}}, as a trial)', () => {
+	assert.equal(type('{{i|}} x {{/if}}', 'f'), '{{if|}} x {{/if}}');
+	assert.equal(type('{{tri|}}', 'm'), '{{trim|}}');
+	assert.equal(type('{{/i|}}', 'f'), '{{/if|}}');
+	assert.equal(type('{{i|', 'f'), '{{if|');
 });
 
 test('W-1: Backspace in an empty {{}} removes both pairs', () => {

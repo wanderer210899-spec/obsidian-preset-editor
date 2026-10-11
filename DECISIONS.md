@@ -4,6 +4,15 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-11 · Closing tags, after the first test
+
+**Decision:**
+- Typing `{{if` adds `{{/if}}` straight away: `{{if|}}{{/if}}`. The cursor stays inside `{{if}}`. Before, `{{/if}}` only came after typing the closing `}}`, which never happens because `}}` is already there.
+- Matching tags get a light blue tint, with no outline. The grey was ugly, and the outline wasn't needed: macros already have their own colour.
+- The owner thinks the automatic `{{/if}}` may not be needed at all. It stays for now, to test.
+
+**Context:** First test of closing tags on `feature/1.3-closing-tags`.
+
 ## 2026-10-11 · Closing tags details
 
 **Decision:**

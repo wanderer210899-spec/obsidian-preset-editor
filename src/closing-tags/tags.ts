@@ -117,9 +117,14 @@ export function pairAt(text: string, pos: number): [Span, Span] | null {
 	];
 }
 
-/** True while there are more open tags of this kind and name than closing ones. */
-export function hasUnclosed(tags: readonly Tag[], kind: Tag['kind'], name: string): boolean {
+/** Open tags of this kind and name, less closing ones. Below 0: there are spare closing tags. */
+export function openCount(tags: readonly Tag[], kind: Tag['kind'], name: string): number {
 	let n = 0;
 	for (const t of tags) if (t.kind === kind && t.name === name) n += t.closing ? -1 : 1;
-	return n > 0;
+	return n;
+}
+
+/** True while there are more open tags of this kind and name than closing ones. */
+export function hasUnclosed(tags: readonly Tag[], kind: Tag['kind'], name: string): boolean {
+	return openCount(tags, kind, name) > 0;
 }
