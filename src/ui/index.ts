@@ -12,6 +12,8 @@ export interface EditorHandle {
 	/** E-6: undo or redo one step, showing the prompt it changed. */
 	undo(): void;
 	redo(): void;
+	/** C-4: Ctrl+F opens the search bar. */
+	openSearch(): void;
 	setStatus(status: SaveState): void;
 	setTitle(title: string): void;
 	destroy(): void;
@@ -23,8 +25,8 @@ export interface EditorOptions {
 }
 
 /**
- * Shows the editor in `target`. The mode switch, Undo and Redo buttons and panel
- * button go into `header` (the Obsidian view header).
+ * Shows the editor in `target`. The mode switch, Undo and Redo buttons, search
+ * button and panel button go into `header` (the Obsidian view header).
  */
 export function mountEditor(
 	target: HTMLElement,
@@ -37,6 +39,7 @@ export function mountEditor(
 	return {
 		undo: () => editor.undo(),
 		redo: () => editor.redo(),
+		openSearch: () => editor.openSearch(),
 		setStatus: (status) => editor.setStatus(status),
 		setTitle: (t) => editor.setTitle(t),
 		destroy: () => void unmount(editor),

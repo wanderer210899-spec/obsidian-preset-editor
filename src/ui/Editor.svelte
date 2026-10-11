@@ -1,8 +1,14 @@
 <script lang="ts">
 	import { onMount, tick, untrack } from 'svelte';
+	import { assemble } from '../assemble';
+	import { workOutMacros } from '../macros';
+	import { matchingIds, normaliseQuery, wrapIndex } from '../search';
 	import { portal } from './actions';
 	import EditPane from './EditPane.svelte';
+	import { toggleOpen } from './folding';
 	import PreviewPane from './PreviewPane.svelte';
+	import SearchBar from './SearchBar.svelte';
+	import { editSearchables, previewSearchables } from './searchables';
 	import Segmented from './Segmented.svelte';
 	import SidePanel from './SidePanel.svelte';
 	import { type EditorDocument, type Mode, type SaveState, sizesFor, type Tab } from './types';
@@ -26,11 +32,26 @@
 	let drawer = $state(false);
 	let pop = $state<string | null>(null);
 	let flash = $state<string | null>(null);
+	/** C-5, C-6: the one open prompt. Starts with none, so every prompt is folded. */
+	let openId = $state<string | null>(null);
+	/** C-4: the search bar. */
+	let searchOpen = $state(false);
+	let query = $state('');
+	let matchIndex = $state(0);
+	let searchBar = $state<SearchBar>();
 	let narrow = $state(false);
 	let canUndo = $state(untrack(() => doc.canUndo()));
 	let canRedo = $state(untrack(() => doc.canRedo()));
 
 	const sizes = $derived(sizesFor(narrow));
+	// V-4: macros are worked out with SillyTavern's New engine (V-6).
+	const blocks = $derived(mode === 'preview' ? assemble(rows, workOutMacros) : []);
+	const q = $derived(searchOpen ? normaliseQuery(query) : '');
+	/** C-4: the prompts that match, in the order the current view shows them. */
+	const matches = $derived(matchingIds(mode === 'edit' ? editSearchables(rows) : previewSearchables(blocks), q));
+	const countText = $derived(
+		!q ? '' : matches.length ? `${Math.min(matchIndex, matches.length - 1) + 1} of ${matches.length}` : 'No matches',
+	);
 	const noHover = window.matchMedia('(hover: none)').matches;
 
 	let root: HTMLDivElement;
@@ -66,12 +87,69 @@
 		};
 	});
 
-	function setMode(next: Mode) {
+	async function setMode(next: Mode) {
 		if (next === mode) return;
 		mode = next;
 		tab = next === 'edit' ? 'order' : 'vars';
 		pop = null;
+		matchIndex = 0;
 		scroller.scrollTop = 0;
+		// Edit and Preview both land on the prompt that's open (from the 1.3 mockup).
+		if (!openId) return;
+		await tick();
+		const attr = next === 'edit' ? 'data-anchor' : 'data-pv';
+		const el = scroller.querySelector<HTMLElement>(`[${attr}="${CSS.escape(openId)}"]`);
+		if (el) scroller.scrollTop = Math.max(0, el.getBoundingClientRect().top - scroller.getBoundingClientRect().top - 12);
+	}
+
+	/** C-1, C-5: opens a prompt (folding the open one) or folds it. Its settings close with it. */
+	function toggleRow(id: string) {
+		openId = toggleOpen(openId, id);
+		if (pop !== openId) pop = null;
+	}
+
+	/** C-4: Ctrl+F and the search button. If the bar is open, its text is selected. */
+	export function openSearch() {
+		if (searchOpen) searchBar?.focus();
+		else searchOpen = true;
+	}
+
+	function closeSearch() {
+		searchOpen = false;
+		query = '';
+		matchIndex = 0;
+	}
+
+	function onQuery(next: string) {
+		query = next;
+		void goToMatch(0);
+	}
+
+	/**
+	 * C-4: shows match number `k` (wrapping round). In Edit the prompt opens;
+	 * in Preview the view stays in Preview. Scrolls to the first highlight.
+	 */
+	async function goToMatch(k: number) {
+		const ids = matches;
+		matchIndex = wrapIndex(k, ids.length);
+		const id = ids[matchIndex];
+		if (!id) return;
+		if (mode === 'edit') openRow(id);
+		await tick();
+		await new Promise(requestAnimationFrame);
+		const attr = mode === 'edit' ? 'data-anchor' : 'data-pv';
+		const row = scroller.querySelector<HTMLElement>(`[${attr}="${CSS.escape(id)}"]`);
+		if (!row) return;
+		const hit = row.querySelector<HTMLElement>('.pe-hit');
+		const target = hit ?? row;
+		const top = target.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop - (hit ? 140 : 12);
+		scroller.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+	}
+
+	/** Opens a prompt so a jump, Undo or a new prompt lands on its text. */
+	function openRow(id: string) {
+		openId = id;
+		if (pop !== id) pop = null;
 	}
 
 	function togglePanel() {
@@ -109,6 +187,7 @@
 	/** E-6: flashes the prompt an undo or redo changed, and scrolls to it if it is off screen. */
 	async function reveal(id: string | null) {
 		if (!id || mode !== 'edit') return;
+		openRow(id);
 		await tick();
 		const el = scroller.querySelector<HTMLElement>(`[data-anchor="${CSS.escape(id)}"]`);
 		if (!el) return;
@@ -123,6 +202,7 @@
 		mode = 'edit';
 		drawer = false;
 		pop = null;
+		openRow(id);
 		await tick();
 		showRow(id);
 	}
@@ -132,6 +212,7 @@
 		const id = doc.insert(at);
 		pop = null;
 		mode = 'edit';
+		openRow(id);
 		await tick();
 		showRow(id);
 		const name = scroller.querySelector<HTMLInputElement>(`[data-anchor="${CSS.escape(id)}"] input[data-name]`);
@@ -147,6 +228,7 @@
 		if (e.key !== 'Escape') return;
 		pop = null;
 		drawer = false;
+		closeSearch();
 	}
 </script>
 
@@ -198,6 +280,18 @@
 	<div
 		class="hbtn"
 		class:narrow
+		class:open={searchOpen}
+		role="button"
+		tabindex="0"
+		title={narrow ? 'Find in prompts' : 'Find in prompts (Ctrl+F)'}
+		aria-label="Find in prompts"
+		onclick={() => (searchOpen ? closeSearch() : openSearch())}
+	>
+		<svg width={narrow ? 20 : 17} height={narrow ? 20 : 17} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+	</div>
+	<div
+		class="hbtn"
+		class:narrow
 		class:open={!narrow && panelOpen}
 		role="button"
 		tabindex="0"
@@ -225,6 +319,17 @@
 			/>
 		</div>
 	{/if}
+	{#if searchOpen}
+		<SearchBar
+			bind:this={searchBar}
+			{query}
+			count={countText}
+			{narrow}
+			onquery={onQuery}
+			onstep={(by) => void goToMatch(matchIndex + by)}
+			onclose={closeSearch}
+		/>
+	{/if}
 	<div class="body">
 		<div class="scroll" bind:this={scroller}>
 			{#if mode === 'edit'}
@@ -236,12 +341,15 @@
 					{sizes}
 					{pop}
 					{flash}
+					{openId}
+					ontoggleopen={toggleRow}
+					query={q}
 					tapToReveal={narrow || noHover}
 					ontogglepop={(id) => (pop = pop === id ? null : id)}
 					oninsert={insert}
 				/>
 			{:else}
-				<PreviewPane {rows} {sizes} onjump={jump} />
+				<PreviewPane {blocks} {sizes} query={q} onjump={jump} />
 			{/if}
 		</div>
 		{#if narrow && drawer}
@@ -254,6 +362,7 @@
 				{sizes}
 				{tab}
 				{flash}
+				{openId}
 				onpicktab={(t) => (tab = t)}
 				onjump={jump}
 				onclose={() => (drawer = false)}
@@ -282,6 +391,7 @@
 		--pe-shadow-pop: 0 16px 40px rgba(0, 0, 0, 0.14);
 		--pe-lift: 0 12px 30px rgba(0, 0, 0, 0.12), 0 0 0 1px #8a5cf5;
 		--pe-scrim: rgba(0, 0, 0, 0.28);
+		--pe-hit: rgba(255, 190, 0, 0.42);
 	}
 	:global(body.theme-dark) .pe-vars {
 		--pe-macro: #b49cfb;
@@ -301,6 +411,7 @@
 		--pe-shadow-pop: 0 16px 40px rgba(0, 0, 0, 0.5);
 		--pe-lift: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px #8a5cf5;
 		--pe-scrim: rgba(0, 0, 0, 0.5);
+		--pe-hit: rgba(255, 190, 0, 0.32);
 	}
 	.header {
 		display: flex;

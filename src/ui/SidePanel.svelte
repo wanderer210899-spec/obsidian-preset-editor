@@ -11,11 +11,13 @@
 		sizes: Sizes;
 		tab: Tab;
 		flash: string | null;
+		/** C-5: the prompt that's open in the editor is marked here too. */
+		openId: string | null;
 		onpicktab: (tab: Tab) => void;
 		onjump: (id: string) => void;
 		onclose: () => void;
 	}
-	let { doc, rows, sizes, tab, flash, onpicktab, onjump, onclose }: Props = $props();
+	let { doc, rows, sizes, tab, flash, openId, onpicktab, onjump, onclose }: Props = $props();
 </script>
 
 <div class="hd" style:height={sizes.narrow ? '56px' : '48px'}>
@@ -40,7 +42,13 @@
 	<div class="hint">Drag a handle to reorder · {sizes.narrow ? 'tap' : 'click'} a name to jump to it</div>
 	<div class="list" use:sortable={{ handle: '.pe-grip', onMove: (id, to) => doc.move(id, to) }}>
 		{#each rows as row, i (row.id)}
-			<div class="orow" class:flash={flash === row.id} data-row={row.id} style:height={sizes.oRowH}>
+			<div
+				class="orow"
+				class:flash={flash === row.id}
+				class:open={openId === row.id}
+				data-row={row.id}
+				style:height={sizes.oRowH}
+			>
 				<Grip plain width={sizes.gripW} height="100%" />
 				<span class="n">{i + 1}</span>
 				<div
@@ -116,8 +124,12 @@
 	.orow:hover {
 		background: var(--background-modifier-hover);
 	}
-	.orow.flash {
+	.orow.flash,
+	.orow.open {
 		background: var(--background-modifier-active-hover);
+	}
+	:global(.pe-drag-clone) {
+		opacity: 0 !important;
 	}
 	.orow:global(.pe-lifted) {
 		background: var(--background-primary);

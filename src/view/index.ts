@@ -36,6 +36,8 @@ export class PresetEditorView extends FileView {
 		this.scope.register(['Mod'], 'z', run((e) => e.undo()));
 		this.scope.register(['Mod', 'Shift'], 'z', run((e) => e.redo()));
 		this.scope.register(['Mod'], 'y', run((e) => e.redo()));
+		// C-4: Ctrl+F opens "Find in prompts" while the Preset Editor is in use.
+		this.scope.register(['Mod'], 'f', run((e) => e.openSearch()));
 	}
 
 	getViewType(): string {

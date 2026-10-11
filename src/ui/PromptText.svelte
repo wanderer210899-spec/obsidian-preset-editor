@@ -1,12 +1,15 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { findRanges } from '../search';
 	import { createPromptEditor, type PromptEditor } from '../text-editor';
 
 	interface Props {
 		text: string;
+		/** C-4: the search, already normalised ('' = none). Matches are highlighted. */
+		query?: string;
 		onchange: (text: string) => void;
 	}
-	let { text, onchange }: Props = $props();
+	let { text, query = '', onchange }: Props = $props();
 
 	let host: HTMLDivElement;
 	let editor: PromptEditor | undefined;
@@ -22,6 +25,10 @@
 
 	$effect(() => {
 		editor?.setText(text);
+	});
+
+	$effect(() => {
+		editor?.setHits(findRanges(text, query));
 	});
 </script>
 
@@ -62,6 +69,10 @@
 		color: var(--pe-var);
 		background: var(--pe-var-bg);
 		border-radius: 3px;
+	}
+	.pe-text :global(.pe-hit) {
+		background: var(--pe-hit);
+		border-radius: 2px;
 	}
 	.pe-text :global(.pe-control) {
 		color: var(--pe-ctl);
