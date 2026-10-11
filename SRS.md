@@ -51,10 +51,9 @@ Each version adds one feature on top of the last.
 
 **1.2 is done** (v1.2.0). The Preview works out local variables, `{{if}}`/`{{else}}` and simple text macros with a port of SillyTavern's New macro engine. Everything else stays as typed, and an `{{if}}` that can't be decided stays as typed, whole. Checked by the owner on desktop and mobile.
 
-**1.3 is in progress.** Folding prompts and search (3.10) and closing tags (3.9) are built and checked by the owner. Still to come: the Variables panel (3.5). Its rules are settled (T-1 to T-6).
+**1.3 is in progress.** Folding prompts and search (3.10) and closing tags (3.9) are built and checked by the owner. The Variables panel (3.5) is built and waits for the owner's check.
 
-- Built: everything marked 1.0, 1.1 and 1.2 below, plus 3.9 and 3.10.
-- The Variables panel is there, but empty. Its content comes in 1.3.
+- Built: everything marked 1.0, 1.1 and 1.2 below, plus 3.5, 3.9 and 3.10.
 - Dragging (Q-1) was checked on a phone, through a test copy of Obsidian.
 - Not yet checked: a full test in the Obsidian phone app. This can only happen once the plugin can be installed. Scrolling, for example, feels different in the test copy.
 
@@ -187,7 +186,7 @@ The version each part arrives in is shown in brackets.
 
 ### 3.5 Variables panel (panel 1.0 · content 1.3)
 
-Until 1.3 the panel is empty. It looks like the Variables tab in the `first draft/` mockup.
+It looks like the Variables tab in the `first draft/` mockup. Until 1.3 the panel was empty.
 
 - **T-1.** Lists every local variable in the prompts the Preview works out: prompts that are on and run for a normal reply (V-2). They're listed in the order they're first used, going down the prompt list.
 - **T-2.** For each variable: its final value as the Preview works it out, which prompts set it, and which prompts read it. Clicking a prompt jumps to it (E-7).

@@ -2,6 +2,7 @@
 	import { onMount, tick, untrack } from 'svelte';
 	import { assemble } from '../assemble';
 	import { workOutMacros } from '../macros';
+	import { listVariables, type VariableInfo } from '../variables';
 	import { matchingIds, normaliseQuery, wrapIndex } from '../search';
 	import { portal } from './actions';
 	import EditPane from './EditPane.svelte';
@@ -55,6 +56,15 @@
 	const sizes = $derived(sizesFor(narrow));
 	// V-4: macros are worked out with SillyTavern's New engine (V-6).
 	const blocks = $derived(mode === 'preview' ? assemble(rows, workOutMacros) : []);
+	/**
+	 * SRS 3.5. Only worked out while the side panel shows, so typing on a phone
+	 * stays fast. While it's hidden it keeps the last list.
+	 */
+	let lastVars: VariableInfo[] = [];
+	const vars = $derived.by(() => {
+		if (narrow ? drawer : panelOpen) lastVars = listVariables(rows);
+		return lastVars;
+	});
 	const q = $derived(searchOpen ? normaliseQuery(query) : '');
 	/** C-4: the prompts that match, in the order the current view shows them. */
 	const matches = $derived(matchingIds(mode === 'edit' ? editSearchables(rows) : previewSearchables(blocks), q));
@@ -371,6 +381,7 @@
 			<SidePanel
 				{doc}
 				{rows}
+				{vars}
 				{sizes}
 				{tab}
 				{flash}
