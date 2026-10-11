@@ -4,6 +4,22 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-11 · Only the New macro engine
+
+**Decision:** The plugin only uses SillyTavern's New macro engine. There is no Legacy engine and no engine switch, in the Preview or on the settings page. The mockup's "Not run by Legacy" highlight and note are dropped too.
+
+This replaces the entry below (switch moves to the settings page).
+
+Accepted trade-off: users who still run Legacy in SillyTavern may see a Preview that differs from what their SillyTavern sends. This happens with `{{if}}` blocks, with `setvar` and `getvar` in the same prompt, and with macros inside macros. Legacy could be added later as its own module if needed.
+
+**Context:** New understands all of Legacy's macros. It is SillyTavern's default (1.19), and SillyTavern's code marks the old system as on its way out. One engine keeps the plugin simpler.
+
+## 2026-10-11 · Macro engine switch moves to the settings page
+
+**Decision:** The New/Legacy macro engine switch goes on the plugin's settings page, not in the Preview as the mockup shows. This keeps the editor screen uncluttered. It changes SRS V-6 and adds an approved change to I-4.
+
+**Context:** Planning 1.2. SillyTavern also keeps its engine choice in its settings ("Experimental Macro Engine" in User Settings), not next to the prompts.
+
 ## 2026-10-10 · 1.1 released with fix 1.0.1 inside
 
 **Decision:**

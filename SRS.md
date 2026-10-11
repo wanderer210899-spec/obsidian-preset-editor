@@ -1,6 +1,6 @@
 # Preset Editor: Software Requirements Specification
 
-Draft 0.5 · 10 October 2026
+Draft 0.6 · 11 October 2026
 
 Follows SRS standard principles: https://www.computer.org/resources/software-requirements-specifications#requirements-fundamentals
 
@@ -28,7 +28,7 @@ Each version adds one feature on top of the last.
 | ------- | ----------------------------------------------------------------------------------------- | ----------- |
 | 1.0     | The editor screen from the mockup: open a preset, edit its prompts, save automatically. Undo and Redo. | Done        |
 | 1.1     | Preview: the full prompt in order. Macros stay as typed.                                  | Done        |
-| 1.2     | Macro engine: variables and `{{if}}`/`{{else}}` worked out. New/Legacy switch works.      | Planned     |
+| 1.2     | Macro engine: variables and `{{if}}`/`{{else}}` worked out, with SillyTavern's New engine. | Planned     |
 | 1.3     | Variables panel.                                                                          | Planned     |
 | 1.4     | Library panel, with New preset and rename. Ribbon button and plugin shortcuts.            | Planned     |
 | 1.5     | Move prompts between presets.                                                             | Planned     |
@@ -68,7 +68,7 @@ Each version adds one feature on top of the last.
 | Trigger            | A reply type a prompt is limited to, e.g. Continue or Impersonate. No trigger = every reply type.    |
 | Macro              | A `{{…}}` code in prompt text, e.g. `{{char}}` or `{{setvar::mood::calm}}`.                          |
 | Local variable     | A value that macros set and read while the prompt is put together.                                   |
-| Macro engine       | SillyTavern's two macro systems: **New** and **Legacy**.                                             |
+| Macro engine       | The part of SillyTavern that works out macros. It has two: **New** (the default) and **Legacy** (on its way out). The plugin only uses New. |
 
 ### 1.5 References
 
@@ -173,9 +173,9 @@ The version each part arrives in is shown in brackets.
   - Main Prompt and Post-History Instructions show the preset's own text. A character card can replace them in SillyTavern, but that is character data (V-3).
   - Things SillyTavern adds from outside the preset are left out: Author's Note, Summary, extension prompts.
   - Prompt text shows exactly as typed. The Preview updates while you edit.
-- **V-4.** _(1.2)_ Local variables and `{{if}}`/`{{else}}` are worked out exactly as SillyTavern would.
+- **V-4.** _(1.2)_ Local variables and `{{if}}`/`{{else}}` are worked out exactly as SillyTavern's New macro engine would.
 - **V-5.** _(1.2)_ Global variables, and macros that can't sensibly be worked out in Obsidian (dice, random picks, date and time, etc.), stay as typed.
-- **V-6.** _(1.2)_ A switch picks the **New** or **Legacy** macro engine. Results follow the chosen engine. The switch, and "Worked-out value" in the colour key, only show from 1.2. Until then nothing is worked out.
+- **V-6.** _(1.2)_ Only the **New** macro engine is used. There is no Legacy engine and no engine switch. "Worked-out value" in the colour key only shows from 1.2. Until then nothing is worked out.
 
 ### 3.5 Variables panel (panel 1.0 · content 1.3)
 
@@ -218,7 +218,7 @@ In 1.0 the panel is empty.
   - The summary next to a prompt names its trigger if it has one (e.g. "Relative · Normal"), says "2 triggers" if it has several, and shows nothing if it has none.
   - No hover (narrow layout or touch screen): tap the gap between two prompts to show "Add prompt here", then tap that to add a prompt.
   - Obsidian mobile: Undo and Redo buttons in the tab header (E-6). The mockup has none.
-  - Preview: placeholders with settings show their role, not "Inserted" (V-9). Chat History is a shaded block that holds the in-chat prompts, and each in-chat prompt has a tag saying where it goes (V-7). This follows the owner's Chat History mockup. The engine switch and "Worked-out value" wait for 1.2 (V-6).
+  - Preview: placeholders with settings show their role, not "Inserted" (V-9). Chat History is a shaded block that holds the in-chat prompts, and each in-chat prompt has a tag saying where it goes (V-7). This follows the owner's Chat History mockup. There is no engine switch and no "Not run by Legacy" note (V-6). "Worked-out value" waits for 1.2.
 
 ## 5. Quality
 
@@ -239,4 +239,5 @@ In 1.0 the panel is empty.
    - Where does it land?
    - Does Undo bring back a cut prompt?
 4. ~~**Undo on mobile:** what it looks like, and which version it comes in.~~ Settled: see E-6. (1.0)
+6. **Starting values of local variables:** in SillyTavern, local variables live in the chat and carry over from earlier replies. The Preview has no chat. Do they start empty every time? (1.2)
 5. ~~**In-chat prompts in the Preview:** does "roughly where SillyTavern would put them" mean grouped around the Chat History placeholder, in SillyTavern's order?~~ Settled: see V-7. (1.1)
