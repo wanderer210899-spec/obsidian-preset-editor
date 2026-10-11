@@ -257,6 +257,7 @@ Details are in open item 8.
   - No hover (narrow layout or touch screen): tap the gap between two prompts to show "Add prompt here", then tap that to add a prompt.
   - Obsidian mobile: Undo and Redo buttons in the tab header (E-6). The mockup has none.
   - _(1.3)_ The editor follows the "Outline" design in `UI design mock/main editor tweak/`: folding prompts and a "Find in prompts" search bar (3.10).
+  - _(1.3)_ Variables panel: no hint line at the top ("In the order they were first used…").
   - Preview: placeholders with settings show their role, not "Inserted" (V-9). Chat History is a shaded block that holds the in-chat prompts, and each in-chat prompt has a tag saying where it goes (V-7). This follows the owner's Chat History mockup. There is no engine switch and no "Not run by Legacy" note (V-6).
 
 ## 5. Quality

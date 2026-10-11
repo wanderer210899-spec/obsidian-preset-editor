@@ -9,11 +9,8 @@
 	let { vars, narrow, onjump }: Props = $props();
 </script>
 
-<!-- SRS 3.5: the Variables tab of the first-draft mockup. -->
+<!-- SRS 3.5: the Variables tab of the first-draft mockup, without its hint line (I-4). -->
 <div class="vars">
-	<div class="hint">
-		In the order they were first used. Every variable starts empty. {narrow ? 'Tap' : 'Click'} a prompt to jump to it.
-	</div>
 	{#each vars as v (v.name)}
 		<div class="var">
 			<div class="top">
@@ -63,15 +60,12 @@
 		overscroll-behavior: contain;
 		padding: 2px 16px 24px;
 	}
-	.hint {
-		margin: 0 0 10px;
-		font-size: 12px;
-		line-height: 1.45;
-		color: var(--text-muted);
-	}
 	.var {
 		padding: 12px 0 14px;
 		border-top: 1px solid var(--background-modifier-border);
+	}
+	.var:first-child {
+		border-top: 0;
 	}
 	.top {
 		display: flex;

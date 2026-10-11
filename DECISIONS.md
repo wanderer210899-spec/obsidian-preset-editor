@@ -4,6 +4,12 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-11 · No hint line in the Variables panel
+
+**Decision:** The Variables panel drops the mockup's hint line at the top ("In the order they were first used. Every variable starts empty. Click a prompt to jump to it."). The list starts straight away. Recorded in SRS I-4.
+
+**Context:** First look at the built Variables panel. The owner said it works as intended, apart from this line.
+
 ## 2026-10-11 · Esc only acts in the Preset Editor
 
 **Decision:** Esc closes the search bar, the settings popover and the phone panel only while the Preset Editor is the tab in use. Before, Esc anywhere in Obsidian did it, e.g. closing the command palette also closed the editor's search bar.
