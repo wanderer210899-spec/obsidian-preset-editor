@@ -55,6 +55,11 @@ export function toParts(marked: string): Part[] {
 	return parts;
 }
 
+/** True if the text still holds a macro left as typed. */
+export function hasKeptMacro(text: string): boolean {
+	return keptRanges(text).length > 0;
+}
+
 /** The outermost `{{…}}` spans that close, as [from, to) pairs. */
 function keptRanges(text: string): [number, number][] {
 	const ranges: [number, number][] = [];

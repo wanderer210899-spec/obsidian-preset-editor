@@ -8,11 +8,12 @@
  * - Left as typed: everything SillyTavern fills in (V-3), and anything that
  *   can't be worked out in Obsidian, such as dice, random picks, dates and
  *   global variables (V-5). They are still listed, with their arguments, so
- *   tags pair up exactly as in SillyTavern.
+ *   tags pair up exactly as in SillyTavern. An {{if}} that depends on one of
+ *   them stays as typed, whole (V-12).
  */
 import type { CstNode } from 'chevrotain';
 import { MACRO_VARIABLE_SHORTHAND_PATTERN } from './lexer';
-import { unmark } from './marks';
+import { hasKeptMacro, unmark } from './marks';
 import { parseDocument } from './parser';
 import { isFalseBoolean, MacroRegistry, normalize, type MacroHandler, type MacroOptions } from './registry';
 import { extractMacroInfo } from './walker';
@@ -152,7 +153,13 @@ function registerConditionMacros(registry: MacroRegistry): void {
 		unnamedArgs: 2,
 		// Only the chosen branch is worked out, so a {{setvar}} in the other branch never runs.
 		delayArgResolution: true,
-		handler: ({ unnamedArgs: [rawCondition = '', rawContent = ''], flags, resolve, trimContent }) => {
+		handler: (context) => {
+			const {
+				unnamedArgs: [rawCondition = '', rawContent = ''],
+				flags,
+				resolve,
+				trimContent,
+			} = context;
 			let inverted = false;
 			let condition = rawCondition;
 			if (/^\s*!/.test(rawCondition)) {
@@ -170,7 +177,10 @@ function registerConditionMacros(registry: MacroRegistry): void {
 				condition = unmark(resolve(`{{${condition}}}`));
 			}
 
-			// Anything left as typed is not empty, so it counts as true (V-3).
+			// V-12: a condition that depends on a macro left as typed can't be decided,
+			// so the whole block stays as typed and nothing inside it runs.
+			if (hasKeptMacro(condition)) return keepAsTyped(context);
+
 			let isFalsy = condition === '' || isFalseBoolean(condition);
 			if (inverted) isFalsy = !isFalsy;
 

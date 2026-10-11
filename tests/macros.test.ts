@@ -108,18 +108,33 @@ test('variables carry from one prompt to the next, and start empty every time (V
 	assert.equal(run('{{if .mood}}yes{{else}}no{{/if}}'), 'no');
 });
 
-test('SillyTavern data stays as typed, and counts as true in {{if}} (V-3)', () => {
+test('SillyTavern data stays as typed (V-3)', () => {
 	assert.equal(run('Hi {{char}}, I am {{user}}.'), 'Hi {{char}}, I am {{user}}.');
-	assert.equal(run('{{if description}}A{{else}}B{{/if}}'), 'A');
-	assert.equal(run('{{if !persona}}A{{else}}B{{/if}}'), 'B');
-	assert.equal(run('{{if {{char}}}}A{{/if}}'), 'A');
 	assert.equal(run('Hello <USER>'), 'Hello {{user}}');
+});
+
+test('an {{if}} that depends on a macro left as typed stays as typed, whole (V-12)', () => {
+	for (const block of [
+		'{{if description}}\n  A {{getvar::a}}\n{{else}}B{{/if}}',
+		'{{if !persona}}A{{else}}B{{/if}}',
+		'{{if {{char}}}}A{{/if}}',
+		'{{if $flag}}yes{{/if}}',
+		'{{if {{roll 1d6}}::A}}',
+	]) {
+		assert.equal(run(block), block);
+	}
+	// Nothing inside it runs.
+	assert.equal(run('{{if char}}{{setvar::a::1}}{{/if}}[{{getvar::a}}]'), '{{if char}}{{setvar::a::1}}{{/if}}[]');
+	// A variable holding a macro left as typed can't be decided either.
+	assert.equal(run('{{setvar::a::{{user}}}}{{if .a}}A{{/if}}'), '{{if .a}}A{{/if}}');
+	// Conditions that can be worked out still choose a branch.
+	assert.equal(run('{{if notamacro}}A{{else}}B{{/if}}'), 'A');
+	assert.equal(run('{{if noop}}A{{else}}B{{/if}}'), 'B');
 });
 
 test('dice, random picks, dates and global variables stay as typed (V-5)', () => {
 	const kept = '{{roll 1d6}} {{random::a::b}} {{time}} {{setglobalvar::g::1}}{{getglobalvar::g}} {{$g = 2}}{{$g}}';
 	assert.equal(run(kept), kept);
-	assert.equal(run('{{if $flag}}yes{{/if}}'), 'yes');
 	// Macros inside them are still worked out.
 	assert.equal(run('{{random::{{getvar::a}}::b}}', { a: 'x' }), '{{random::x::b}}');
 	assert.equal(run('{{$g = {{getvar::a}}}}', { a: 'x' }), '{{$g = x}}');

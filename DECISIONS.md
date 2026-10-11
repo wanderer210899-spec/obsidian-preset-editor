@@ -4,6 +4,20 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-11 · Closing tags, but no suggestion lists
+
+**Decision:** A later version helps with closing tags while typing prompt text. Scoped macros close by themselves (`{{if}}` adds `{{/if}}`). XML tags close by themselves, rename together, and show their matching pair. There are no macro or variable suggestion lists. Version and details are still open (SRS open item 7).
+
+**Context:** The owner asked what autocomplete could look like. SillyTavern's own prompt editor shows a macro list when typing `{{`. The owner judged that such lists would clutter the screen on mobile.
+
+## 2026-10-11 · An {{if}} that can't be decided stays as typed
+
+**Decision:** If an `{{if}}` condition uses something the Preview can't work out, the whole block stays as typed and nothing inside it runs. This includes SillyTavern data such as `{{char}}` and `{{description}}`, and also dice, dates and global variables. Example: `{{if $flag}}A{{else}}B{{/if}}` shows exactly as typed.
+
+This replaces the V-3 rule that SillyTavern data counts as "true" in `{{if}}`.
+
+**Context:** Raised while building the 1.2 engine. The owner tested the engine on desktop and mobile first.
+
 ## 2026-10-11 · The Preview works out simple text macros
 
 **Decision:** Besides variables and `{{if}}`/`{{else}}`, the Preview works out macros whose result comes only from the prompt text: `{{// comment}}`, `{{newline}}`, `{{space}}`, `{{trim}}`, `{{noop}}`, `{{reverse}}` (and `{{banned}}`, which SillyTavern removes in Chat Completion). A comment, for example, disappears as it does in SillyTavern.

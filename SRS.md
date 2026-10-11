@@ -32,6 +32,7 @@ Each version adds one feature on top of the last.
 | 1.3     | Variables panel.                                                                          | Planned     |
 | 1.4     | Library panel, with New preset and rename. Ribbon button and plugin shortcuts.            | Planned     |
 | 1.5     | Move prompts between presets.                                                             | Planned     |
+| Later   | Closing tags while writing prompts. See 3.9.                                              | Planned     |
 | Later   | Snapshots or version history.                                                             | Planned     |
 
 **Not planned**
@@ -160,7 +161,7 @@ The version each part arrives in is shown in brackets.
 
 - **V-1.** _(1.1)_ Shows the full prompt as close as possible to what SillyTavern would put together, as in the mockup.
 - **V-2.** _(1.1)_ Assumes a normal reply. Leaves out prompts that are off, or whose triggers don't include a normal reply.
-- **V-3.** _(1.1)_ Anything that comes from SillyTavern stays as typed or as a placeholder. This includes character data, persona, chat history, `{{char}}` and `{{user}}`. In `{{if}}`, these count as "true".
+- **V-3.** _(1.1)_ Anything that comes from SillyTavern stays as typed or as a placeholder. This includes character data, persona, chat history, `{{char}}` and `{{user}}`. For `{{if}}`, see V-12.
 - **V-7.** _(1.1)_ In-chat prompts show where SillyTavern would put them.
   - Chat History is one shaded block, as in the Chat History mockup the owner supplied (dark and light). The in-chat prompts sit inside it, deepest first, in SillyTavern's order.
   - The block's first row shows the Chat History placeholder and how many in-chat prompts it holds, e.g. "3 in-chat prompts inside". It ends with "End of chat history". With no in-chat prompts, the count and the ending are left out.
@@ -177,6 +178,7 @@ The version each part arrives in is shown in brackets.
 - **V-5.** _(1.2)_ Global variables, and macros that can't sensibly be worked out in Obsidian (dice, random picks, date and time, etc.), stay as typed.
 - **V-6.** _(1.2)_ Only the **New** macro engine is used. There is no Legacy engine and no engine switch. "Worked-out value" in the colour key only shows from 1.2. Until then nothing is worked out.
 - **V-11.** _(1.2)_ A variable read before any prompt sets it is empty, as in a brand-new SillyTavern chat. The Preview marks it as empty. In `{{if}}` it counts as "no".
+- **V-12.** _(1.2)_ An `{{if}}` whose condition uses something that can't be worked out (V-3, V-5) stays as typed, the whole block. Nothing inside it is worked out.
 
 ### 3.5 Variables panel (panel 1.0 · content 1.3)
 
@@ -205,6 +207,17 @@ In 1.0 the panel is empty.
 - **L-3.** New preset can be started from the command palette or the library panel.
 - **L-4.** A new preset is called "Untitled preset". If that name is taken: "Untitled preset 1", "Untitled preset 2", and so on.
 - **L-5.** A new preset is a copy of SillyTavern's Default preset with every prompt's text left blank.
+
+### 3.9 Closing tags (later, version to be set)
+
+Help with closing tags while typing prompt text. No suggestion lists: they would clutter the screen on mobile.
+
+- **W-1.** A scoped macro closes by itself: finishing `{{if …}}` adds `{{/if}}`.
+- **W-2.** An XML tag closes by itself: typing `<rules>` adds `</rules>`.
+- **W-3.** Renaming an XML tag renames its partner too.
+- **W-4.** The matching XML tag shows when the cursor is in a tag.
+
+Details are in open item 7.
 
 ---
 
@@ -241,4 +254,9 @@ In 1.0 the panel is empty.
    - Does Undo bring back a cut prompt?
 4. ~~**Undo on mobile:** what it looks like, and which version it comes in.~~ Settled: see E-6. (1.0)
 6. ~~**Starting values of local variables:** in SillyTavern, local variables live in the chat and carry over from earlier replies. The Preview has no chat. Do they start empty every time?~~ Settled: see V-11. (1.2)
+7. **Closing tags:** (version to be set)
+   - Which version?
+   - Does typing `{{` also add `}}`?
+   - Which macros close by themselves: only `{{if}}`, or every macro that can wrap text?
+   - Should W-4 also work for `{{if}}` and `{{/if}}`?
 5. ~~**In-chat prompts in the Preview:** does "roughly where SillyTavern would put them" mean grouped around the Chat History placeholder, in SillyTavern's order?~~ Settled: see V-7. (1.1)
