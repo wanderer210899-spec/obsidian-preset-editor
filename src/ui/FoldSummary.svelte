@@ -6,9 +6,11 @@
 		/** Left padding, so the line sits under the prompt name. */
 		indent: string;
 		dimmed: boolean;
+		/** C-4: search matches in this prompt; shown instead of the line count. */
+		matches?: number;
 		onopen: () => void;
 	}
-	let { text, indent, dimmed, onopen }: Props = $props();
+	let { text, indent, dimmed, matches = 0, onopen }: Props = $props();
 
 	const s = $derived(foldSummary(text));
 </script>
@@ -16,7 +18,11 @@
 <!-- C-1: a folded prompt shows its first line and how many lines it has. Clicking it opens the prompt. -->
 <button type="button" class="sum" style:padding-left={indent} style:opacity={dimmed ? 0.45 : 1} onclick={onopen}>
 	<span class="first">{s.firstLine || 'Empty'}</span>
-	{#if s.lines}<span class="count">{s.lines === 1 ? '1 line' : `${s.lines} lines`}</span>{/if}
+	{#if matches}
+		<span class="count hit">{matches === 1 ? '1 match' : `${matches} matches`}</span>
+	{:else if s.lines}
+		<span class="count">{s.lines === 1 ? '1 line' : `${s.lines} lines`}</span>
+	{/if}
 </button>
 
 <style>
@@ -53,5 +59,8 @@
 		flex: none;
 		font-size: 12px;
 		color: var(--text-faint);
+	}
+	.count.hit {
+		color: var(--text-accent);
 	}
 </style>

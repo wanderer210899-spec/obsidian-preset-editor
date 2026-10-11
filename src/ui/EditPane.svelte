@@ -17,12 +17,14 @@
 		/** C-5: the one open prompt, or null when all are folded. */
 		openId: string | null;
 		ontoggleopen: (id: string) => void;
+		/** C-4: the search, already normalised ('' = none). */
+		query: string;
 		/** No hover (narrow layout or touch): the first tap on a divider shows "Add prompt here". */
 		tapToReveal: boolean;
 		ontogglepop: (id: string) => void;
 		oninsert: (at: number) => void;
 	}
-	let { doc, rows, title, status, sizes, pop, flash, openId, ontoggleopen, tapToReveal, ontogglepop, oninsert }: Props = $props();
+	let { doc, rows, title, status, sizes, pop, flash, openId, ontoggleopen, query, tapToReveal, ontogglepop, oninsert }: Props = $props();
 
 	/** The divider shown by a first tap (DECISIONS.md, 2026-10-10). */
 	let revealed = $state<number | null>(null);
@@ -85,6 +87,7 @@
 						ontogglepop={() => ontogglepop(row.id)}
 						oninsert={(offset) => oninsert(i + offset)}
 						ondelete={() => doc.remove(row.id)}
+						{query}
 					/>
 				{/if}
 			</div>

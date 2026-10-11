@@ -3,7 +3,7 @@
  * (SRS E-5, 2.4). The rest of the plugin only sees `createPromptEditor`.
  */
 import { defaultKeymap } from '@codemirror/commands';
-import { Annotation, type Extension, RangeSetBuilder } from '@codemirror/state';
+import { Annotation, type Extension, RangeSetBuilder, StateEffect, StateField } from '@codemirror/state';
 import {
 	Decoration,
 	type DecorationSet,
@@ -18,6 +18,8 @@ import { macroSpans } from './highlight';
 export interface PromptEditor {
 	/** Replaces the text, unless it is already the same. Doesn't call `onChange`. */
 	setText(text: string): void;
+	/** Marks these parts of the text (class `pe-hit`), e.g. search matches. Replaces the last marks. */
+	setHits(ranges: readonly { from: number; to: number }[]): void;
 	destroy(): void;
 }
 
@@ -44,6 +46,7 @@ export function createPromptEditor(parent: HTMLElement, options: PromptEditorOpt
 			placeholder(options.placeholder),
 			EditorView.contentAttributes.of({ spellcheck: 'false', 'aria-label': 'Prompt content' }),
 			macroColours(),
+			hits,
 			EditorView.updateListener.of((u) => {
 				if (u.docChanged && !u.transactions.some((t) => t.annotation(fromOutside))) options.onChange(u.state.doc.toString());
 			}),
@@ -63,11 +66,34 @@ export function createPromptEditor(parent: HTMLElement, options: PromptEditorOpt
 				annotations: fromOutside.of(true),
 			});
 		},
+		setHits(ranges) {
+			view.dispatch({ effects: setHitsEffect.of(ranges) });
+		},
 		destroy() {
 			view.destroy();
 		},
 	};
 }
+
+const HIT = Decoration.mark({ class: 'pe-hit' });
+const setHitsEffect = StateEffect.define<readonly { from: number; to: number }[]>();
+
+/** Marks set from outside with `setHits`. They move with the text while typing. */
+const hits = StateField.define<DecorationSet>({
+	create: () => Decoration.none,
+	update(marks, tr) {
+		marks = marks.map(tr.changes);
+		for (const e of tr.effects) {
+			if (!e.is(setHitsEffect)) continue;
+			const len = tr.state.doc.length;
+			const builder = new RangeSetBuilder<Decoration>();
+			for (const r of e.value) if (r.from < r.to && r.to <= len) builder.add(r.from, r.to, HIT);
+			marks = builder.finish();
+		}
+		return marks;
+	},
+	provide: (f) => EditorView.decorations.from(f),
+});
 
 const MARKS = {
 	macro: Decoration.mark({ class: 'pe-macro' }),

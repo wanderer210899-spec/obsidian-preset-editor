@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PromptData } from '../preset';
 	import { rulesFor } from '../kinds';
+	import { countMatches } from '../search';
 	import FoldChevron from './FoldChevron.svelte';
 	import FoldSummary from './FoldSummary.svelte';
 	import PromptMeta from './PromptMeta.svelte';
@@ -16,16 +17,19 @@
 		/** C-1: open shows the text, role and settings; folded shows a one-line summary. */
 		open: boolean;
 		ontoggleopen: () => void;
+		/** C-4: the search, already normalised ('' = none). */
+		query: string;
 		update: (patch: Partial<PromptData>) => void;
 		ontoggle: () => void;
 		ontogglepop: () => void;
 		oninsert: (offset: 0 | 1) => void;
 		ondelete: () => void;
 	}
-	let { row, sizes, popOpen, open, ontoggleopen, update, ontoggle, ontogglepop, oninsert, ondelete }: Props = $props();
+	let { row, sizes, popOpen, open, ontoggleopen, query, update, ontoggle, ontogglepop, oninsert, ondelete }: Props = $props();
 
 	const p = $derived(row.prompt);
 	const removable = $derived(rulesFor(row.id).remove);
+	const matches = $derived(query ? countMatches(`${p.name ?? ''}\n${p.content ?? ''}`, query) : 0);
 </script>
 
 <!-- C-1: an open prompt's title row stays at the top while its text scrolls. -->
@@ -55,11 +59,11 @@
 {#if open}
 	<div class="body" style:padding-left={sizes.narrow ? '0' : '28px'}>
 		<div class="text" style:font-size={sizes.monoFs} style:opacity={row.enabled ? 1 : 0.45}>
-			<PromptText text={p.content ?? ''} onchange={(content) => update({ content })} />
+			<PromptText text={p.content ?? ''} {query} onchange={(content) => update({ content })} />
 		</div>
 	</div>
 {:else}
-	<FoldSummary text={p.content ?? ''} indent={sizes.narrow ? '0' : '28px'} dimmed={!row.enabled} onopen={ontoggleopen} />
+	<FoldSummary text={p.content ?? ''} indent={sizes.narrow ? '0' : '28px'} dimmed={!row.enabled} {matches} onopen={ontoggleopen} />
 {/if}
 {#if open && popOpen}
 	<PromptSettings prompt={p} {sizes} {update} onclose={ontogglepop} {oninsert} {ondelete} />
