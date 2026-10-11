@@ -4,6 +4,108 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-11 · No hint line in the Variables panel
+
+**Decision:** The Variables panel drops the mockup's hint line at the top ("In the order they were first used. Every variable starts empty. Click a prompt to jump to it."). The list starts straight away. Recorded in SRS I-4.
+
+**Context:** First look at the built Variables panel. The owner said it works as intended, apart from this line.
+
+## 2026-10-11 · Esc only acts in the Preset Editor
+
+**Decision:** Esc closes the search bar, the settings popover and the phone panel only while the Preset Editor is the tab in use. Before, Esc anywhere in Obsidian did it, e.g. closing the command palette also closed the editor's search bar.
+
+**Context:** Found in the health check before the Variables panel. The owner asked for it to be fixed.
+
+## 2026-10-11 · Variables panel rules
+
+**Decision:**
+- The panel uses the same prompts as the Preview: prompts that are on and run for a normal reply. A prompt that only runs on Continue is left out, so the final values match the Preview (SRS T-1).
+- Every variable macro as typed counts, even inside an `{{if}}` part that doesn't run. Example: `{{if .nsfw}}{{getvar::kink}}{{/if}}` with `nsfw` never set still lists `kink` as read in that prompt. The list stays the same when prompts are switched on and off. The final value only comes from what runs (T-4).
+- A variable read before a later prompt sets it gets no extra warning. Only "never set" is flagged, as the SRS already said (T-3, T-5).
+- Proposed and not changed by the owner: the panel follows the first-draft mockup's Variables tab. "Set in" covers `setvar`, `addvar`, `incvar`, `decvar`, `deletevar`, `{{.x = …}}` and `{{.x++}}`. "Read in" covers `getvar`, `hasvar`, `{{.x}}` and `{{if .x}}`. Global variables never show.
+
+**Context:** Before building the Variables panel on `feature/1.3-variables-panel`. Options were shown with examples; the owner picked the recommended one each time.
+
+## 2026-10-11 · Closing tags, after the first test
+
+**Decision:**
+- Typing `{{if` adds `{{/if}}` straight away: `{{if|}}{{/if}}`. The cursor stays inside `{{if}}`. Before, `{{/if}}` only came after typing the closing `}}`, which never happens because `}}` is already there.
+- Matching tags get a light blue tint, with no outline. The grey was ugly, and the outline wasn't needed: macros already have their own colour.
+- The owner thinks the automatic `{{/if}}` may not be needed at all. It stays for now, to test.
+- After testing: the automatic `{{/if}}` stays. `{{if}}` and `{{/if}}` are no longer marked when the cursor is in them. Their macro colour is enough. This replaces the earlier choice to mark them.
+- XML tags get no lasting colour of their own. Only the blue pair mark shows, while the cursor is in a tag. The owner was happy with it as it is.
+- Closing tags accepted as built.
+
+**Context:** First test of closing tags on `feature/1.3-closing-tags`.
+
+## 2026-10-11 · Closing tags details
+
+**Decision:**
+- Typing `{{` adds `}}`, with the cursor in between.
+- Only `{{if}}` closes by itself: finishing `{{if mood}}` adds `{{/if}}`. This is a trial. Other macros that can wrap text, like `{{trim}}`, stay as they are for now.
+- With the cursor on `{{if}}`, its `{{/if}}` is marked too, as XML tags are.
+- The plugin settings have one switch for all of this, called "Auto complete". It covers `{{ }}`, `{{if}}`, XML tags and renaming the partner tag. The matching-tag marks always show.
+- Smaller details, proposed and not changed by the owner: typing `}` in front of an added `}}` steps over it; Backspace in an empty `{{}}` removes both pairs; `{{/if}}` and `</tag>` are only added when the tag isn't closed yet; the cursor lands between the two tags; `<br/>` and closing tags add nothing; `{{else}}` is not marked.
+
+**Context:** SRS open item 7, before building closing tags on `feature/1.3-closing-tags`.
+
+## 2026-10-11 · Select mode joins 1.5
+
+**Decision:** Version 1.5 gets a select mode, next to moving prompts between presets. A button turns it on, and several prompts can then be picked at once. The picked prompts can be deleted together, or moved to another preset together. It must work on desktop and mobile. Details are still open (SRS M-2, open item 3).
+
+**Context:** New feature request after testing the 1.3 editor changes.
+
+## 2026-10-11 · Folding and search accepted as built
+
+**Decision:** The owner tested folding and search and said they work. These details were raised with the build and kept:
+- "12 lines" counts lines as typed, not as wrapped on screen.
+- An empty folded prompt shows "Empty" with no line count.
+- Preview search also looks at prompt names, as Edit does.
+- Switching between Edit and Preview keeps the search; the count starts again at "1 of …".
+- Undo/Redo, jumping from the Order panel and adding a prompt open that prompt.
+- "2 of 5" counts prompts, not single matches. Next goes to the next prompt that matches.
+- A match in a prompt's name counts but isn't highlighted (names sit in a text box).
+- Typing in the search bar jumps straight to the first match.
+- Esc closes the search bar, even while typing in a prompt.
+
+**Context:** Built on `feature/1.3-editor-tweak` and merged into `version-1.3`.
+
+## 2026-10-11 · Each view searches what it shows
+
+**Decision:** Edit searches the typed text. Preview searches the worked-out text. Example: a prompt has `Mood: {{getvar::mood}}` and Preview shows `Mood: calm`. In Preview, "calm" finds it and "getvar" doesn't. In Edit, it's the other way round.
+
+**Context:** Follows from search working in Preview (entry below). A match then always lands on text you can see.
+
+## 2026-10-11 · Folding and search details
+
+**Decision:**
+- Only one prompt is open at a time. Opening a prompt folds the one that was open, as in the mockup.
+- Prompts are dragged only in the Order panel. The main list has no drag handle, as in the mockup. This changes SRS E-2.
+- When a preset is opened, every prompt is folded. The open prompt is not remembered.
+- Search works in Preview too, and highlights matches there. The mockup only searched in Edit and switched to Edit to show a match.
+
+**Context:** SRS open item 8, raised after reading the "Outline" mockup.
+
+## 2026-10-11 · New editor mockup replaces divider prompts; search joins 1.3
+
+**Decision:** The owner's new mockup (`UI design mock/main editor tweak/`, the "Outline" design) sets how the editor looks in 1.3. Prompts fold down to a short form, and there's a "Find in prompts" search bar. Divider prompts (old C-2, C-3) are dropped: the new design replaces them. The search bar goes into the SRS as an approved change to the look.
+
+This replaces the divider part of "Collapsing prompts, and empty prompts as dividers" below.
+
+**Context:** The owner made the mockup with a designer after open item 8 was raised. They asked for the editor changes, closing tags and the Variables panel to be built side by side in 1.3.
+
+## 2026-10-11 · Collapsing prompts, and empty prompts as dividers
+
+**Decision:** Long presets are decluttered two ways. Prompts can be collapsed; collapsing only changes the editor's look. Empty prompts act as dividers that group the prompts under them. Visual folders saved outside the preset are not used. How a prompt is recognised as a divider, and how dividers look, are still being discussed. The owner doesn't want divider controls to clutter the editor.
+
+**Context:** SRS open item 8. Options offered: collapsible prompts, visual folders, heading prompts, one-at-a-time, filter.
+
+## 2026-10-11 · 1.3 also gets closing tags, collapsing and grouping
+
+**Decision:** Version 1.3 holds the Variables panel, closing tags while typing (SRS 3.9), and a way to declutter long presets: collapsing prompts and grouping them into visual folders (SRS 3.10). Folders and collapsing only change how the editor looks. Whether to build folders, collapsing, or both is still open (SRS open item 8).
+
+**Context:** 1.2 was tested and released. The owner wants long presets with many prompts to have a minimal view.
+
 ## 2026-10-11 · Closing tags, but no suggestion lists
 
 **Decision:** A later version helps with closing tags while typing prompt text. Scoped macros close by themselves (`{{if}}` adds `{{/if}}`). XML tags close by themselves, rename together, and show their matching pair. There are no macro or variable suggestion lists. Version and details are still open (SRS open item 7).

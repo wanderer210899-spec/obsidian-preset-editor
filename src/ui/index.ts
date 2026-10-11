@@ -12,19 +12,27 @@ export interface EditorHandle {
 	/** E-6: undo or redo one step, showing the prompt it changed. */
 	undo(): void;
 	redo(): void;
+	/** C-4: Ctrl+F opens the search bar. */
+	openSearch(): void;
+	/** Esc closes the search bar, the settings popover and the phone panel. */
+	escape(): void;
 	setStatus(status: SaveState): void;
 	setTitle(title: string): void;
+	/** W-5: the "Auto complete" setting changed. */
+	setAutoComplete(on: boolean): void;
 	destroy(): void;
 }
 
 export interface EditorOptions {
 	/** E-6: show the Undo and Redo buttons (Obsidian mobile only, DECISIONS.md 2026-10-10). */
 	undoButton: boolean;
+	/** W-5: close tags while typing. */
+	autoComplete: boolean;
 }
 
 /**
- * Shows the editor in `target`. The mode switch, Undo and Redo buttons and panel
- * button go into `header` (the Obsidian view header).
+ * Shows the editor in `target`. The mode switch, Undo and Redo buttons, search
+ * button and panel button go into `header` (the Obsidian view header).
  */
 export function mountEditor(
 	target: HTMLElement,
@@ -33,12 +41,15 @@ export function mountEditor(
 	title: string,
 	options: EditorOptions,
 ): EditorHandle {
-	const editor = mount(Editor, { target, props: { doc, header, title, undoButton: options.undoButton } });
+	const editor = mount(Editor, { target, props: { doc, header, title, undoButton: options.undoButton, autoComplete: options.autoComplete } });
 	return {
 		undo: () => editor.undo(),
 		redo: () => editor.redo(),
+		openSearch: () => editor.openSearch(),
+		escape: () => editor.escape(),
 		setStatus: (status) => editor.setStatus(status),
 		setTitle: (t) => editor.setTitle(t),
+		setAutoComplete: (on) => editor.setAutoComplete(on),
 		destroy: () => void unmount(editor),
 	};
 }

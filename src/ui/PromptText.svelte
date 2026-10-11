@@ -1,13 +1,18 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { findRanges } from '../search';
 	import { createPromptEditor, type PromptEditor } from '../text-editor';
+	import { getTextSettings } from './text-settings';
 
 	interface Props {
 		text: string;
+		/** C-4: the search, already normalised ('' = none). Matches are highlighted. */
+		query?: string;
 		onchange: (text: string) => void;
 	}
-	let { text, onchange }: Props = $props();
+	let { text, query = '', onchange }: Props = $props();
 
+	const settings = getTextSettings();
 	let host: HTMLDivElement;
 	let editor: PromptEditor | undefined;
 
@@ -15,6 +20,7 @@
 		editor = createPromptEditor(host, {
 			text,
 			placeholder: 'Write the prompt…',
+			autoComplete: settings.autoComplete,
 			onChange: (t) => onchange(t),
 		});
 		return () => editor?.destroy();
@@ -22,6 +28,14 @@
 
 	$effect(() => {
 		editor?.setText(text);
+	});
+
+	$effect(() => {
+		editor?.setHits(findRanges(text, query));
+	});
+
+	$effect(() => {
+		editor?.setAutoComplete(settings.autoComplete);
 	});
 </script>
 
@@ -61,6 +75,15 @@
 	.pe-text :global(.pe-variable) {
 		color: var(--pe-var);
 		background: var(--pe-var-bg);
+		border-radius: 3px;
+	}
+	.pe-text :global(.pe-hit) {
+		background: var(--pe-hit);
+		border-radius: 2px;
+	}
+	/* W-4: the tag pair the cursor is in. */
+	.pe-text :global(.pe-pair) {
+		background-color: var(--pe-pair);
 		border-radius: 3px;
 	}
 	.pe-text :global(.pe-control) {

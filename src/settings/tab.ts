@@ -2,7 +2,7 @@ import { type App, normalizePath, Notice, type Plugin, PluginSettingTab, Setting
 import { FolderSuggest } from './folder-suggest';
 import type { SettingsStore } from './store';
 
-/** The plugin's settings page, in Obsidian's standard look (SRS F-1, I-2). */
+/** The plugin's settings page, in Obsidian's standard look (SRS F-1, W-5, I-2). */
 export class SettingsTab extends PluginSettingTab {
 	constructor(
 		app: App,
@@ -46,6 +46,11 @@ export class SettingsTab extends PluginSettingTab {
 					}),
 			);
 		}
+
+		new Setting(containerEl)
+			.setName('Auto complete')
+			.setDesc('While typing prompt text: close {{ }}, {{if}} and XML tags, and rename the partner of an XML tag.')
+			.addToggle((toggle) => toggle.setValue(this.store.autoComplete).onChange((on) => this.store.setAutoComplete(on)));
 	}
 
 	private async add(input: string): Promise<void> {

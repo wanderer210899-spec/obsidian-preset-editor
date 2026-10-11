@@ -1,6 +1,6 @@
 # Preset Editor: Software Requirements Specification
 
-Draft 0.7 · 11 October 2026
+Draft 0.11 · 11 October 2026
 
 Follows SRS standard principles: https://www.computer.org/resources/software-requirements-specifications#requirements-fundamentals
 
@@ -29,10 +29,9 @@ Each version adds one feature on top of the last.
 | 1.0     | The editor screen from the mockup: open a preset, edit its prompts, save automatically. Undo and Redo. | Done        |
 | 1.1     | Preview: the full prompt in order. Macros stay as typed.                                  | Done        |
 | 1.2     | Macro engine: variables and `{{if}}`/`{{else}}` worked out, with SillyTavern's New engine. | Done        |
-| 1.3     | Variables panel.                                                                          | Planned     |
+| 1.3     | Variables panel. Closing tags while typing (3.9). Folding prompts and search (3.10).      | Done        |
 | 1.4     | Library panel, with New preset and rename. Ribbon button and plugin shortcuts.            | Planned     |
-| 1.5     | Move prompts between presets.                                                             | Planned     |
-| Later   | Closing tags while writing prompts. See 3.9.                                              | Planned     |
+| 1.5     | Move prompts between presets. Select several prompts at once (M-2).                       | Planned     |
 | Later   | Snapshots or version history.                                                             | Planned     |
 
 **Not planned**
@@ -52,8 +51,9 @@ Each version adds one feature on top of the last.
 
 **1.2 is done** (v1.2.0). The Preview works out local variables, `{{if}}`/`{{else}}` and simple text macros with a port of SillyTavern's New macro engine. Everything else stays as typed, and an `{{if}}` that can't be decided stays as typed, whole. Checked by the owner on desktop and mobile.
 
-- Built: everything marked 1.0, 1.1 and 1.2 below.
-- The Variables panel is there, but empty. Its content comes in 1.3.
+**1.3 is done** (v1.3.0). The Variables panel (3.5) lists each local variable with its final value and where it is set and read. Closing tags while typing (3.9). Folding prompts and search (3.10). All checked by the owner.
+
+- Built: everything marked 1.0 to 1.3 below.
 - Dragging (Q-1) was checked on a phone, through a test copy of Obsidian.
 - Not yet checked: a full test in the Obsidian phone app. This can only happen once the plugin can be installed. Scrolling, for example, feels different in the test copy.
 
@@ -75,7 +75,9 @@ Each version adds one feature on top of the last.
 
 ### 1.5 References
 
-- **Looks:** `Preset Editor UI Brief/` (the mockup)
+- **Looks:** the mockups in `UI design mock/`. Git doesn't save this folder.
+  - `first draft/`: the editor screen (1.0 to 1.2)
+  - `main editor tweak/`: the 1.3 editor changes
 - **Behaviour:** SillyTavern source code (`/workspace/Sillytavern-reference`)
 - **Platform:** docs.obsidian.md
 - **Ground rules and git rules:** `CLAUDE.md`
@@ -108,7 +110,7 @@ Obsidian desktop and mobile. Both use the mockup's two layouts: wide and narrow.
 ### 2.4 Limits
 
 - Licence: AGPL-3.0. SillyTavern's macro engine code is reused.
-- Tools: TypeScript, Svelte (as the Obsidian docs suggest), CodeMirror 6, SortableJS.
+- Tools: TypeScript, Svelte (as the Obsidian docs suggest), CodeMirror 6, SortableJS, and Chevrotain (reads `{{…}}` for the macro engine, as in SillyTavern).
 - Simple look, like Notion and Apple Notes. Follows Obsidian's light and dark themes.
 
 ---
@@ -131,7 +133,7 @@ The version each part arrives in is shown in brackets.
 ### 3.2 Editing prompts (1.0)
 
 - **E-1.** Shows every prompt in the preset's order, as in the mockup.
-- **E-2.** Drag to reorder, in the main list and in the Order panel.
+- **E-2.** Drag to reorder in the Order panel. _(Until 1.3, also in the main list. From 1.3 the main list has no drag handle, as in the new mockup.)_
 - **E-3.** Switch each prompt on or off.
 - **E-4.** Add a custom prompt (at the end, between prompts, or above or below one), rename it, and delete it. A new prompt is called "Untitled prompt". It's switched on, sits where the user clicked, has no trigger, and is set to Relative.
 - **E-5.** Edit a prompt's name, role (System, User, Assistant) and text. Also its settings: position, depth, order, triggers and forbid overrides. Switching a prompt to In-chat also saves depth 4 and order 100 if it has none, as SillyTavern's edit form does.
@@ -178,17 +180,20 @@ The version each part arrives in is shown in brackets.
   - Prompt text shows exactly as typed. The Preview updates while you edit.
 - **V-4.** _(1.2)_ Local variables, `{{if}}`/`{{else}}`, and text macros whose result comes only from the prompt text (comments, `{{newline}}`, `{{space}}`, `{{trim}}`, `{{noop}}`, `{{reverse}}`) are worked out exactly as SillyTavern's New macro engine would.
 - **V-5.** _(1.2)_ Global variables, and macros that can't sensibly be worked out in Obsidian (dice, random picks, date and time, etc.), stay as typed.
-- **V-6.** _(1.2)_ Only the **New** macro engine is used. There is no Legacy engine and no engine switch. "Worked-out value" in the colour key only shows from 1.2. Until then nothing is worked out.
+- **V-6.** _(1.2)_ Only the **New** macro engine is used. There is no Legacy engine and no engine switch.
 - **V-11.** _(1.2)_ A variable read before any prompt sets it is empty, as in a brand-new SillyTavern chat. The Preview marks it as empty. In `{{if}}` it counts as "no".
 - **V-12.** _(1.2)_ An `{{if}}` whose condition uses something that can't be worked out (V-3, V-5) stays as typed, the whole block. Nothing inside it is worked out.
 
 ### 3.5 Variables panel (panel 1.0 · content 1.3)
 
-In 1.0 the panel is empty.
+It looks like the Variables tab in the `first draft/` mockup. Until 1.3 the panel was empty.
 
-- **T-1.** Lists every local variable used by prompts that are on, in the order they're first used.
-- **T-2.** For each variable: its final value, which prompts set it, and which prompts read it.
-- **T-3.** Flags a variable that's read but never set.
+- **T-1.** Lists every local variable in the prompts the Preview works out: prompts that are on and run for a normal reply (V-2). They're listed in the order they're first used, going down the prompt list.
+- **T-2.** For each variable: its final value as the Preview works it out, which prompts set it, and which prompts read it. Clicking a prompt jumps to it (E-7).
+- **T-3.** Flags a variable that's read but never set ("Never set — reads empty").
+- **T-4.** Every variable macro as typed counts, even one inside an `{{if}}` part that doesn't run. Example: `{{if .flag}}{{getvar::x}}{{/if}}` lists `x` as read, even when `flag` is empty. The final value only comes from what runs.
+- **T-5.** A variable read before a later prompt sets it gets no extra warning. The Preview already shows it as empty there (V-11).
+- **T-6.** Global variables never show (see "Never in scope" in 1.2).
 
 ### 3.6 Saving (1.0)
 
@@ -198,9 +203,10 @@ In 1.0 the panel is empty.
 - **S-4.** If the file changes outside the editor while it's open (sync, git, another app), the editor reloads it. Any edit not yet saved is dropped. The file on disk always wins.
 - **S-5.** A status line shows "Saving…", "Saved" or "Not saved". If saving fails, a "Couldn't save" message also shows.
 
-### 3.7 Moving prompts between presets (1.5)
+### 3.7 Moving and selecting prompts (1.5)
 
 - **M-1.** The user can move a prompt from one preset to another. Cut and paste is the likely way: it works on desktop and mobile. Drag and drop needs both presets side by side, which mobile can't do. Details are in open item 3.
+- **M-2.** A button turns on a select mode, where several prompts can be picked at once. The picked prompts can be deleted together, or moved to another preset together (M-1). Works on desktop and mobile. Details are in open item 3.
 
 ### 3.8 Library panel and New preset (1.4)
 
@@ -210,16 +216,32 @@ In 1.0 the panel is empty.
 - **L-4.** A new preset is called "Untitled preset". If that name is taken: "Untitled preset 1", "Untitled preset 2", and so on.
 - **L-5.** A new preset is a copy of SillyTavern's Default preset with every prompt's text left blank.
 
-### 3.9 Closing tags (later, version to be set)
+### 3.9 Closing tags (1.3)
 
 Help with closing tags while typing prompt text. No suggestion lists: they would clutter the screen on mobile.
 
-- **W-1.** A scoped macro closes by itself: finishing `{{if …}}` adds `{{/if}}`.
+- **W-1.** Macros close by themselves.
+  - Typing `{{` adds `}}`, with the cursor in between.
+  - Typing `{{if` adds `{{/if}}` straight after it. The cursor stays where it was, inside `{{if}}`. Only `{{if}}` does this, as a trial. Other macros that can wrap text, like `{{trim}}`, may join later.
 - **W-2.** An XML tag closes by itself: typing `<rules>` adds `</rules>`.
 - **W-3.** Renaming an XML tag renames its partner too.
-- **W-4.** The matching XML tag shows when the cursor is in a tag.
+- **W-4.** The matching XML tag shows when the cursor is in a tag. `{{if}}` and `{{/if}}` are not marked: their macro colour is enough.
+- **W-5.** The plugin settings have one switch, "Auto complete", that turns W-1, W-2 and W-3 on or off. It starts on. The matching-tag marks (W-4) always show.
 
 Details are in open item 7.
+
+### 3.10 Folding prompts and search (1.3)
+
+Long presets get a minimal view, so many prompts are easier to scan. The look follows the "Outline" design in `UI design mock/main editor tweak/`.
+
+- **C-1.** Prompts fold down to a short form. This only changes how the editor looks. Nothing is saved to the preset.
+- **C-5.** Only one prompt is open at a time. Opening a prompt folds the one that was open.
+- **C-6.** When a preset is opened, every prompt is folded.
+- **C-2.** ~~Empty prompts act as dividers.~~ Dropped: the new mockup replaces dividers.
+- **C-3.** ~~Dividers show in SillyTavern.~~ Dropped with C-2.
+- **C-4.** A "Find in prompts" search bar finds text in prompt names and text. It works in Edit and in Preview. Each searches what it shows: Edit the typed text, Preview the worked-out text.
+
+Details are in open item 8.
 
 ---
 
@@ -234,7 +256,9 @@ Details are in open item 7.
   - The summary next to a prompt names its trigger if it has one (e.g. "Relative · Normal"), says "2 triggers" if it has several, and shows nothing if it has none.
   - No hover (narrow layout or touch screen): tap the gap between two prompts to show "Add prompt here", then tap that to add a prompt.
   - Obsidian mobile: Undo and Redo buttons in the tab header (E-6). The mockup has none.
-  - Preview: placeholders with settings show their role, not "Inserted" (V-9). Chat History is a shaded block that holds the in-chat prompts, and each in-chat prompt has a tag saying where it goes (V-7). This follows the owner's Chat History mockup. There is no engine switch and no "Not run by Legacy" note (V-6). "Worked-out value" waits for 1.2.
+  - _(1.3)_ The editor follows the "Outline" design in `UI design mock/main editor tweak/`: folding prompts and a "Find in prompts" search bar (3.10).
+  - _(1.3)_ Variables panel: no hint line at the top ("In the order they were first used…").
+  - Preview: placeholders with settings show their role, not "Inserted" (V-9). Chat History is a shaded block that holds the in-chat prompts, and each in-chat prompt has a tag saying where it goes (V-7). This follows the owner's Chat History mockup. There is no engine switch and no "Not run by Legacy" note (V-6).
 
 ## 5. Quality
 
@@ -248,17 +272,28 @@ Details are in open item 7.
 
 1. **Library panel:** design and behaviour. Needs a mockup. (1.4)
 2. **New preset from the command palette:** which folder does it go in when there are several preset folders? (1.4)
-3. **Moving prompts:** (1.5)
+3. **Moving and selecting prompts:** (1.5)
    - Cut and paste, or drag and drop?
    - Which kinds of prompt can be moved? Only custom ones?
    - What if the other preset already has that prompt?
    - Where does it land?
    - Does Undo bring back a cut prompt?
+   - Select mode (M-2): where is its button, and how are prompts picked?
+   - Can every kind of prompt be picked, or only ones that can be deleted or moved?
+   - Is deleting several prompts one Undo step?
+   - Needs a mockup?
 4. ~~**Undo on mobile:** what it looks like, and which version it comes in.~~ Settled: see E-6. (1.0)
 6. ~~**Starting values of local variables:** in SillyTavern, local variables live in the chat and carry over from earlier replies. The Preview has no chat. Do they start empty every time?~~ Settled: see V-11. (1.2)
-7. **Closing tags:** (version to be set)
-   - Which version?
-   - Does typing `{{` also add `}}`?
-   - Which macros close by themselves: only `{{if}}`, or every macro that can wrap text?
-   - Should W-4 also work for `{{if}}` and `{{/if}}`?
+7. **Closing tags:** (1.3)
+   - ~~Does typing `{{` also add `}}`?~~ Settled: yes (W-1).
+   - ~~Which macros close by themselves: only `{{if}}`, or every macro that can wrap text?~~ Settled: only `{{if}}`, as a trial (W-1).
+   - ~~Should W-4 also work for `{{if}}` and `{{/if}}`?~~ Settled: no, the macro colour is enough (W-4).
+   - ~~Settings (W-5): one switch for all closing help, or one switch for each kind?~~ Settled: one switch, "Auto complete" (W-5).
+8. **Folding and search:** (1.3)
+   - ~~Collapsible prompts, visual folders, or both?~~ Settled: the new mockup's folding prompts and search (C-1, C-4). Dividers are dropped.
+   - ~~Can several prompts be open at once, or only one?~~ Settled: only one (C-5).
+   - ~~Can prompts still be dragged in the main list, or only in the Order panel?~~ Settled: only in the Order panel (E-2).
+   - ~~Is the open prompt remembered when the preset is reopened?~~ Settled: no, every prompt starts folded (C-6).
+   - ~~Does search also look in Preview?~~ Settled: yes (C-4).
+   - ~~In Preview, does search find the typed text or the worked-out text?~~ Settled: each view searches what it shows (C-4).
 5. ~~**In-chat prompts in the Preview:** does "roughly where SillyTavern would put them" mean grouped around the Chat History placeholder, in SillyTavern's order?~~ Settled: see V-7. (1.1)

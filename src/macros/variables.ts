@@ -89,4 +89,9 @@ export class LocalVariables {
 		if (this.has(name)) delete this.vars[name];
 		return '';
 	}
+
+	/** The variables that hold a value. */
+	names(): string[] {
+		return Object.keys(this.vars);
+	}
 }

@@ -1,17 +1,18 @@
 <script lang="ts">
-	import { assemble, type PreviewBlock } from '../assemble';
-	import { workOutMacros, type WorkedOut } from '../macros';
-	import type { Sizes, UiRow } from './types';
+	import type { PreviewBlock } from '../assemble';
+	import type { WorkedOut } from '../macros';
+	import { markParts } from '../search';
+	import type { Sizes } from './types';
 
 	interface Props {
-		rows: UiRow[];
+		/** The full prompt, put together by the editor (V-1, V-4). */
+		blocks: PreviewBlock<WorkedOut>[];
 		sizes: Sizes;
+		/** C-4: the search, already normalised ('' = none). Matches are highlighted. */
+		query: string;
 		onjump: (id: string) => void;
 	}
-	let { rows, sizes, onjump }: Props = $props();
-
-	// V-4: macros are worked out with SillyTavern's New engine (V-6).
-	const blocks = $derived(assemble(rows, workOutMacros));
+	let { blocks, sizes, query, onjump }: Props = $props();
 
 	const ROLE_DOT: Record<string, string> = {
 		system: 'var(--text-faint)',
@@ -52,15 +53,15 @@
 			<!-- V-7: the chat history is one shaded block that holds the in-chat prompts. -->
 			<div class="history-slot">
 				<div class="history">
-					<div class="blk">{@render block(b)}</div>
+					<div class="blk" data-pv={b.id}>{@render block(b)}</div>
 					{#each b.inChat as p, j (j)}
-						<div class="blk">{@render block(p)}</div>
+						<div class="blk" data-pv={p.id}>{@render block(p)}</div>
 					{/each}
 					{#if b.inChat.length}<div class="history-end">End of chat history</div>{/if}
 				</div>
 			</div>
 		{:else}
-			<div class="blk">{@render block(b)}</div>
+			<div class="blk" data-pv={b.id}>{@render block(b)}</div>
 		{/if}
 	{/each}
 </div>
@@ -78,7 +79,7 @@
 	<div class="content">
 		{#if b.type === 'text'}
 			<!-- V-11: a variable that isn't set shows the "empty" tag. -->
-			<div class="txt">{#each b.text.parts as p}{#if p.value && !p.text}<span class="empty">empty</span>{:else}<span class:val={p.value} class:kept={p.kept}>{p.text}</span>{/if}{/each}</div>
+			<div class="txt">{#each markParts(b.text.parts, query) as p}{#if p.value && !p.text}<span class="empty">empty</span>{:else}<span class:val={p.value} class:kept={p.kept} class:pe-hit={p.hit}>{p.text}</span>{/if}{/each}</div>
 		{:else}
 			<div class="ph-line">
 				<div class="ph">{b.name}</div>
@@ -257,6 +258,18 @@
 		padding: 0 2px;
 		border-radius: 3px;
 		background: var(--pe-val-bg);
+	}
+	/* A search match can split a value in two; keep it looking like one. */
+	.val + .val {
+		padding-left: 0;
+	}
+	.val:has(+ .val) {
+		padding-right: 0;
+	}
+	/* C-4: search matches. */
+	.pe-hit {
+		background: var(--pe-hit);
+		border-radius: 2px;
 	}
 	.empty {
 		padding: 0 4px;

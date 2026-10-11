@@ -24,7 +24,11 @@ export class PresetEditorView extends FileView {
 	/** The file's text as last read or written by this view. */
 	private diskText = '';
 
-	constructor(leaf: WorkspaceLeaf) {
+	constructor(
+		leaf: WorkspaceLeaf,
+		/** W-5: the "Auto complete" setting when the editor opens. */
+		private readonly autoComplete: () => boolean,
+	) {
 		super(leaf);
 		// E-6: one undo timeline for the whole preset, text boxes included.
 		this.scope = new Scope(this.app.scope);
@@ -36,6 +40,13 @@ export class PresetEditorView extends FileView {
 		this.scope.register(['Mod'], 'z', run((e) => e.undo()));
 		this.scope.register(['Mod', 'Shift'], 'z', run((e) => e.redo()));
 		this.scope.register(['Mod'], 'y', run((e) => e.redo()));
+		// C-4: Ctrl+F opens "Find in prompts" while the Preset Editor is in use.
+		this.scope.register(['Mod'], 'f', run((e) => e.openSearch()));
+		// Esc only acts while this tab is in use (DECISIONS.md, 2026-10-11). Obsidian still gets the key too.
+		this.scope.register([], 'Escape', () => {
+			this.editor?.escape();
+			return true;
+		});
 	}
 
 	getViewType(): string {
@@ -90,7 +101,10 @@ export class PresetEditorView extends FileView {
 		this.contentEl.empty();
 		this.contentEl.setCssStyles({ padding: '0', overflow: 'hidden' });
 		const header = this.containerEl.querySelector<HTMLElement>('.view-header .view-actions') ?? this.contentEl;
-		this.editor = mountEditor(this.contentEl, header, doc, file.basename, { undoButton: Platform.isMobile });
+		this.editor = mountEditor(this.contentEl, header, doc, file.basename, {
+			undoButton: Platform.isMobile,
+			autoComplete: this.autoComplete(),
+		});
 	}
 
 	async onUnloadFile(_file: TFile): Promise<void> {
@@ -117,6 +131,11 @@ export class PresetEditorView extends FileView {
 		this.editor?.destroy();
 		this.contentEl.empty();
 		this.doc = this.autosave = this.editor = this.stopListening = null;
+	}
+
+	/** W-5: the "Auto complete" setting changed. */
+	setAutoComplete(on: boolean): void {
+		this.editor?.setAutoComplete(on);
 	}
 
 	async onRename(file: TFile): Promise<void> {

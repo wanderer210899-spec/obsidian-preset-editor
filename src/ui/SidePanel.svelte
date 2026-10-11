@@ -1,21 +1,27 @@
 <script lang="ts">
 	import { kindOf } from '../kinds';
+	import type { VariableInfo } from '../variables';
 	import { sortable } from './actions';
 	import Grip from './Grip.svelte';
 	import Segmented from './Segmented.svelte';
 	import type { EditorDocument, Sizes, Tab, UiRow } from './types';
+	import VariablesPanel from './VariablesPanel.svelte';
 
 	interface Props {
 		doc: EditorDocument;
 		rows: UiRow[];
+		/** SRS 3.5 */
+		vars: VariableInfo[];
 		sizes: Sizes;
 		tab: Tab;
 		flash: string | null;
+		/** C-5: the prompt that's open in the editor is marked here too. */
+		openId: string | null;
 		onpicktab: (tab: Tab) => void;
 		onjump: (id: string) => void;
 		onclose: () => void;
 	}
-	let { doc, rows, sizes, tab, flash, onpicktab, onjump, onclose }: Props = $props();
+	let { doc, rows, vars, sizes, tab, flash, openId, onpicktab, onjump, onclose }: Props = $props();
 </script>
 
 <div class="hd" style:height={sizes.narrow ? '56px' : '48px'}>
@@ -23,7 +29,7 @@
 		fill
 		options={[
 			{ value: 'order' as Tab, label: 'Order', count: rows.length },
-			{ value: 'vars' as Tab, label: 'Variables', count: '' },
+			{ value: 'vars' as Tab, label: 'Variables', count: vars.length },
 		]}
 		value={tab}
 		onpick={onpicktab}
@@ -40,8 +46,14 @@
 	<div class="hint">Drag a handle to reorder · {sizes.narrow ? 'tap' : 'click'} a name to jump to it</div>
 	<div class="list" use:sortable={{ handle: '.pe-grip', onMove: (id, to) => doc.move(id, to) }}>
 		{#each rows as row, i (row.id)}
-			<div class="orow" class:flash={flash === row.id} data-row={row.id} style:height={sizes.oRowH}>
-				<Grip plain width={sizes.gripW} height="100%" />
+			<div
+				class="orow"
+				class:flash={flash === row.id}
+				class:open={openId === row.id}
+				data-row={row.id}
+				style:height={sizes.oRowH}
+			>
+				<Grip width={sizes.gripW} height="100%" />
 				<span class="n">{i + 1}</span>
 				<div
 					class="name"
@@ -68,8 +80,7 @@
 		{/each}
 	</div>
 {:else}
-	<!-- Variables tab: logic arrives in 1.1+ (SRS 3.5); what 1.0 shows is open item 5. -->
-	<div class="list vars"></div>
+	<VariablesPanel {vars} narrow={sizes.narrow} {onjump} />
 {/if}
 
 <style>
@@ -102,9 +113,6 @@
 		overscroll-behavior: contain;
 		padding: 0 8px 16px;
 	}
-	.list.vars {
-		padding: 2px 16px 24px;
-	}
 	.orow {
 		display: flex;
 		align-items: center;
@@ -116,8 +124,12 @@
 	.orow:hover {
 		background: var(--background-modifier-hover);
 	}
-	.orow.flash {
+	.orow.flash,
+	.orow.open {
 		background: var(--background-modifier-active-hover);
+	}
+	:global(.pe-drag-clone) {
+		opacity: 0 !important;
 	}
 	.orow:global(.pe-lifted) {
 		background: var(--background-primary);
