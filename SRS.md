@@ -1,6 +1,6 @@
 # Preset Editor: Software Requirements Specification
 
-Draft 0.6 · 11 October 2026
+Draft 0.7 · 11 October 2026
 
 Follows SRS standard principles: https://www.computer.org/resources/software-requirements-specifications#requirements-fundamentals
 
@@ -28,7 +28,7 @@ Each version adds one feature on top of the last.
 | ------- | ----------------------------------------------------------------------------------------- | ----------- |
 | 1.0     | The editor screen from the mockup: open a preset, edit its prompts, save automatically. Undo and Redo. | Done        |
 | 1.1     | Preview: the full prompt in order. Macros stay as typed.                                  | Done        |
-| 1.2     | Macro engine: variables and `{{if}}`/`{{else}}` worked out, with SillyTavern's New engine. | Planned     |
+| 1.2     | Macro engine: variables and `{{if}}`/`{{else}}` worked out, with SillyTavern's New engine. | Done        |
 | 1.3     | Variables panel.                                                                          | Planned     |
 | 1.4     | Library panel, with New preset and rename. Ribbon button and plugin shortcuts.            | Planned     |
 | 1.5     | Move prompts between presets.                                                             | Planned     |
@@ -44,13 +44,15 @@ Each version adds one feature on top of the last.
 - Any link to a SillyTavern install. The plugin only works on files in the Obsidian vault.
 - Global variables.
 
-### 1.3 Where things stand (10 October 2026)
+### 1.3 Where things stand (11 October 2026)
 
 **1.0 is done** (v1.0.0). A preset edited in the plugin was loaded into SillyTavern, and every change came across. Undo and Redo (E-6) were checked on a phone.
 
 **1.1 is done** (v1.1.0). The Preview shows the full prompt in SillyTavern's order, with in-chat prompts inside the Chat History block. Checked in light and dark, wide and on a phone. It also holds fix 1.0.1 (E-5: switching to In-chat saves a depth and order). That fix was not released on its own.
 
-- Built: everything marked 1.0 and 1.1 below.
+**1.2 is done** (v1.2.0). The Preview works out local variables, `{{if}}`/`{{else}}` and simple text macros with a port of SillyTavern's New macro engine. Everything else stays as typed, and an `{{if}}` that can't be decided stays as typed, whole. Checked by the owner on desktop and mobile.
+
+- Built: everything marked 1.0, 1.1 and 1.2 below.
 - The Variables panel is there, but empty. Its content comes in 1.3.
 - Dragging (Q-1) was checked on a phone, through a test copy of Obsidian.
 - Not yet checked: a full test in the Obsidian phone app. This can only happen once the plugin can be installed. Scrolling, for example, feels different in the test copy.
