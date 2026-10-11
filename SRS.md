@@ -51,9 +51,9 @@ Each version adds one feature on top of the last.
 
 **1.2 is done** (v1.2.0). The Preview works out local variables, `{{if}}`/`{{else}}` and simple text macros with a port of SillyTavern's New macro engine. Everything else stays as typed, and an `{{if}}` that can't be decided stays as typed, whole. Checked by the owner on desktop and mobile.
 
-**1.3 is in progress.** Folding prompts and search (3.10) are built and checked by the owner. Still to come: closing tags (3.9) and the Variables panel (3.5).
+**1.3 is in progress.** Folding prompts and search (3.10) and closing tags (3.9) are built and checked by the owner. Still to come: the Variables panel (3.5).
 
-- Built: everything marked 1.0, 1.1 and 1.2 below, plus 3.10.
+- Built: everything marked 1.0, 1.1 and 1.2 below, plus 3.9 and 3.10.
 - The Variables panel is there, but empty. Its content comes in 1.3.
 - Dragging (Q-1) was checked on a phone, through a test copy of Obsidian.
 - Not yet checked: a full test in the Obsidian phone app. This can only happen once the plugin can be installed. Scrolling, for example, feels different in the test copy.
