@@ -1,6 +1,6 @@
 # Preset Editor: Software Requirements Specification
 
-Draft 0.9 · 11 October 2026
+Draft 0.10 · 11 October 2026
 
 Follows SRS standard principles: https://www.computer.org/resources/software-requirements-specifications#requirements-fundamentals
 
@@ -218,10 +218,13 @@ In 1.0 the panel is empty.
 
 Help with closing tags while typing prompt text. No suggestion lists: they would clutter the screen on mobile.
 
-- **W-1.** A scoped macro closes by itself: finishing `{{if …}}` adds `{{/if}}`.
+- **W-1.** Macros close by themselves.
+  - Typing `{{` adds `}}`, with the cursor in between.
+  - Finishing `{{if …}}` adds `{{/if}}`. Only `{{if}}` does this, as a trial. Other macros that can wrap text, like `{{trim}}`, may join later.
 - **W-2.** An XML tag closes by itself: typing `<rules>` adds `</rules>`.
 - **W-3.** Renaming an XML tag renames its partner too.
-- **W-4.** The matching XML tag shows when the cursor is in a tag.
+- **W-4.** The matching tag shows when the cursor is in a tag. This works for XML tags, and for `{{if}}` and `{{/if}}`.
+- **W-5.** The closing help (W-1, W-2, W-3) can be switched off in the plugin settings.
 
 Details are in open item 7.
 
@@ -279,9 +282,10 @@ Details are in open item 8.
 4. ~~**Undo on mobile:** what it looks like, and which version it comes in.~~ Settled: see E-6. (1.0)
 6. ~~**Starting values of local variables:** in SillyTavern, local variables live in the chat and carry over from earlier replies. The Preview has no chat. Do they start empty every time?~~ Settled: see V-11. (1.2)
 7. **Closing tags:** (1.3)
-   - Does typing `{{` also add `}}`?
-   - Which macros close by themselves: only `{{if}}`, or every macro that can wrap text?
-   - Should W-4 also work for `{{if}}` and `{{/if}}`?
+   - ~~Does typing `{{` also add `}}`?~~ Settled: yes (W-1).
+   - ~~Which macros close by themselves: only `{{if}}`, or every macro that can wrap text?~~ Settled: only `{{if}}`, as a trial (W-1).
+   - ~~Should W-4 also work for `{{if}}` and `{{/if}}`?~~ Settled: yes (W-4).
+   - Settings (W-5): one switch for all closing help, or one switch for each kind?
 8. **Folding and search:** (1.3)
    - ~~Collapsible prompts, visual folders, or both?~~ Settled: the new mockup's folding prompts and search (C-1, C-4). Dividers are dropped.
    - ~~Can several prompts be open at once, or only one?~~ Settled: only one (C-5).

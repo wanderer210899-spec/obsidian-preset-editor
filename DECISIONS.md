@@ -4,6 +4,16 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-11 · Closing tags details
+
+**Decision:**
+- Typing `{{` adds `}}`, with the cursor in between.
+- Only `{{if}}` closes by itself: finishing `{{if mood}}` adds `{{/if}}`. This is a trial. Other macros that can wrap text, like `{{trim}}`, stay as they are for now.
+- With the cursor on `{{if}}`, its `{{/if}}` is marked too, as XML tags are.
+- The closing help can be switched off in the plugin settings.
+
+**Context:** SRS open item 7, before building closing tags on `feature/1.3-closing-tags`.
+
 ## 2026-10-11 · Select mode joins 1.5
 
 **Decision:** Version 1.5 gets a select mode, next to moving prompts between presets. A button turns it on, and several prompts can then be picked at once. The picked prompts can be deleted together, or moved to another preset together. It must work on desktop and mobile. Details are still open (SRS M-2, open item 3).
