@@ -9,11 +9,12 @@
 	import { toggleOpen } from './folding';
 	import PreviewPane from './PreviewPane.svelte';
 	import SearchBar from './SearchBar.svelte';
+	import { PickedActions } from './select-actions';
 	import { editSearchables, previewSearchables } from './searchables';
 	import Segmented from './Segmented.svelte';
 	import SidePanel from './SidePanel.svelte';
 	import { setTextSettings } from './text-settings';
-	import { type EditorDocument, type Mode, type SaveState, sizesFor, type Tab } from './types';
+	import { type EditorDocument, type Mode, type Notify, type PresetPort, type SaveState, sizesFor, type Tab } from './types';
 
 	interface Props {
 		doc: EditorDocument;
@@ -24,8 +25,12 @@
 		undoButton: boolean;
 		/** W-5: close tags while typing. */
 		autoComplete: boolean;
+		/** M-1: the other presets, for Copy to… and Move to…. */
+		presets: PresetPort;
+		/** M-7: shows a message in Obsidian's message box. */
+		notify: Notify;
 	}
-	let { doc, header, title, undoButton, autoComplete: startAutoComplete }: Props = $props();
+	let { doc, header, title, undoButton, autoComplete: startAutoComplete, presets, notify }: Props = $props();
 
 	let rows = $state(untrack(() => doc.rows()));
 	let shownTitle = $state(untrack(() => title));
@@ -47,6 +52,9 @@
 	let canUndo = $state(untrack(() => doc.canUndo()));
 	let canRedo = $state(untrack(() => doc.canRedo()));
 	let autoComplete = $state(untrack(() => startAutoComplete));
+	/** SRS 3.7: select mode's actions and messages. */
+	const actions = untrack(() => new PickedActions(doc, presets, notify, () => undo()));
+	let sidePanel = $state<SidePanel>();
 	setTextSettings({
 		get autoComplete() {
 			return autoComplete;
@@ -92,6 +100,7 @@
 			rows = doc.rows();
 			canUndo = doc.canUndo();
 			canRedo = doc.canRedo();
+			actions.changed();
 		});
 		const ro = new ResizeObserver(([entry]) => {
 			const n = (entry?.contentRect.width ?? 0) < 760;
@@ -248,6 +257,7 @@
 
 	/** Esc, while the Preset Editor is the tab in use. */
 	export function escape() {
+		if (sidePanel?.escape()) return;
 		pop = null;
 		drawer = false;
 		closeSearch();
@@ -379,7 +389,10 @@
 		{/if}
 		<div class="panel" class:narrow class:hidden={!narrow && !panelOpen} class:open={drawer}>
 			<SidePanel
+				bind:this={sidePanel}
 				{doc}
+				{actions}
+				port={presets}
 				{rows}
 				{vars}
 				{sizes}

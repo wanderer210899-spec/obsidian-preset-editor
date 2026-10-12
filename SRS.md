@@ -82,7 +82,7 @@ Each version adds one feature on top of the last.
   - `first draft/`: the editor screen (1.0 to 1.2)
   - `main editor tweak/`: the 1.3 editor changes
   - `library view/B2 · PC (click around)-html/` and `library view/B2 · Phone (tap around, long-press a preset)-html/`: the 1.4 library, wide and narrow. Both can be clicked through and show how it behaves.
-  - Mockups O.1 to O.8: the 1.5 select mode and Copy to…, narrow (O.1 to O.7) and wide (O.8).
+  - Mockups O.1 to O.8: the 1.5 select mode and Copy to…, narrow (O.1 to O.7) and wide (O.8). These are screenshots the owner shared in chat, not files in the folder.
 - **Behaviour:** SillyTavern source code (`/workspace/Sillytavern-reference`)
 - **Platform:** docs.obsidian.md
 - **Ground rules and git rules:** `CLAUDE.md`

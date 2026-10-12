@@ -1,12 +1,14 @@
 /**
  * View module: the Obsidian tab that shows one preset in the editor. It joins
- * the preset, document, autosave and ui modules; none of them know each other.
+ * the preset, document, autosave, prompt-transfer and ui modules; none of them
+ * know each other.
  */
 import { type App, FileView, Notice, Platform, Scope, TFile, type WorkspaceLeaf } from 'obsidian';
 import { Autosave } from '../autosave';
 import { PresetDocument } from '../document';
 import { readPreset, writePreset } from '../preset';
-import { type EditorHandle, mountEditor } from '../ui';
+import { type PresetListEntry, presetPort } from '../prompt-transfer';
+import { type EditorHandle, type Message, type MessageHandle, mountEditor } from '../ui';
 
 export const VIEW_TYPE = 'preset-editor';
 
@@ -26,6 +28,44 @@ export async function openPresetEditor(app: App, file: TFile, newTab = false): P
 	await app.workspace.getLeaf(newTab ? 'tab' : false).setViewState({ type: VIEW_TYPE, state: { file: file.path }, active: true });
 }
 
+export interface ViewDeps {
+	/** W-5: the "Auto complete" setting when the editor opens. */
+	autoComplete: () => boolean;
+	/** M-1: every valid preset in the preset folders. */
+	listPresets: () => Promise<PresetListEntry[]>;
+}
+
+/** The document of an editor tab showing the preset at `path`, if one is open. */
+function openDocument(app: App, path: string): PresetDocument | null {
+	for (const leaf of app.workspace.getLeavesOfType(VIEW_TYPE)) {
+		if (leaf.view instanceof PresetEditorView && leaf.view.file?.path === path) return leaf.view.document;
+	}
+	return null;
+}
+
+/** M-7: messages with an Undo link stay this long. */
+const UNDO_MESSAGE_MS = 10_000;
+
+/** M-7: a message in Obsidian's message box, with its links. Tapping it closes it. */
+function showMessage(message: Message): MessageHandle {
+	const fragment = createFragment((f) => {
+		const row = f.createDiv();
+		row.setCssStyles({ display: 'flex', alignItems: 'center', gap: '16px' });
+		const text = row.createDiv();
+		for (const line of message.lines) text.createDiv({ text: line });
+		for (const link of message.links) {
+			const el = row.createEl('a', { text: link.label, href: '#' });
+			el.setCssStyles({ flex: 'none', fontWeight: '600', color: 'var(--text-accent)', textDecoration: 'none' });
+			el.addEventListener('click', (e) => {
+				e.preventDefault();
+				link.run();
+			});
+		}
+	});
+	const notice = new Notice(fragment, message.links.length ? UNDO_MESSAGE_MS : undefined);
+	return { close: () => notice.hide() };
+}
+
 export class PresetEditorView extends FileView {
 	navigation = true;
 	private doc: PresetDocument | null = null;
@@ -37,8 +77,7 @@ export class PresetEditorView extends FileView {
 
 	constructor(
 		leaf: WorkspaceLeaf,
-		/** W-5: the "Auto complete" setting when the editor opens. */
-		private readonly autoComplete: () => boolean,
+		private readonly deps: ViewDeps,
 	) {
 		super(leaf);
 		// E-6: one undo timeline for the whole preset, text boxes included.
@@ -58,6 +97,11 @@ export class PresetEditorView extends FileView {
 			this.editor?.escape();
 			return true;
 		});
+	}
+
+	/** The open preset's document, so Copy to… and Move to… from another tab can change it (M-1). */
+	get document(): PresetDocument | null {
+		return this.doc;
 	}
 
 	getViewType(): string {
@@ -112,9 +156,24 @@ export class PresetEditorView extends FileView {
 		this.contentEl.empty();
 		this.contentEl.setCssStyles({ padding: '0', overflow: 'hidden' });
 		const header = this.containerEl.querySelector<HTMLElement>('.view-header .view-actions') ?? this.contentEl;
+		const app = this.app;
+		const port = presetPort(
+			{
+				app,
+				listPresets: this.deps.listPresets,
+				openDocument: (path) => openDocument(app, path),
+				openPreset: (path) => {
+					const target = app.vault.getFileByPath(path);
+					if (target) void openPresetEditor(app, target, true);
+				},
+			},
+			() => this.file?.path,
+		);
 		this.editor = mountEditor(this.contentEl, header, doc, file.basename, {
 			undoButton: Platform.isMobile,
-			autoComplete: this.autoComplete(),
+			autoComplete: this.deps.autoComplete(),
+			presets: port,
+			notify: showMessage,
 		});
 	}
 
