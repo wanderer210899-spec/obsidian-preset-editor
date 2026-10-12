@@ -4,6 +4,17 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-12 · Library panel: open, menu, rename, select, delete
+
+**Decision:**
+- A click or tap on a preset always opens it. Rename lives in the "⋯" menu. Picking Rename turns the name into a text box in the row. Enter saves, Esc cancels. A name already used in that folder shows a small red warning.
+- Move to… and Delete are in the "⋯" menu. On desktop the "⋯" shows when the mouse is over a row, and right-click opens the same menu, as in Obsidian. On a phone the "⋯" always shows and opens a sheet from the bottom.
+- Delete always asks first, and says the preset goes to Obsidian's trash.
+- Picking several presets works the same way the prompt select mode will (M-2, 1.5), so it's only learned once. A "Select" button sits next to Sort. Circles show up, and a bar offers Move to… and Delete. On a phone, pressing and holding a preset also starts it.
+- The library follows the two clickable B2 mockups: "B2 · PC" and "B2 · Phone". They replace the first B2 as the reference. They also set the sort choices (Last edited, Name A to Z, Most prompts) and the folder list for New preset and Move to….
+
+**Context:** Follow-up questions after the library was set to design B2. Clicking to open and clicking the name to rename clashed, mainly on a phone. The first B2 had no menu and no phone version, so the owner got both mockups from the designer.
+
 ## 2026-10-12 · Library panel: design B2 and first rules
 
 **Decision:**
