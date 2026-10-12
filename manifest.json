@@ -1,8 +1,8 @@
 {
 	"id": "obsidian-preset-editor",
 	"name": "Preset Editor",
-	"version": "1.3.0",
-	"minAppVersion": "1.4.10",
+	"version": "1.4.0",
+	"minAppVersion": "1.8.7",
 	"description": "Edit the prompts in SillyTavern Chat Completion preset files.",
 	"author": "",
 	"isDesktopOnly": false

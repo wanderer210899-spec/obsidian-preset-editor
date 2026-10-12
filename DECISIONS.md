@@ -4,6 +4,60 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-12 · Library panel accepted on a first look; real use after 1.5
+
+**Decision:**
+- The owner looked at the library on a phone and on a PC, without real use yet. Everything seemed in order for this build. It merges into the 1.4 version branch.
+- After 1.5, the plugin is ready for testing in real use. Changes may come up from that.
+- Proposed with the build and not changed by the owner:
+  - New preset from the command palette, outside the library, shows Obsidian's folder list, then opens the new preset in a new tab.
+  - Clicking a preset that's already open goes to its tab instead of opening a second one.
+  - Recent and sort are remembered on each device separately.
+  - The phone layout starts below 600px wide.
+  - The phone tip ("press and hold…") goes away after the first press and hold.
+  - Moving into a folder that already has a preset with the same name leaves that preset where it is, with a message saying why.
+  - A preset folder inside another preset folder shows once, inside the outer one.
+  - With no preset folders set, the library says "No preset folders yet. Add one in the plugin settings."
+  - Deleting several presets asks once for each, as Obsidian's file list does. "Don't ask again" in Obsidian's box also applies here.
+
+**Context:** First build of the library on `feature/1.4-library`.
+
+## 2026-10-12 · Library panel: last details, then build
+
+**Decision:**
+- The desktop "⋯" menu has no plain "Open". A click already opens a preset.
+- Short messages use Obsidian's normal message box, not the mockup's dark bar.
+- Delete uses Obsidian's own delete box and message, and follows Obsidian's settings for deleted files. This replaces the mockup's "goes to Obsidian's trash" box.
+- The plugin doesn't make folders. New folders are made in Obsidian.
+- Build first, then tweak. The library must stay a separate module, so it's easy to change.
+
+**Context:** Last open questions after the B2 PC and Phone mockups.
+
+## 2026-10-12 · Library panel: open, menu, rename, select, delete
+
+**Decision:**
+- A click or tap on a preset always opens it. Rename lives in the "⋯" menu. Picking Rename turns the name into a text box in the row. Enter saves, Esc cancels. A name already used in that folder shows a small red warning.
+- Move to… and Delete are in the "⋯" menu. On desktop the "⋯" shows when the mouse is over a row, and right-click opens the same menu, as in Obsidian. On a phone the "⋯" always shows and opens a sheet from the bottom.
+- Delete always asks first, and says the preset goes to Obsidian's trash.
+- Picking several presets works the same way the prompt select mode will (M-2, 1.5), so it's only learned once. A "Select" button sits next to Sort. Circles show up, and a bar offers Move to… and Delete. On a phone, pressing and holding a preset also starts it.
+- The library follows the two clickable B2 mockups: "B2 · PC" and "B2 · Phone". They replace the first B2 as the reference. They also set the sort choices (Last edited, Name A to Z, Most prompts) and the folder list for New preset and Move to….
+
+**Context:** Follow-up questions after the library was set to design B2. Clicking to open and clicking the name to rename clashed, mainly on a phone. The first B2 had no menu and no phone version, so the owner got both mockups from the designer.
+
+## 2026-10-12 · Library panel: design B2 and first rules
+
+**Decision:**
+- The library follows design B2 (`UI design mock/library view/`): one list grouped by folder, recent presets on top, folders folded. Design A (folder column plus list) is not used. B2 replaces the earlier B.
+- New preset asks which folder it goes in. A preset is never made without a folder. This settles SRS open item 2.
+- A preset can easily be moved to another folder.
+- Clicking a preset opens it in a new tab.
+- Clicking a preset's name in the library renames it. Renaming in the editor works already.
+- Several presets can be picked at once, then moved or deleted together.
+- Search looks at preset names only.
+- Sorting follows the mockup.
+
+**Context:** A and B were compared before 1.4. A doesn't clash with Obsidian's file list, but it shows a second folder list next to it. A also needs a separate phone design. B fits a phone as one list and is simpler to build. The owner then supplied B2. Open details are in SRS open item 1.
+
 ## 2026-10-11 · No hint line in the Variables panel
 
 **Decision:** The Variables panel drops the mockup's hint line at the top ("In the order they were first used. Every variable starts empty. Click a prompt to jump to it."). The list starts straight away. Recorded in SRS I-4.

@@ -1,6 +1,6 @@
 # Preset Editor: Software Requirements Specification
 
-Draft 0.11 · 11 October 2026
+Draft 0.12 · 12 October 2026
 
 Follows SRS standard principles: https://www.computer.org/resources/software-requirements-specifications#requirements-fundamentals
 
@@ -30,7 +30,7 @@ Each version adds one feature on top of the last.
 | 1.1     | Preview: the full prompt in order. Macros stay as typed.                                  | Done        |
 | 1.2     | Macro engine: variables and `{{if}}`/`{{else}}` worked out, with SillyTavern's New engine. | Done        |
 | 1.3     | Variables panel. Closing tags while typing (3.9). Folding prompts and search (3.10).      | Done        |
-| 1.4     | Library panel, with New preset and rename. Ribbon button and plugin shortcuts.            | Planned     |
+| 1.4     | Library panel: New preset, rename, move and delete presets, one or several at once. Ribbon button and plugin shortcuts. | Done        |
 | 1.5     | Move prompts between presets. Select several prompts at once (M-2).                       | Planned     |
 | Later   | Snapshots or version history.                                                             | Planned     |
 
@@ -43,7 +43,7 @@ Each version adds one feature on top of the last.
 - Any link to a SillyTavern install. The plugin only works on files in the Obsidian vault.
 - Global variables.
 
-### 1.3 Where things stand (11 October 2026)
+### 1.3 Where things stand (12 October 2026)
 
 **1.0 is done** (v1.0.0). A preset edited in the plugin was loaded into SillyTavern, and every change came across. Undo and Redo (E-6) were checked on a phone.
 
@@ -53,8 +53,11 @@ Each version adds one feature on top of the last.
 
 **1.3 is done** (v1.3.0). The Variables panel (3.5) lists each local variable with its final value and where it is set and read. Closing tags while typing (3.9). Folding prompts and search (3.10). All checked by the owner.
 
-- Built: everything marked 1.0 to 1.3 below.
+**1.4 is done** (v1.4.0). The library panel (3.8). The owner looked at it on desktop and on a phone, without real use yet, and everything seemed in order. From 1.4 the plugin needs Obsidian 1.8.7 or newer.
+
+- Built: everything marked 1.0 to 1.4 below.
 - Dragging (Q-1) was checked on a phone, through a test copy of Obsidian.
+- Real use: after 1.5, the plugin is ready for testing in real use. Changes may come up from that.
 - Not yet checked: a full test in the Obsidian phone app. This can only happen once the plugin can be installed. Scrolling, for example, feels different in the test copy.
 
 ### 1.4 Terms
@@ -78,6 +81,7 @@ Each version adds one feature on top of the last.
 - **Looks:** the mockups in `UI design mock/`. Git doesn't save this folder.
   - `first draft/`: the editor screen (1.0 to 1.2)
   - `main editor tweak/`: the 1.3 editor changes
+  - `library view/B2 · PC (click around)-html/` and `library view/B2 · Phone (tap around, long-press a preset)-html/`: the 1.4 library, wide and narrow. Both can be clicked through and show how it behaves.
 - **Behaviour:** SillyTavern source code (`/workspace/Sillytavern-reference`)
 - **Platform:** docs.obsidian.md
 - **Ground rules and git rules:** `CLAUDE.md`
@@ -206,15 +210,31 @@ It looks like the Variables tab in the `first draft/` mockup. Until 1.3 the pane
 ### 3.7 Moving and selecting prompts (1.5)
 
 - **M-1.** The user can move a prompt from one preset to another. Cut and paste is the likely way: it works on desktop and mobile. Drag and drop needs both presets side by side, which mobile can't do. Details are in open item 3.
-- **M-2.** A button turns on a select mode, where several prompts can be picked at once. The picked prompts can be deleted together, or moved to another preset together (M-1). Works on desktop and mobile. Details are in open item 3.
+- **M-2.** A button turns on a select mode, where several prompts can be picked at once. The picked prompts can be deleted together, or moved to another preset together (M-1). Works on desktop and mobile. It works the same way as picking presets in the library (L-9), so it only has to be learned once. Details are in open item 3.
 
 ### 3.8 Library panel and New preset (1.4)
 
-- **L-1.** A library panel lists presets, grouped by folder. It has a ribbon button and plugin shortcuts. Design to come (open item 1).
-- **L-2.** Presets can be renamed from the library panel.
+The look follows the two B2 mockups in `UI design mock/library view/`: "B2 · PC" for the wide layout and "B2 · Phone" for the narrow one. The other library designs (A, B, and the first B2) are not used.
+
+- **L-1.** A library tab lists presets, grouped by folder. A "Recent" row on top shows the 4 presets opened last. Folders start folded. A folded folder shows its first few preset names. It has a ribbon button and plugin shortcuts.
+- **L-2.** Rename turns the name into a text box, right in the row. Enter saves, Esc cancels. A name already used in that folder shows a small red warning and isn't saved. (Renaming in the editor already works, F-8.)
 - **L-3.** New preset can be started from the command palette or the library panel.
 - **L-4.** A new preset is called "Untitled preset". If that name is taken: "Untitled preset 1", "Untitled preset 2", and so on.
 - **L-5.** A new preset is a copy of SillyTavern's Default preset with every prompt's text left blank.
+- **L-6.** New preset first asks which folder it goes in ("New preset in…"). A preset is never made without a folder. In the library, the new preset then shows with its name ready to rename.
+- **L-7.** A click or tap on a preset always opens it, in a new tab.
+- **L-8.** "Move to…" lists the preset folders and the folders inside them. The folder it's already in is greyed out.
+- **L-9.** A "Select" button next to Sort starts picking. Circles show on each preset, and a bar offers "Move to…" and "Delete". On a phone, pressing and holding a preset also starts it.
+- **L-10.** Search looks at preset names only. Results show as one list, with each preset's folder.
+- **L-11.** Sort choices: Last edited, Name A to Z, Most prompts.
+- **L-12.** Each preset has a "⋯" menu with Rename, Move to… and Delete. The desktop menu also has "Open in new tab". There is no plain "Open": a click already does that.
+  - Desktop: the "⋯" shows when the mouse is over the row. Right-click opens the same menu, as in Obsidian.
+  - Phone: the "⋯" always shows, and opens a sheet from the bottom.
+- **L-13.** Delete uses Obsidian's own delete box and message. It follows Obsidian's settings for deleted files: Obsidian's trash folder, the computer's trash, or deleted for good. Deleting several presets asks once for each, as Obsidian's file list does.
+- **L-14.** Short messages ("Renamed to …") use Obsidian's normal message box (I-2), not the mockup's dark bar.
+- **L-15.** The plugin doesn't make folders. New folders are made in Obsidian's file list, and then show in the library.
+
+Details are in open item 1.
 
 ### 3.9 Closing tags (1.3)
 
@@ -270,15 +290,26 @@ Details are in open item 8.
 
 ## 6. Open items (to settle later)
 
-1. **Library panel:** design and behaviour. Needs a mockup. (1.4)
-2. **New preset from the command palette:** which folder does it go in when there are several preset folders? (1.4)
+1. **Library panel:** (1.4)
+   - ~~Design?~~ Settled: the B2 mockups (3.8).
+   - ~~Open or rename on click?~~ Settled: a click opens (L-7). Rename is in the menu (L-2, L-12).
+   - ~~Where do move and delete live?~~ Settled: the "⋯" menu (L-12), and select mode for several (L-9).
+   - ~~How is picking several turned on?~~ Settled: a Select button, or press and hold on a phone (L-9).
+   - ~~Deleting: ask first?~~ Settled: always (L-13).
+   - ~~Phone layout?~~ Settled: the B2 Phone mockup.
+   - ~~Sort choices?~~ Settled: L-11.
+   - ~~"Open" in the desktop menu?~~ Settled: removed (L-12).
+   - ~~The mockup's dark message bar, or Obsidian's?~~ Settled: Obsidian's (L-14).
+   - ~~Delete message when Obsidian deletes for good?~~ Settled: Obsidian's own delete box (L-13).
+   - ~~New folders?~~ Settled: made in Obsidian, not the plugin (L-15).
+2. ~~**New preset from the command palette:** which folder does it go in when there are several preset folders?~~ Settled: it asks (L-6). (1.4)
 3. **Moving and selecting prompts:** (1.5)
    - Cut and paste, or drag and drop?
    - Which kinds of prompt can be moved? Only custom ones?
    - What if the other preset already has that prompt?
    - Where does it land?
    - Does Undo bring back a cut prompt?
-   - Select mode (M-2): where is its button, and how are prompts picked?
+   - ~~Select mode (M-2): where is its button, and how are prompts picked?~~ Settled: the same way as in the library (L-9).
    - Can every kind of prompt be picked, or only ones that can be deleted or moved?
    - Is deleting several prompts one Undo step?
    - Needs a mockup?
