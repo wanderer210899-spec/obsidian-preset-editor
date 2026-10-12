@@ -1,6 +1,6 @@
 import { Plugin } from 'obsidian';
 import { registerFileMenu } from './files';
-import { registerLibrary } from './library';
+import { listPresets, registerLibrary } from './library';
 import { SettingsStore, SettingsTab } from './settings';
 import { openPresetEditor, PresetEditorView, VIEW_TYPE } from './view';
 
@@ -15,7 +15,14 @@ export default class PresetEditorPlugin extends Plugin {
 		await this.settings.init();
 		this.addSettingTab(new SettingsTab(this.app, this, this.settings));
 
-		this.registerView(VIEW_TYPE, (leaf) => new PresetEditorView(leaf, () => this.settings.autoComplete));
+		this.registerView(
+			VIEW_TYPE,
+			(leaf) =>
+				new PresetEditorView(leaf, {
+					autoComplete: () => this.settings.autoComplete,
+					listPresets: () => listPresets(this.app, this.settings.presetFolders),
+				}),
+		);
 		// W-5: open editors follow the "Auto complete" switch straight away.
 		this.register(
 			this.settings.onChange(() => {

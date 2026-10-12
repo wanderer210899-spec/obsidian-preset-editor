@@ -22,6 +22,30 @@ export function listFolders(app: App, presetFolders: readonly string[]): { roots
 	return { roots, folders };
 }
 
+/** The list entry for a valid preset file. */
+function entryFor(file: TFile, prompts: number): PresetEntry {
+	return { path: file.path, name: file.basename, folder: file.parent?.path ?? '', mtime: file.stat.mtime, prompts };
+}
+
+function isPresetFile(file: TAbstractFile, presetFolders: readonly string[]): file is TFile {
+	return file instanceof TFile && file.extension === 'json' && isInPresetFolder(file.path, presetFolders);
+}
+
+/**
+ * Every valid preset in the preset folders, read once (SRS F-1, F-3).
+ * The editor's Copy to… and Move to… list them (M-1).
+ */
+export async function listPresets(app: App, presetFolders: readonly string[]): Promise<PresetEntry[]> {
+	const files = app.vault.getFiles().filter((f) => isPresetFile(f, presetFolders));
+	const entries = await Promise.all(
+		files.map(async (f) => {
+			const content = readPreset(await app.vault.cachedRead(f));
+			return content ? entryFor(f, content.order.length) : null;
+		}),
+	);
+	return entries.filter((e) => e !== null);
+}
+
 /**
  * Keeps a list of the valid presets in the preset folders (SRS F-1, F-3),
  * and follows changes made anywhere: the library, the editor, Obsidian's
@@ -80,7 +104,7 @@ export class PresetsIndex {
 	}
 
 	private counts(file: TAbstractFile): file is TFile {
-		return file instanceof TFile && file.extension === 'json' && isInPresetFolder(file.path, this.presetFolders());
+		return isPresetFile(file, this.presetFolders());
 	}
 
 	private async changed(file: TAbstractFile): Promise<void> {
@@ -109,13 +133,7 @@ export class PresetsIndex {
 			this.entries.delete(file.path);
 			return;
 		}
-		this.entries.set(file.path, {
-			path: file.path,
-			name: file.basename,
-			folder: file.parent?.path ?? '',
-			mtime: file.stat.mtime,
-			prompts: content.order.length,
-		});
+		this.entries.set(file.path, entryFor(file, content.order.length));
 	}
 
 	/** Changes often come in bursts (a move, a sync), so the list updates once after them. */

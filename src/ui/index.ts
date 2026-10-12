@@ -4,9 +4,9 @@
  */
 import { mount, unmount } from 'svelte';
 import Editor from './Editor.svelte';
-import type { EditorDocument, SaveState } from './types';
+import type { EditorDocument, Notify, PresetPort, SaveState } from './types';
 
-export type { EditorDocument, SaveState, UiRow } from './types';
+export type { EditorDocument, Message, MessageHandle, PresetPort, SaveState, UiRow } from './types';
 
 export interface EditorHandle {
 	/** E-6: undo or redo one step, showing the prompt it changed. */
@@ -28,6 +28,10 @@ export interface EditorOptions {
 	undoButton: boolean;
 	/** W-5: close tags while typing. */
 	autoComplete: boolean;
+	/** M-1: the other presets, for Copy to… and Move to…. */
+	presets: PresetPort;
+	/** M-7: shows a message in Obsidian's message box. */
+	notify: Notify;
 }
 
 /**
@@ -41,7 +45,7 @@ export function mountEditor(
 	title: string,
 	options: EditorOptions,
 ): EditorHandle {
-	const editor = mount(Editor, { target, props: { doc, header, title, undoButton: options.undoButton, autoComplete: options.autoComplete } });
+	const editor = mount(Editor, { target, props: { doc, header, title, ...options } });
 	return {
 		undo: () => editor.undo(),
 		redo: () => editor.redo(),
