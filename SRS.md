@@ -220,7 +220,7 @@ The look follows the two B2 mockups in `UI design mock/library view/`: "B2 · PC
 - **L-5.** A new preset is a copy of SillyTavern's Default preset with every prompt's text left blank.
 - **L-6.** New preset first asks which folder it goes in ("New preset in…"). A preset is never made without a folder. In the library, the new preset then shows with its name ready to rename.
 - **L-7.** A click or tap on a preset always opens it, in a new tab.
-- **L-8.** "Move to…" lists the preset folders and their folders. The folder it's already in is greyed out.
+- **L-8.** "Move to…" lists the preset folders and the folders inside them. The folder it's already in is greyed out.
 - **L-9.** A "Select" button next to Sort starts picking. Circles show on each preset, and a bar offers "Move to…" and "Delete". On a phone, pressing and holding a preset also starts it.
 - **L-10.** Search looks at preset names only. Results show as one list, with each preset's folder.
 - **L-11.** Sort choices: Last edited, Name A to Z, Most prompts.
