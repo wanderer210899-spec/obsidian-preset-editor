@@ -1,6 +1,6 @@
 # Preset Editor: Software Requirements Specification
 
-Draft 0.12 · 12 October 2026
+Draft 0.13 · 12 October 2026
 
 Follows SRS standard principles: https://www.computer.org/resources/software-requirements-specifications#requirements-fundamentals
 
@@ -31,7 +31,7 @@ Each version adds one feature on top of the last.
 | 1.2     | Macro engine: variables and `{{if}}`/`{{else}}` worked out, with SillyTavern's New engine. | Done        |
 | 1.3     | Variables panel. Closing tags while typing (3.9). Folding prompts and search (3.10).      | Done        |
 | 1.4     | Library panel: New preset, rename, move and delete presets, one or several at once. Ribbon button and plugin shortcuts. | Done        |
-| 1.5     | Move prompts between presets. Select several prompts at once (M-2).                       | Planned     |
+| 1.5     | Select several prompts at once. Copy or move them to another preset, delete them, or drag them together (3.7). | Planned     |
 | Later   | Snapshots or version history.                                                             | Planned     |
 
 **Not planned**
@@ -82,6 +82,7 @@ Each version adds one feature on top of the last.
   - `first draft/`: the editor screen (1.0 to 1.2)
   - `main editor tweak/`: the 1.3 editor changes
   - `library view/B2 · PC (click around)-html/` and `library view/B2 · Phone (tap around, long-press a preset)-html/`: the 1.4 library, wide and narrow. Both can be clicked through and show how it behaves.
+  - Mockups O.1 to O.8: the 1.5 select mode and Copy to…, narrow (O.1 to O.7) and wide (O.8).
 - **Behaviour:** SillyTavern source code (`/workspace/Sillytavern-reference`)
 - **Platform:** docs.obsidian.md
 - **Ground rules and git rules:** `CLAUDE.md`
@@ -207,10 +208,22 @@ It looks like the Variables tab in the `first draft/` mockup. Until 1.3 the pane
 - **S-4.** If the file changes outside the editor while it's open (sync, git, another app), the editor reloads it. Any edit not yet saved is dropped. The file on disk always wins.
 - **S-5.** A status line shows "Saving…", "Saved" or "Not saved". If saving fails, a "Couldn't save" message also shows.
 
-### 3.7 Moving and selecting prompts (1.5)
+### 3.7 Selecting, copying and moving prompts (1.5)
 
-- **M-1.** The user can move a prompt from one preset to another. Cut and paste is the likely way: it works on desktop and mobile. Drag and drop needs both presets side by side, which mobile can't do. Details are in open item 3.
-- **M-2.** A button turns on a select mode, where several prompts can be picked at once. The picked prompts can be deleted together, or moved to another preset together (M-1). Works on desktop and mobile. It works the same way as picking presets in the library (L-9), so it only has to be learned once. Details are in open item 3.
+The look follows mockups O.1 to O.8. Works on desktop and mobile.
+
+- **M-2.** A "Select" button in the Order panel starts select mode. Circles show on every prompt. A bar offers Copy to…, Move to… and Delete. It works the same way as picking presets in the library (L-9), so it only has to be learned once.
+- **M-3.** Dragging one picked prompt moves all the picked prompts. They land together, in the order they were in.
+- **M-1.** Copy to… and Move to… send the picked prompts to another preset.
+  - First pick the preset from a list grouped by folder, with search. The preset you're in is greyed out.
+  - Then tap the spot in that preset where they go.
+  - Move takes them out of this preset. Copy leaves them here too.
+- **M-4.** Only custom prompts are copied, moved or deleted. Picked built-ins and placeholders are skipped, and a message names them. Every preset already has its own (3.3).
+- **M-5.** If the other preset already has the same prompt, a second one is added. Nothing in the other preset is replaced or lost.
+- **M-6.** Undoing a Move to… puts things back as they were. The prompts return to this preset and leave the other one.
+- **M-7.** Messages use Obsidian's normal message box, as in the library (L-14). An Undo or Open link sits inside it. The mockup's dark bar is not used.
+
+Details are in open item 3.
 
 ### 3.8 Library panel and New preset (1.4)
 
@@ -304,15 +317,22 @@ Details are in open item 8.
    - ~~New folders?~~ Settled: made in Obsidian, not the plugin (L-15).
 2. ~~**New preset from the command palette:** which folder does it go in when there are several preset folders?~~ Settled: it asks (L-6). (1.4)
 3. **Moving and selecting prompts:** (1.5)
-   - Cut and paste, or drag and drop?
-   - Which kinds of prompt can be moved? Only custom ones?
-   - What if the other preset already has that prompt?
-   - Where does it land?
-   - Does Undo bring back a cut prompt?
+   - ~~Cut and paste, or drag and drop?~~ Settled: Copy to… and Move to…, with a preset list (M-1).
+   - ~~Which kinds of prompt can be moved? Only custom ones?~~ Settled: only custom ones (M-4).
+   - ~~What if the other preset already has that prompt?~~ Settled: a second one is added (M-5).
+   - ~~Where does it land?~~ Settled: the user taps the spot (M-1).
+   - ~~Does Undo bring back a moved prompt?~~ Settled: yes, and it leaves the other preset (M-6).
    - ~~Select mode (M-2): where is its button, and how are prompts picked?~~ Settled: the same way as in the library (L-9).
-   - Can every kind of prompt be picked, or only ones that can be deleted or moved?
-   - Is deleting several prompts one Undo step?
-   - Needs a mockup?
+   - ~~Can every kind of prompt be picked?~~ Settled: yes, circles show on every prompt (M-2, M-4).
+   - ~~Needs a mockup?~~ Settled: O.1 to O.8.
+   - Is each action (Delete, a group drag, Move to…) one Undo step?
+   - Can Copy to… be undone?
+   - On a phone, does pressing and holding a prompt start select mode, as in the library (L-9)?
+   - Does select mode end after each action? (The mockups show it ending after a drag and after Copy to….)
+   - In the other preset's list, is a spot already chosen before you tap one?
+   - How do the preset list and spot picker look on desktop? There is no wide mockup for them.
+   - Which actions show a message, and what does each say?
+   - Does "Open" in the Copy message open the other preset in a new tab?
 4. ~~**Undo on mobile:** what it looks like, and which version it comes in.~~ Settled: see E-6. (1.0)
 6. ~~**Starting values of local variables:** in SillyTavern, local variables live in the chat and carry over from earlier replies. The Preview has no chat. Do they start empty every time?~~ Settled: see V-11. (1.2)
 7. **Closing tags:** (1.3)

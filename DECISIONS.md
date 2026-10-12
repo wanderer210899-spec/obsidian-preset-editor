@@ -4,6 +4,19 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-12 · Plan 1.5: select, copy, move and delete prompts
+
+**Decision:**
+- 1.5 follows the owner's mockups O.1 to O.8. A "Select" button in the Order panel starts select mode. Circles show on every prompt. A bar offers Copy to…, Move to… and Delete.
+- Prompts go to another preset with Copy to… and Move to…, not cut and paste. Copy is new: the SRS only had Move. First you pick the preset, then you tap the spot where the prompts go. The preset you're in is greyed out.
+- Dragging one picked prompt moves all the picked ones. They land together.
+- Only custom prompts are copied, moved or deleted. Picked built-ins and placeholders are skipped, and a message names them. Every preset already has its own.
+- If the other preset already has the same prompt, a second one is added. Nothing in the other preset is replaced or lost. (SillyTavern's own prompt import replaces it instead.)
+- Undoing a Move to… puts things back as they were: the prompts return to this preset and leave the other one.
+- Messages use Obsidian's normal message box, as in the library (L-14). An Undo or Open link sits inside it. The mockup's dark bar is not used.
+
+**Context:** Starting 1.5. The owner supplied the mockups and asked for bulk select, copy and move to other presets, bulk delete, and moving several prompts around at once. This settles most of SRS open item 3.
+
 ## 2026-10-12 · Library panel accepted on a first look; real use after 1.5
 
 **Decision:**
