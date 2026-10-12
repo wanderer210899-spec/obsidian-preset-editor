@@ -4,6 +4,17 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-12 · Library panel: last details, then build
+
+**Decision:**
+- The desktop "⋯" menu has no plain "Open". A click already opens a preset.
+- Short messages use Obsidian's normal message box, not the mockup's dark bar.
+- Delete uses Obsidian's own delete box and message, and follows Obsidian's settings for deleted files. This replaces the mockup's "goes to Obsidian's trash" box.
+- The plugin doesn't make folders. New folders are made in Obsidian.
+- Build first, then tweak. The library must stay a separate module, so it's easy to change.
+
+**Context:** Last open questions after the B2 PC and Phone mockups.
+
 ## 2026-10-12 · Library panel: open, menu, rename, select, delete
 
 **Decision:**

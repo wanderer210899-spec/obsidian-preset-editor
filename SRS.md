@@ -224,10 +224,12 @@ The look follows the two B2 mockups in `UI design mock/library view/`: "B2 · PC
 - **L-9.** A "Select" button next to Sort starts picking. Circles show on each preset, and a bar offers "Move to…" and "Delete". On a phone, pressing and holding a preset also starts it.
 - **L-10.** Search looks at preset names only. Results show as one list, with each preset's folder.
 - **L-11.** Sort choices: Last edited, Name A to Z, Most prompts.
-- **L-12.** Each preset has a "⋯" menu with Rename, Move to… and Delete.
+- **L-12.** Each preset has a "⋯" menu with Rename, Move to… and Delete. The desktop menu also has "Open in new tab". There is no plain "Open": a click already does that.
   - Desktop: the "⋯" shows when the mouse is over the row. Right-click opens the same menu, as in Obsidian.
   - Phone: the "⋯" always shows, and opens a sheet from the bottom.
-- **L-13.** Delete always asks first. The message says the preset goes to Obsidian's trash.
+- **L-13.** Delete uses Obsidian's own delete box and message. It follows Obsidian's settings for deleted files: Obsidian's trash folder, the computer's trash, or deleted for good. Deleting several presets asks once for each, as Obsidian's file list does.
+- **L-14.** Short messages ("Renamed to …") use Obsidian's normal message box (I-2), not the mockup's dark bar.
+- **L-15.** The plugin doesn't make folders. New folders are made in Obsidian's file list, and then show in the library.
 
 Details are in open item 1.
 
@@ -293,10 +295,10 @@ Details are in open item 8.
    - ~~Deleting: ask first?~~ Settled: always (L-13).
    - ~~Phone layout?~~ Settled: the B2 Phone mockup.
    - ~~Sort choices?~~ Settled: L-11.
-   - The desktop menu has both "Open" and "Open in new tab". What does "Open" do, if a click already opens a new tab?
-   - The mockup's short messages ("Renamed to …") are dark bars at the bottom. I-2 says messages use Obsidian's normal look. Which one?
-   - Obsidian can be set to delete files for good, or send them to the computer's trash. What happens to L-13's message then?
-   - The mockup has no way to make a new folder. Are new folders made in Obsidian's file list?
+   - ~~"Open" in the desktop menu?~~ Settled: removed (L-12).
+   - ~~The mockup's dark message bar, or Obsidian's?~~ Settled: Obsidian's (L-14).
+   - ~~Delete message when Obsidian deletes for good?~~ Settled: Obsidian's own delete box (L-13).
+   - ~~New folders?~~ Settled: made in Obsidian, not the plugin (L-15).
 2. ~~**New preset from the command palette:** which folder does it go in when there are several preset folders?~~ Settled: it asks (L-6). (1.4)
 3. **Moving and selecting prompts:** (1.5)
    - Cut and paste, or drag and drop?
