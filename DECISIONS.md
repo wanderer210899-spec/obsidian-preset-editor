@@ -4,6 +4,21 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-12 · 1.5 details: undo, select mode, spot picker, messages
+
+**Decision:**
+- Each action is one Undo step: Delete, a group drag, or Move to….
+- Copy to… can be undone, but only from the Undo link in its message. Ctrl+Z and the phone Undo button skip it, since the preset you're in didn't change.
+- A copied or moved prompt that was changed in the other preset stays there on Undo. A message names it. Unchanged ones still leave.
+- On a phone, pressing and holding a prompt starts select mode.
+- Select mode ends after every action. If only locked prompts are picked, nothing happens, a message says why, and select mode stays on.
+- In the other preset's list, no spot is chosen until you tap one.
+- On desktop, the preset list and spot picker look the same as on the phone, in a box in the middle of the screen. This matches the library's Move to….
+- Messages follow the list in SRS M-7. One prompt uses its name, several use a count. Single delete and drag outside select mode still show no message.
+- "Open" in the message opens the other preset in a new tab.
+
+**Context:** Detail pass on SRS open item 3, after the 1.5 plan.
+
 ## 2026-10-12 · Plan 1.5: select, copy, move and delete prompts
 
 **Decision:**

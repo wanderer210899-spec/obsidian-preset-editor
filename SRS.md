@@ -213,15 +213,37 @@ It looks like the Variables tab in the `first draft/` mockup. Until 1.3 the pane
 The look follows mockups O.1 to O.8. Works on desktop and mobile.
 
 - **M-2.** A "Select" button in the Order panel starts select mode. Circles show on every prompt. A bar offers Copy to…, Move to… and Delete. It works the same way as picking presets in the library (L-9), so it only has to be learned once.
+  - On a phone, pressing and holding a prompt also starts select mode.
+  - Select mode ends after every action: Copy to…, Move to…, Delete, or a group drag.
 - **M-3.** Dragging one picked prompt moves all the picked prompts. They land together, in the order they were in.
 - **M-1.** Copy to… and Move to… send the picked prompts to another preset.
   - First pick the preset from a list grouped by folder, with search. The preset you're in is greyed out.
-  - Then tap the spot in that preset where they go.
+  - Then tap the spot in that preset where they go. No spot is chosen until you tap one.
   - Move takes them out of this preset. Copy leaves them here too.
+  - On a phone, the list slides up from the bottom (O.5, O.6). On desktop, the same list shows in a box in the middle of the screen, like the library's Move to… (L-8).
 - **M-4.** Only custom prompts are copied, moved or deleted. Picked built-ins and placeholders are skipped, and a message names them. Every preset already has its own (3.3).
+  - If only these are picked, nothing happens and a message says why. Select mode stays on.
 - **M-5.** If the other preset already has the same prompt, a second one is added. Nothing in the other preset is replaced or lost.
-- **M-6.** Undoing a Move to… puts things back as they were. The prompts return to this preset and leave the other one.
+- **M-6.** Undo:
+  - Each action is one Undo step: Delete, a group drag, or Move to….
+  - Undoing a Move to… puts things back as they were. The prompts return to this preset and leave the other one.
+  - Copy to… doesn't change this preset, so Ctrl+Z and the phone Undo button skip it. Only the Undo link in its message undoes it. The copies then leave the other preset.
+  - A copied or moved prompt that was changed in the other preset stays there on Undo. A message names it.
 - **M-7.** Messages use Obsidian's normal message box, as in the library (L-14). An Undo or Open link sits inside it. The mockup's dark bar is not used.
+
+  | Action                | Message                                          | Links      |
+  | --------------------- | ------------------------------------------------ | ---------- |
+  | Delete                | "Deleted 3 prompts"                              | Undo       |
+  | Group drag            | "Moved 3 prompts"                                | Undo       |
+  | Move to…              | "Moved 3 prompts to Narrator, third person"      | Undo, Open |
+  | Copy to…              | "Copied 3 prompts to Narrator, third person"     | Undo, Open |
+  | Some prompts skipped  | Second line: "Main Prompt stays: every preset has its own." More than two: "Main Prompt, Chat History and 2 more stay…" | |
+  | Only locked prompts picked | "Main Prompt can't be copied, moved or deleted." | |
+  | Changed copy stays on Undo | "Pacing rules was changed in Narrator, so it stays there." | |
+
+  - One prompt uses its name: "Deleted Pacing rules".
+  - No message, as now: deleting or dragging one prompt outside select mode, and pressing Undo (the prompt flashes, E-6).
+  - "Open" opens the other preset in a new tab, as in the library (L-7).
 
 Details are in open item 3.
 
@@ -325,14 +347,16 @@ Details are in open item 8.
    - ~~Select mode (M-2): where is its button, and how are prompts picked?~~ Settled: the same way as in the library (L-9).
    - ~~Can every kind of prompt be picked?~~ Settled: yes, circles show on every prompt (M-2, M-4).
    - ~~Needs a mockup?~~ Settled: O.1 to O.8.
-   - Is each action (Delete, a group drag, Move to…) one Undo step?
-   - Can Copy to… be undone?
-   - On a phone, does pressing and holding a prompt start select mode, as in the library (L-9)?
-   - Does select mode end after each action? (The mockups show it ending after a drag and after Copy to….)
-   - In the other preset's list, is a spot already chosen before you tap one?
-   - How do the preset list and spot picker look on desktop? There is no wide mockup for them.
-   - Which actions show a message, and what does each say?
-   - Does "Open" in the Copy message open the other preset in a new tab?
+   - ~~Is each action (Delete, a group drag, Move to…) one Undo step?~~ Settled: yes (M-6).
+   - ~~Can Copy to… be undone?~~ Settled: only from the Undo link in its message (M-6).
+   - ~~On a phone, does pressing and holding a prompt start select mode?~~ Settled: yes (M-2).
+   - ~~Does select mode end after each action?~~ Settled: yes (M-2).
+   - ~~In the other preset's list, is a spot already chosen before you tap one?~~ Settled: no (M-1).
+   - ~~How do the preset list and spot picker look on desktop?~~ Settled: the same list in a box in the middle of the screen (M-1).
+   - ~~Which actions show a message, and what does each say?~~ Settled: M-7.
+   - ~~Does "Open" in the Copy message open the other preset in a new tab?~~ Settled: yes (M-7).
+   - How long does a message with Undo stay on screen? For Copy to…, the link is the only way to undo.
+   - You delete 3 prompts, then type in a prompt, then tap Undo in the "Deleted 3 prompts" message. Does it bring back the 3 prompts, or undo the typing?
 4. ~~**Undo on mobile:** what it looks like, and which version it comes in.~~ Settled: see E-6. (1.0)
 6. ~~**Starting values of local variables:** in SillyTavern, local variables live in the chat and carry over from earlier replies. The Preview has no chat. Do they start empty every time?~~ Settled: see V-11. (1.2)
 7. **Closing tags:** (1.3)
