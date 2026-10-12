@@ -244,6 +244,8 @@ The look follows mockups O.1 to O.8. Works on desktop and mobile.
   - One prompt uses its name: "Deleted Pacing rules".
   - No message, as now: deleting or dragging one prompt outside select mode, and pressing Undo (the prompt flashes, E-6).
   - "Open" opens the other preset in a new tab, as in the library (L-7).
+  - A message with an Undo link stays 10 seconds. Tapping it closes it sooner.
+  - Any new change in this preset closes a Delete, group drag or Move to… message. Ctrl+Z still works step by step. A Copy to… message stays, since copying doesn't change this preset.
 
 Details are in open item 3.
 
@@ -355,8 +357,8 @@ Details are in open item 8.
    - ~~How do the preset list and spot picker look on desktop?~~ Settled: the same list in a box in the middle of the screen (M-1).
    - ~~Which actions show a message, and what does each say?~~ Settled: M-7.
    - ~~Does "Open" in the Copy message open the other preset in a new tab?~~ Settled: yes (M-7).
-   - How long does a message with Undo stay on screen? For Copy to…, the link is the only way to undo.
-   - You delete 3 prompts, then type in a prompt, then tap Undo in the "Deleted 3 prompts" message. Does it bring back the 3 prompts, or undo the typing?
+   - ~~How long does a message with Undo stay on screen?~~ Settled: 10 seconds (M-7).
+   - ~~What does the Undo link do after a later change?~~ Settled: a later change closes the message (M-7).
 4. ~~**Undo on mobile:** what it looks like, and which version it comes in.~~ Settled: see E-6. (1.0)
 6. ~~**Starting values of local variables:** in SillyTavern, local variables live in the chat and carry over from earlier replies. The Preview has no chat. Do they start empty every time?~~ Settled: see V-11. (1.2)
 7. **Closing tags:** (1.3)

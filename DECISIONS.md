@@ -16,6 +16,8 @@ Decisions the product owner has made about how the plugin behaves, with the date
 - On desktop, the preset list and spot picker look the same as on the phone, in a box in the middle of the screen. This matches the library's Move to….
 - Messages follow the list in SRS M-7. One prompt uses its name, several use a count. Single delete and drag outside select mode still show no message.
 - "Open" in the message opens the other preset in a new tab.
+- A message with an Undo link stays 10 seconds, about twice Obsidian's normal time. Tapping it closes it sooner.
+- Any new change in the preset closes a Delete, group drag or Move to… message. Ctrl+Z still works step by step. A Copy to… message stays, since copying doesn't change the preset you're in.
 
 **Context:** Detail pass on SRS open item 3, after the 1.5 plan.
 
