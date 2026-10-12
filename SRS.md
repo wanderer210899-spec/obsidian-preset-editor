@@ -1,6 +1,6 @@
 # Preset Editor: Software Requirements Specification
 
-Draft 0.13 · 12 October 2026
+Draft 0.14 · 12 October 2026
 
 Follows SRS standard principles: https://www.computer.org/resources/software-requirements-specifications#requirements-fundamentals
 
@@ -31,7 +31,7 @@ Each version adds one feature on top of the last.
 | 1.2     | Macro engine: variables and `{{if}}`/`{{else}}` worked out, with SillyTavern's New engine. | Done        |
 | 1.3     | Variables panel. Closing tags while typing (3.9). Folding prompts and search (3.10).      | Done        |
 | 1.4     | Library panel: New preset, rename, move and delete presets, one or several at once. Ribbon button and plugin shortcuts. | Done        |
-| 1.5     | Select several prompts at once. Copy or move them to another preset, delete them, or drag them together (3.7). | Planned     |
+| 1.5     | Select several prompts at once. Copy or move them to another preset, delete them, or drag them together (3.7). | Done        |
 | Later   | Snapshots or version history.                                                             | Planned     |
 
 **Not planned**
@@ -55,9 +55,11 @@ Each version adds one feature on top of the last.
 
 **1.4 is done** (v1.4.0). The library panel (3.8). The owner looked at it on desktop and on a phone, without real use yet, and everything seemed in order. From 1.4 the plugin needs Obsidian 1.8.7 or newer.
 
-- Built: everything marked 1.0 to 1.4 below.
+**1.5 is done** (v1.5.0). Select mode in the Order panel (3.7): copy or move several prompts to another preset, delete them, or drag them together. The owner tested it on desktop and on a phone in the test copy of Obsidian.
+
+- Built: everything marked 1.0 to 1.5 below.
 - Dragging (Q-1) was checked on a phone, through a test copy of Obsidian.
-- Real use: after 1.5, the plugin is ready for testing in real use. Changes may come up from that.
+- Real use: from 1.5, the plugin is ready for testing in real use, installed by hand from a GitHub release. Changes may come up from that.
 - Not yet checked: a full test in the Obsidian phone app. This can only happen once the plugin can be installed. Scrolling, for example, feels different in the test copy.
 
 ### 1.4 Terms
