@@ -10,9 +10,20 @@ import { type EditorHandle, mountEditor } from '../ui';
 
 export const VIEW_TYPE = 'preset-editor';
 
-/** Opens `file` in the Preset Editor, in the current tab. */
-export async function openPresetEditor(app: App, file: TFile): Promise<void> {
-	await app.workspace.getLeaf(false).setViewState({ type: VIEW_TYPE, state: { file: file.path }, active: true });
+/**
+ * Opens `file` in the Preset Editor: in the current tab (F-4), or in a new
+ * tab (L-7). A preset already open in a tab is shown there instead.
+ */
+export async function openPresetEditor(app: App, file: TFile, newTab = false): Promise<void> {
+	if (newTab) {
+		const open = app.workspace.getLeavesOfType(VIEW_TYPE).find((leaf) => leaf.view instanceof PresetEditorView && leaf.view.file === file);
+		if (open) {
+			app.workspace.setActiveLeaf(open, { focus: true });
+			await app.workspace.revealLeaf(open);
+			return;
+		}
+	}
+	await app.workspace.getLeaf(newTab ? 'tab' : false).setViewState({ type: VIEW_TYPE, state: { file: file.path }, active: true });
 }
 
 export class PresetEditorView extends FileView {

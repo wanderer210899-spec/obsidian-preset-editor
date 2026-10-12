@@ -1,5 +1,6 @@
 import { Plugin } from 'obsidian';
 import { registerFileMenu } from './files';
+import { registerLibrary } from './library';
 import { SettingsStore, SettingsTab } from './settings';
 import { openPresetEditor, PresetEditorView, VIEW_TYPE } from './view';
 
@@ -28,6 +29,12 @@ export default class PresetEditorPlugin extends Plugin {
 			() => this.settings.presetFolders,
 			(file) => openPresetEditor(this.app, file),
 		);
+		registerLibrary(this, {
+			presetFolders: () => this.settings.presetFolders,
+			onFoldersChange: (listener) => this.settings.onChange(listener),
+			openPreset: (file) => openPresetEditor(this.app, file, true),
+			editorViewType: VIEW_TYPE,
+		});
 	}
 
 	onunload() {}

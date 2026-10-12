@@ -16,6 +16,15 @@ export interface PresetEntry {
 	prompts: number;
 }
 
+/** What the library shows: the folders and the valid presets in them. */
+export interface LibrarySnapshot {
+	/** Top folders (preset folders from the settings). */
+	roots: string[];
+	/** Every folder inside them, at any depth. */
+	folders: string[];
+	presets: PresetEntry[];
+}
+
 /** L-11: the sort choices, as in the B2 mockups. */
 export type SortKey = 'edited' | 'name' | 'prompts';
 
