@@ -2,6 +2,7 @@
  * Library module (SRS 3.8): the library tab, its ribbon button and commands,
  * and New preset. It links to the rest of the plugin only through what
  * registerLibrary is given, plus the preset reader and the preset-folder check.
+ * It also lists the presets for the editor's Copy to… and Move to… (listPresets).
  */
 import { FileView, Notice, type Plugin, TFile } from 'obsidian';
 import { LibraryActions } from './actions';
@@ -9,6 +10,9 @@ import { folderChoices } from './catalog';
 import { FolderPickModal } from './folder-modal';
 import { LibraryPrefs } from './prefs';
 import { listFolders } from './presets-index';
+
+export { listPresets } from './presets-index';
+export type { PresetEntry } from './catalog';
 import { LIBRARY_VIEW_TYPE, LibraryView } from './view';
 
 export interface LibraryOptions {

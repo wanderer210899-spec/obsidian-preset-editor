@@ -4,6 +4,51 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-12 · Select mode accepted after a first test; merges into 1.5
+
+**Decision:**
+- The owner tested select mode, Copy to…, Move to…, Delete and group drag on a phone and on desktop. Everything worked. It merges into the 1.5 version branch. Real use comes next.
+- Proposed with the build and not changed by the owner:
+  - With one prompt, titles use its name, e.g. "Copy Pacing rules to…".
+  - The preset list is sorted A to Z inside each folder.
+  - Tapping the top half of a row puts the spot above it. The bottom half puts it below.
+  - In select mode, tapping a name picks it instead of jumping to it.
+  - Dragging a prompt that isn't picked moves only that one. Select mode stays on.
+  - Esc closes the preset list. If the list isn't open, Esc ends select mode.
+  - Copies that arrive in a preset open in another tab are one Undo step in that tab.
+
+**Context:** First build of select mode on `feature/1.5-select-prompts`.
+
+## 2026-10-12 · 1.5 details: undo, select mode, spot picker, messages
+
+**Decision:**
+- Each action is one Undo step: Delete, a group drag, or Move to….
+- Copy to… can be undone, but only from the Undo link in its message. Ctrl+Z and the phone Undo button skip it, since the preset you're in didn't change.
+- A copied or moved prompt that was changed in the other preset stays there on Undo. A message names it. Unchanged ones still leave.
+- On a phone, pressing and holding a prompt starts select mode.
+- Select mode ends after every action. If only locked prompts are picked, nothing happens, a message says why, and select mode stays on.
+- In the other preset's list, no spot is chosen until you tap one.
+- On desktop, the preset list and spot picker look the same as on the phone, in a box in the middle of the screen. This matches the library's Move to….
+- Messages follow the list in SRS M-7. One prompt uses its name, several use a count. Single delete and drag outside select mode still show no message.
+- "Open" in the message opens the other preset in a new tab.
+- A message with an Undo link stays 10 seconds, about twice Obsidian's normal time. Tapping it closes it sooner.
+- Any new change in the preset closes a Delete, group drag or Move to… message. Ctrl+Z still works step by step. A Copy to… message stays, since copying doesn't change the preset you're in.
+
+**Context:** Detail pass on SRS open item 3, after the 1.5 plan.
+
+## 2026-10-12 · Plan 1.5: select, copy, move and delete prompts
+
+**Decision:**
+- 1.5 follows the owner's mockups O.1 to O.8. A "Select" button in the Order panel starts select mode. Circles show on every prompt. A bar offers Copy to…, Move to… and Delete.
+- Prompts go to another preset with Copy to… and Move to…, not cut and paste. Copy is new: the SRS only had Move. First you pick the preset, then you tap the spot where the prompts go. The preset you're in is greyed out.
+- Dragging one picked prompt moves all the picked ones. They land together.
+- Only custom prompts are copied, moved or deleted. Picked built-ins and placeholders are skipped, and a message names them. Every preset already has its own.
+- If the other preset already has the same prompt, a second one is added. Nothing in the other preset is replaced or lost. (SillyTavern's own prompt import replaces it instead.)
+- Undoing a Move to… puts things back as they were: the prompts return to this preset and leave the other one.
+- Messages use Obsidian's normal message box, as in the library (L-14). An Undo or Open link sits inside it. The mockup's dark bar is not used.
+
+**Context:** Starting 1.5. The owner supplied the mockups and asked for bulk select, copy and move to other presets, bulk delete, and moving several prompts around at once. This settles most of SRS open item 3.
+
 ## 2026-10-12 · Library panel accepted on a first look; real use after 1.5
 
 **Decision:**
