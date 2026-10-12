@@ -30,7 +30,7 @@ Each version adds one feature on top of the last.
 | 1.1     | Preview: the full prompt in order. Macros stay as typed.                                  | Done        |
 | 1.2     | Macro engine: variables and `{{if}}`/`{{else}}` worked out, with SillyTavern's New engine. | Done        |
 | 1.3     | Variables panel. Closing tags while typing (3.9). Folding prompts and search (3.10).      | Done        |
-| 1.4     | Library panel: New preset, rename, move and delete presets, one or several at once. Ribbon button and plugin shortcuts. | Planned     |
+| 1.4     | Library panel: New preset, rename, move and delete presets, one or several at once. Ribbon button and plugin shortcuts. | Done        |
 | 1.5     | Move prompts between presets. Select several prompts at once (M-2).                       | Planned     |
 | Later   | Snapshots or version history.                                                             | Planned     |
 
@@ -53,7 +53,7 @@ Each version adds one feature on top of the last.
 
 **1.3 is done** (v1.3.0). The Variables panel (3.5) lists each local variable with its final value and where it is set and read. Closing tags while typing (3.9). Folding prompts and search (3.10). All checked by the owner.
 
-**1.4 is built, not yet released.** The library panel (3.8) is built. The owner looked at it on desktop and on a phone, without real use yet, and everything seemed in order.
+**1.4 is done** (v1.4.0). The library panel (3.8). The owner looked at it on desktop and on a phone, without real use yet, and everything seemed in order. From 1.4 the plugin needs Obsidian 1.8.7 or newer.
 
 - Built: everything marked 1.0 to 1.4 below.
 - Dragging (Q-1) was checked on a phone, through a test copy of Obsidian.
