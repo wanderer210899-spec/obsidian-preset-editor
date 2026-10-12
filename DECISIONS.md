@@ -4,6 +4,20 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-12 · Library panel: design B2 and first rules
+
+**Decision:**
+- The library follows design B2 (`UI design mock/library view/`): one list grouped by folder, recent presets on top, folders folded. Design A (folder column plus list) is not used. B2 replaces the earlier B.
+- New preset asks which folder it goes in. A preset is never made without a folder. This settles SRS open item 2.
+- A preset can easily be moved to another folder.
+- Clicking a preset opens it in a new tab.
+- Clicking a preset's name in the library renames it. Renaming in the editor works already.
+- Several presets can be picked at once, then moved or deleted together.
+- Search looks at preset names only.
+- Sorting follows the mockup.
+
+**Context:** A and B were compared before 1.4. A doesn't clash with Obsidian's file list, but it shows a second folder list next to it. A also needs a separate phone design. B fits a phone as one list and is simpler to build. The owner then supplied B2. Open details are in SRS open item 1.
+
 ## 2026-10-11 · No hint line in the Variables panel
 
 **Decision:** The Variables panel drops the mockup's hint line at the top ("In the order they were first used. Every variable starts empty. Click a prompt to jump to it."). The list starts straight away. Recorded in SRS I-4.

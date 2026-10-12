@@ -1,6 +1,6 @@
 # Preset Editor: Software Requirements Specification
 
-Draft 0.11 · 11 October 2026
+Draft 0.12 · 12 October 2026
 
 Follows SRS standard principles: https://www.computer.org/resources/software-requirements-specifications#requirements-fundamentals
 
@@ -30,7 +30,7 @@ Each version adds one feature on top of the last.
 | 1.1     | Preview: the full prompt in order. Macros stay as typed.                                  | Done        |
 | 1.2     | Macro engine: variables and `{{if}}`/`{{else}}` worked out, with SillyTavern's New engine. | Done        |
 | 1.3     | Variables panel. Closing tags while typing (3.9). Folding prompts and search (3.10).      | Done        |
-| 1.4     | Library panel, with New preset and rename. Ribbon button and plugin shortcuts.            | Planned     |
+| 1.4     | Library panel: New preset, rename, move and delete presets, one or several at once. Ribbon button and plugin shortcuts. | Planned     |
 | 1.5     | Move prompts between presets. Select several prompts at once (M-2).                       | Planned     |
 | Later   | Snapshots or version history.                                                             | Planned     |
 
@@ -78,6 +78,7 @@ Each version adds one feature on top of the last.
 - **Looks:** the mockups in `UI design mock/`. Git doesn't save this folder.
   - `first draft/`: the editor screen (1.0 to 1.2)
   - `main editor tweak/`: the 1.3 editor changes
+  - `library view/B2 · Recent on top, folders folded-html/`: the 1.4 library
 - **Behaviour:** SillyTavern source code (`/workspace/Sillytavern-reference`)
 - **Platform:** docs.obsidian.md
 - **Ground rules and git rules:** `CLAUDE.md`
@@ -210,11 +211,21 @@ It looks like the Variables tab in the `first draft/` mockup. Until 1.3 the pane
 
 ### 3.8 Library panel and New preset (1.4)
 
-- **L-1.** A library panel lists presets, grouped by folder. It has a ribbon button and plugin shortcuts. Design to come (open item 1).
-- **L-2.** Presets can be renamed from the library panel.
+The look follows the "B2" design in `UI design mock/library view/`: one list grouped by folder, with recent presets on top. The other library designs (A, B) are not used.
+
+- **L-1.** A library tab lists presets, grouped by folder. Recent presets sit on top. Folders start folded. It has a ribbon button and plugin shortcuts.
+- **L-2.** Clicking a preset's name in the library renames it. (Renaming in the editor already works, F-8.)
 - **L-3.** New preset can be started from the command palette or the library panel.
 - **L-4.** A new preset is called "Untitled preset". If that name is taken: "Untitled preset 1", "Untitled preset 2", and so on.
 - **L-5.** A new preset is a copy of SillyTavern's Default preset with every prompt's text left blank.
+- **L-6.** New preset first asks which folder it goes in. A preset is never made without a folder.
+- **L-7.** Clicking a preset opens it in a new tab.
+- **L-8.** A preset can easily be moved to another folder.
+- **L-9.** Several presets can be picked at once, then moved or deleted together.
+- **L-10.** Search looks at preset names only.
+- **L-11.** Sorting follows the mockup ("Sort: last edited").
+
+Details are in open item 1.
 
 ### 3.9 Closing tags (1.3)
 
@@ -270,8 +281,17 @@ Details are in open item 8.
 
 ## 6. Open items (to settle later)
 
-1. **Library panel:** design and behaviour. Needs a mockup. (1.4)
-2. **New preset from the command palette:** which folder does it go in when there are several preset folders? (1.4)
+1. **Library panel:** (1.4)
+   - ~~Design?~~ Settled: B2 (3.8).
+   - Clicking a preset opens it (L-7), and clicking its name renames it (L-2). How do the two sit side by side, mainly on a phone?
+   - Where do the actions for one preset (move, delete) live? B2 shows no menu button on a row.
+   - Picking several presets (L-9): how is it turned on? Same way as select mode for prompts (M-2)?
+   - Moving (L-8): pick from a list of folders? Can a brand-new folder be made from the library?
+   - Deleting: ask first, or delete straight away?
+   - Phone layout: B2 has no phone version.
+   - Sort: which choices besides "last edited"?
+   - Recent: how many, and is it last edited or last opened?
+2. ~~**New preset from the command palette:** which folder does it go in when there are several preset folders?~~ Settled: it asks (L-6). (1.4)
 3. **Moving and selecting prompts:** (1.5)
    - Cut and paste, or drag and drop?
    - Which kinds of prompt can be moved? Only custom ones?
