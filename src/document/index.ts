@@ -15,11 +15,27 @@ export interface Row {
 /** 'edit': changed in the editor. 'load': replaced by `load()`. */
 export type ChangeCause = 'edit' | 'load';
 
+/**
+ * M-6: work done outside this preset that Undo and Redo must follow, e.g.
+ * prompts sent to another preset. Runs after the step is undone or redone.
+ */
+export interface StepLink {
+	undo(): void;
+	redo(): void;
+}
+
+/** A prompt to add, with its on/off state (M-1). */
+export interface IncomingPrompt {
+	prompt: Readonly<PromptData>;
+	enabled: boolean;
+}
+
 /** One step of the undo timeline: how things were, and which prompt changed. */
 interface Step {
 	prompts: PromptData[];
 	order: OrderEntry[];
 	id: string;
+	link?: StepLink;
 }
 
 /** E-6: the timeline keeps this many steps. */
@@ -73,6 +89,11 @@ export class PresetDocument {
 		return rows;
 	}
 
+	/** The prompt with this identifier, if the preset has it. */
+	prompt(id: string): Readonly<PromptData> | undefined {
+		return this.find(id);
+	}
+
 	/** Calls `listener` after every change. Returns a function that stops it. */
 	onChange(listener: (cause: ChangeCause) => void): () => void {
 		this.listeners.add(listener);
@@ -119,6 +140,49 @@ export class PresetDocument {
 	}
 
 	/**
+	 * M-3: moves several prompts so they sit together, in the order they were
+	 * in, at position `to` among the other rows. One undo step.
+	 */
+	moveMany(ids: readonly string[], to: number): void {
+		const group = new Set(ids);
+		const moving = this.order.filter((e) => group.has(e.identifier) && this.find(e.identifier));
+		const first = moving[0];
+		if (!first) return;
+		const rest = this.order.filter((e) => !moving.includes(e));
+		const at = this.orderIndexOfRow(to, rest);
+		const next = [...rest.slice(0, at), ...moving, ...rest.slice(at)];
+		const shown = (order: OrderEntry[]) => order.filter((e) => this.find(e.identifier));
+		const before = shown(this.order);
+		if (shown(next).every((e, i) => e === before[i])) return;
+		this.record(first.identifier);
+		this.order = next;
+		this.changed();
+	}
+
+	/**
+	 * M-1, M-5: adds copies of `incoming` at position `at` in `rows()`, as one
+	 * undo step. A prompt whose identifier is already used here gets a new one,
+	 * so a second prompt is added and nothing is replaced. Returns the prompts
+	 * as they were added.
+	 */
+	insertMany(at: number, incoming: readonly IncomingPrompt[]): PromptData[] {
+		const used = new Set([...this.prompts.map((p) => p.identifier), ...this.order.map((e) => e.identifier)]);
+		const added = incoming.map(({ prompt }) => {
+			const identifier = used.has(prompt.identifier) ? crypto.randomUUID() : prompt.identifier;
+			used.add(identifier);
+			return { ...structuredClone(prompt), identifier };
+		});
+		const first = added[0];
+		if (!first) return [];
+		this.record(first.identifier);
+		this.prompts.push(...added);
+		const entries = added.map((p, i) => ({ identifier: p.identifier, enabled: incoming[i]?.enabled === true }));
+		this.order.splice(this.orderIndexOfRow(at), 0, ...entries);
+		this.changed();
+		return added.map((p) => structuredClone(p));
+	}
+
+	/**
 	 * E-4: adds a new custom prompt at position `at` in `rows()` (the end if
 	 * `at` is past the last row). Returns its identifier.
 	 */
@@ -156,6 +220,21 @@ export class PresetDocument {
 		this.changed();
 	}
 
+	/**
+	 * M-2, M-6: deletes several prompts as one undo step. `link` runs when the
+	 * step is undone or redone.
+	 */
+	removeMany(ids: readonly string[], link?: StepLink): void {
+		const wanted = new Set(ids);
+		const gone = new Set(this.order.filter((e) => wanted.has(e.identifier) && this.find(e.identifier)).map((e) => e.identifier));
+		const first = [...gone][0];
+		if (first === undefined) return;
+		this.record(first, link);
+		this.prompts = this.prompts.filter((p) => !gone.has(p.identifier));
+		this.order = this.order.filter((e) => !gone.has(e.identifier));
+		this.changed();
+	}
+
 	/** E-6 */
 	canUndo(): boolean {
 		return this.undoSteps.length > 0;
@@ -171,17 +250,17 @@ export class PresetDocument {
 	 * changed, or null if there is nothing to undo.
 	 */
 	undo(): string | null {
-		return this.travel(this.undoSteps, this.redoSteps);
+		return this.travel(this.undoSteps, this.redoSteps, 'undo');
 	}
 
 	/** E-6: goes forward again after `undo()`. Returns the prompt it changed, or null. */
 	redo(): string | null {
-		return this.travel(this.redoSteps, this.undoSteps);
+		return this.travel(this.redoSteps, this.undoSteps, 'redo');
 	}
 
 	/** Saves how things are now as an undo step, before a change to prompt `id`. A new change clears redo. */
-	private record(id: string): void {
-		this.undoSteps.push(this.snapshot(id));
+	private record(id: string, link?: StepLink): void {
+		this.undoSteps.push({ ...this.snapshot(id), link });
 		if (this.undoSteps.length > MAX_STEPS) this.undoSteps.shift();
 		this.redoSteps = [];
 		this.typing = null;
@@ -192,10 +271,10 @@ export class PresetDocument {
 	}
 
 	/** Moves one step from `from` to `to`. On/off states stay as they are now (E-6). */
-	private travel(from: Step[], to: Step[]): string | null {
+	private travel(from: Step[], to: Step[], way: 'undo' | 'redo'): string | null {
 		const step = from.pop();
 		if (!step) return null;
-		to.push(this.snapshot(step.id));
+		to.push({ ...this.snapshot(step.id), link: step.link });
 		const enabled = new Map(this.order.map((e) => [e.identifier, e.enabled]));
 		this.prompts = step.prompts.slice();
 		this.order = step.order.map((e) => {
@@ -205,6 +284,7 @@ export class PresetDocument {
 		});
 		this.typing = null;
 		this.changed();
+		step.link?.[way]();
 		return step.id;
 	}
 
@@ -213,15 +293,15 @@ export class PresetDocument {
 	}
 
 	/** Where in `order` the row at position `row` sits (order.length if past the end). */
-	private orderIndexOfRow(row: number): number {
+	private orderIndexOfRow(row: number, order: readonly OrderEntry[] = this.order): number {
 		let seen = 0;
-		for (let i = 0; i < this.order.length; i++) {
-			const entry = this.order[i];
+		for (let i = 0; i < order.length; i++) {
+			const entry = order[i];
 			if (!entry || !this.find(entry.identifier)) continue;
 			if (seen === row) return i;
 			seen++;
 		}
-		return this.order.length;
+		return order.length;
 	}
 
 	private changed(cause: ChangeCause = 'edit'): void {
