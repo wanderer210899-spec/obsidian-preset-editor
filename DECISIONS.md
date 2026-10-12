@@ -4,6 +4,21 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-12 · Select mode accepted after a first test; merges into 1.5
+
+**Decision:**
+- The owner tested select mode, Copy to…, Move to…, Delete and group drag on a phone and on desktop. Everything worked. It merges into the 1.5 version branch. Real use comes next.
+- Proposed with the build and not changed by the owner:
+  - With one prompt, titles use its name, e.g. "Copy Pacing rules to…".
+  - The preset list is sorted A to Z inside each folder.
+  - Tapping the top half of a row puts the spot above it. The bottom half puts it below.
+  - In select mode, tapping a name picks it instead of jumping to it.
+  - Dragging a prompt that isn't picked moves only that one. Select mode stays on.
+  - Esc closes the preset list. If the list isn't open, Esc ends select mode.
+  - Copies that arrive in a preset open in another tab are one Undo step in that tab.
+
+**Context:** First build of select mode on `feature/1.5-select-prompts`.
+
 ## 2026-10-12 · 1.5 details: undo, select mode, spot picker, messages
 
 **Decision:**
