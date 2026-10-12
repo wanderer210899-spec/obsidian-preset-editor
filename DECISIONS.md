@@ -4,6 +4,24 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-12 · Library panel accepted on a first look; real use after 1.5
+
+**Decision:**
+- The owner looked at the library on a phone and on a PC, without real use yet. Everything seemed in order for this build. It merges into the 1.4 version branch.
+- After 1.5, the plugin is ready for testing in real use. Changes may come up from that.
+- Proposed with the build and not changed by the owner:
+  - New preset from the command palette, outside the library, shows Obsidian's folder list, then opens the new preset in a new tab.
+  - Clicking a preset that's already open goes to its tab instead of opening a second one.
+  - Recent and sort are remembered on each device separately.
+  - The phone layout starts below 600px wide.
+  - The phone tip ("press and hold…") goes away after the first press and hold.
+  - Moving into a folder that already has a preset with the same name leaves that preset where it is, with a message saying why.
+  - A preset folder inside another preset folder shows once, inside the outer one.
+  - With no preset folders set, the library says "No preset folders yet. Add one in the plugin settings."
+  - Deleting several presets asks once for each, as Obsidian's file list does. "Don't ask again" in Obsidian's box also applies here.
+
+**Context:** First build of the library on `feature/1.4-library`.
+
 ## 2026-10-12 · Library panel: last details, then build
 
 **Decision:**

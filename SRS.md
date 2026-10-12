@@ -43,7 +43,7 @@ Each version adds one feature on top of the last.
 - Any link to a SillyTavern install. The plugin only works on files in the Obsidian vault.
 - Global variables.
 
-### 1.3 Where things stand (11 October 2026)
+### 1.3 Where things stand (12 October 2026)
 
 **1.0 is done** (v1.0.0). A preset edited in the plugin was loaded into SillyTavern, and every change came across. Undo and Redo (E-6) were checked on a phone.
 
@@ -53,8 +53,11 @@ Each version adds one feature on top of the last.
 
 **1.3 is done** (v1.3.0). The Variables panel (3.5) lists each local variable with its final value and where it is set and read. Closing tags while typing (3.9). Folding prompts and search (3.10). All checked by the owner.
 
-- Built: everything marked 1.0 to 1.3 below.
+**1.4 is built, not yet released.** The library panel (3.8) is built. The owner looked at it on desktop and on a phone, without real use yet, and everything seemed in order.
+
+- Built: everything marked 1.0 to 1.4 below.
 - Dragging (Q-1) was checked on a phone, through a test copy of Obsidian.
+- Real use: after 1.5, the plugin is ready for testing in real use. Changes may come up from that.
 - Not yet checked: a full test in the Obsidian phone app. This can only happen once the plugin can be installed. Scrolling, for example, feels different in the test copy.
 
 ### 1.4 Terms
