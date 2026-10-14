@@ -4,6 +4,12 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-14 · Replace mode ignores prompt names
+
+**Decision:** While the replace box is open, find only looks in prompt text. Name matches aren't counted or lit up. Closing the replace box brings them back. Example: searching "mood" in a prompt named "Mood rules" with the text "Keep the mood calm. The mood shifts slowly." shows "1 of 3" with the replace box closed, and "1 of 2" with it open.
+
+**Context:** Open item 9. Replace only changes prompt text (C-10), so a match in a name couldn't be replaced. Skipping it would make Replace seem to do nothing. This way, every match you see can be replaced, with no extra buttons. SRS C-10.
+
 ## 2026-10-14 · 1.5.1 accepted on a phone
 
 **Decision:** The owner tested 1.5.1 on a phone. The last prompt now clears Obsidian's bottom bar. It merges into main as v1.5.1.
