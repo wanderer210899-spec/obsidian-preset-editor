@@ -33,7 +33,7 @@ Each version adds one feature on top of the last.
 | 1.4     | Library panel: New preset, rename, move and delete presets, one or several at once. Ribbon button and plugin shortcuts. | Done        |
 | 1.5     | Select several prompts at once. Copy or move them to another preset, delete them, or drag them together (3.7). | Done        |
 | 1.5.1   | Mobile: the last row in the Order panel and Variables panel clears Obsidian's bottom bar (I-5). | Done        |
-| 1.5.2   | Search in the Variables panel (T-7).                                                      | Planned     |
+| 1.5.2   | Search in the Variables panel (T-7).                                                      | Done        |
 | 1.5.3   | Find and replace in Edit. Find steps match by match, with a Match case switch (C-7 to C-10). | Planned     |
 
 **Not planned**
@@ -62,7 +62,9 @@ Each version adds one feature on top of the last.
 
 **1.5.1 is done** (v1.5.1). In the mobile app, the last row of the Order panel and Variables panel clears Obsidian's bottom bar (I-5). Checked by the owner on a phone.
 
-- Built: everything marked 1.0 to 1.5.1 below.
+**1.5.2 is done** (v1.5.2). A search box in the Variables panel (T-7). Checked by the owner on a phone and on desktop.
+
+- Built: everything marked 1.0 to 1.5.2 below.
 - Dragging (Q-1) was checked on a phone, through a test copy of Obsidian.
 - Real use: from 1.5, the plugin is ready for testing in real use, installed by hand from a GitHub release. Changes may come up from that.
 - Real use found four things (14 October 2026). They become 1.5.1 to 1.5.3, plus a note on a SillyTavern gap (V-13).
@@ -318,6 +320,7 @@ Long presets get a minimal view, so many prompts are easier to scan. The look fo
   - It looks exactly like the find bar: same theme and buttons. No mockup.
 - **C-10.** _(1.5.3)_ What replace changes:
   - Prompt text only, never prompt names. Prompts that are off are included, as in find.
+  - While the replace box is open, find only looks in prompt text. Name matches aren't counted or lit up. Closing the replace box brings them back. So the count always equals what "Replace all" changes.
   - "Replace" changes the current match, then jumps to the next one.
   - "Replace all" changes every match. It's one Undo step.
 
@@ -405,5 +408,5 @@ Details are in open item 8.
    - ~~Upper and lower case?~~ Settled: a Match case switch (C-8).
    - ~~Undo for Replace all?~~ Settled: one step (C-10).
    - ~~How is replace opened?~~ Settled: an arrow below the find box, or Ctrl+H (C-9).
-   - What happens when the current match is in a prompt name and "Replace" is pressed?
+   - ~~What happens when the current match is in a prompt name and "Replace" is pressed?~~ Settled: while the replace box is open, names aren't searched (C-10).
 5. ~~**In-chat prompts in the Preview:** does "roughly where SillyTavern would put them" mean grouped around the Chat History placeholder, in SillyTavern's order?~~ Settled: see V-7. (1.1)
