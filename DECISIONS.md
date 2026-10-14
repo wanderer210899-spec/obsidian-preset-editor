@@ -4,6 +4,15 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-14 · Simplified Chinese: new prompt name, review file kept local (1.6)
+
+**Decision:**
+- With Obsidian in Simplified Chinese, a new prompt is named 未命名 instead of "Untitled prompt". The name is saved in the file like any other name.
+- The translation review file stays on the owner's computer. It is not saved in git and never goes to GitHub.
+- 1.6 starts now, on the `version-1.6` branch.
+
+**Context:** Asked before building 1.6. Still open: the name for a new preset ("Untitled preset"). SRS N-3, N-5.
+
 ## 2026-10-14 · Order panel search accepted; released as 1.5.4
 
 **Decision:**
