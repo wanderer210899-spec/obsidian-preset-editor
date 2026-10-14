@@ -18,7 +18,7 @@
 
 	/** C-7: the current match, when it's in this prompt's text. */
 	function currentIn(id: string): CurrentMatch | null {
-		return current && current.id === id && !current.inName ? current : null;
+		return current && current.id === id ? current : null;
 	}
 
 	const ROLE_DOT: Record<string, string> = {

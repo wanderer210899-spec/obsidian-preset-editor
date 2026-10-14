@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { countMatches, findRanges, indexAfter, listMatches, makeQuery, markParts, NO_QUERY, replaceRanges, wrapIndex } from '../src/search';
+import { filterByName } from '../src/ui/order-search';
 
 test('C-4: matches ignore case and spaces around the query', () => {
 	const q = makeQuery('  Mood ', false);
@@ -24,17 +25,16 @@ test('C-4: symbols in the query are plain text', () => {
 	assert.equal(countMatches('a.b axb', makeQuery('a.b', false)), 1);
 });
 
-test('C-7: the bar steps through every match, prompt by prompt, name first, and wraps round', () => {
+test('C-4, C-7: the bar steps through every match in prompt text, prompt by prompt, and wraps round', () => {
 	const items = [
-		{ id: 'a', name: 'Calm', text: 'calm and calm' },
-		{ id: 'b', name: 'Storm', text: 'storm' },
-		{ id: 'c', name: '', text: 'calm again' },
+		{ id: 'a', text: 'calm and calm' },
+		{ id: 'b', text: 'storm' },
+		{ id: 'c', text: 'calm again' },
 	];
 	assert.deepEqual(listMatches(items, makeQuery('calm', false)), [
-		{ id: 'a', inName: true, from: 0, to: 4 },
-		{ id: 'a', inName: false, from: 0, to: 4 },
-		{ id: 'a', inName: false, from: 9, to: 13 },
-		{ id: 'c', inName: false, from: 0, to: 4 },
+		{ id: 'a', from: 0, to: 4 },
+		{ id: 'a', from: 9, to: 13 },
+		{ id: 'c', from: 0, to: 4 },
 	]);
 	assert.deepEqual(listMatches(items, NO_QUERY), []);
 	assert.equal(wrapIndex(2, 2), 0);
@@ -50,8 +50,8 @@ test('C-10: Replace puts the new text in place and goes to the next match after 
 	assert.equal(text, 'cats cat');
 	const after = listMatches(
 		[
-			{ id: 'a', name: '', text },
-			{ id: 'c', name: '', text: 'cat' },
+			{ id: 'a', text },
+			{ id: 'c', text: 'cat' },
 		],
 		q,
 	);
@@ -96,4 +96,15 @@ test('C-7: in Preview, only the pieces of the current match are marked "now"', (
 			['sea', true, true],
 		],
 	);
+});
+
+test('E-8: the Order panel search looks at prompt names only, and ignores case and outer spaces', () => {
+	const rows = [
+		{ id: 'main', prompt: { identifier: 'main', name: 'Main Prompt', content: 'pacing' }, enabled: true },
+		{ id: 'a', prompt: { identifier: 'a', name: 'Pacing rules', content: '' }, enabled: false },
+		{ id: 'chatHistory', prompt: { identifier: 'chatHistory', name: 'Chat History' }, enabled: true },
+	];
+	assert.deepEqual(filterByName(rows, ' PACING ').map((r) => r.id), ['a']);
+	assert.deepEqual(filterByName(rows, 'chat').map((r) => r.id), ['chatHistory']);
+	assert.deepEqual(filterByName(rows, '  ').map((r) => r.id), ['main', 'a', 'chatHistory']);
 });

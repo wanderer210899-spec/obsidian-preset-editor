@@ -81,9 +81,10 @@
 		return lastVars;
 	});
 	const q = $derived(searchOpen ? makeQuery(query, matchCase) : NO_QUERY);
-	/** C-9, C-10: replace works in Edit only. While it's open, names aren't searched. */
+	/** C-9: replace works in Edit only. */
 	const replacing = $derived(replaceOpen && mode === 'edit');
-	const searchables = $derived(mode === 'edit' ? editSearchables(rows, !replacing) : previewSearchables(blocks));
+	/** C-4: find looks at prompt text only. */
+	const searchables = $derived(mode === 'edit' ? editSearchables(rows) : previewSearchables(blocks));
 	/** C-7: every match, in the order the current view shows them. */
 	const matches = $derived(listMatches(searchables, q));
 	const current = $derived<CurrentMatch | null>(
@@ -163,7 +164,7 @@
 	 * C-9: Ctrl+H also shows the replace box.
 	 */
 	export function openSearch(withReplace = false) {
-		if (withReplace) setReplaceOpen(true);
+		if (withReplace) replaceOpen = true;
 		if (searchOpen) searchBar?.focus();
 		else searchOpen = true;
 	}
@@ -188,19 +189,6 @@
 		void goToMatch(0);
 	}
 
-	/**
-	 * C-10: showing or hiding the replace box adds or drops name matches.
-	 * The current match stays if it's still there; otherwise the next one in the text takes over.
-	 */
-	function setReplaceOpen(open: boolean) {
-		const was = current;
-		replaceOpen = open;
-		if (!was) return;
-		const k = matches.findIndex((m) => m.id === was.id && m.inName === was.inName && m.from === was.from);
-		if (k !== -1) matchIndex = k;
-		else void goToMatch(indexAfter(matches, ids(), was.id, was.inName ? 0 : was.from));
-	}
-
 	/** The prompts the current view searches, in order. */
 	function ids(): string[] {
 		return searchables.map((s) => s.id);
@@ -208,8 +196,7 @@
 
 	/**
 	 * C-7: shows match number `k` (wrapping round). In Edit the prompt opens;
-	 * in Preview the view stays in Preview. A match in the text scrolls into
-	 * the middle; a match in a name scrolls its prompt to the top.
+	 * in Preview the view stays in Preview. The match scrolls into the middle.
 	 */
 	async function goToMatch(k: number) {
 		matchIndex = wrapIndex(k, matches.length);
@@ -218,13 +205,12 @@
 		if (!m) return;
 		if (mode === 'edit') openRow(m.id);
 		// Edit: the text box scrolls to its own match (PromptText).
-		if (mode === 'edit' && !m.inName) return;
+		if (mode === 'edit') return;
 		await tick();
 		await new Promise(requestAnimationFrame);
-		const attr = mode === 'edit' ? 'data-anchor' : 'data-pv';
-		const row = scroller.querySelector<HTMLElement>(`[${attr}="${CSS.escape(m.id)}"]`);
+		const row = scroller.querySelector<HTMLElement>(`[data-pv="${CSS.escape(m.id)}"]`);
 		if (!row) return;
-		const hit = m.inName ? null : row.querySelector<HTMLElement>('.pe-now');
+		const hit = row.querySelector<HTMLElement>('.pe-now');
 		const target = hit ?? row;
 		const top =
 			target.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop - (hit ? scroller.clientHeight / 2 : 12);
@@ -234,7 +220,7 @@
 	/** C-10: replaces the current match, then goes to the next one. One undo step. */
 	function replaceOne() {
 		const m = current;
-		if (!replacing || !m || m.inName) return;
+		if (!replacing || !m) return;
 		const text = rows.find((r) => r.id === m.id)?.prompt.content ?? '';
 		doc.setTexts([{ id: m.id, content: replaceRanges(text, [m], replacement) }]);
 		void goToMatch(indexAfter(matches, ids(), m.id, m.from + replacement.length));
@@ -438,7 +424,7 @@
 			onstep={(by) => void goToMatch(matchIndex + by)}
 			onclose={closeSearch}
 			onmatchcase={toggleMatchCase}
-			ontogglereplace={() => setReplaceOpen(!replaceOpen)}
+			ontogglereplace={() => (replaceOpen = !replaceOpen)}
 			onreplacement={(text) => (replacement = text)}
 			onreplace={replaceOne}
 			onreplaceall={replaceAll}
@@ -510,6 +496,7 @@
 		--pe-seg-shadow: 0 1px 2px rgba(0, 0, 0, 0.14);
 		--pe-shadow-pop: 0 16px 40px rgba(0, 0, 0, 0.14);
 		--pe-lift: 0 12px 30px rgba(0, 0, 0, 0.12), 0 0 0 1px #8a5cf5;
+		--pe-stack-edge: rgba(138, 92, 245, 0.55);
 		--pe-scrim: rgba(0, 0, 0, 0.28);
 		--pe-hit: rgba(255, 190, 0, 0.42);
 		--pe-now: rgba(255, 128, 0, 0.6);
@@ -532,6 +519,7 @@
 		--pe-seg-shadow: none;
 		--pe-shadow-pop: 0 16px 40px rgba(0, 0, 0, 0.5);
 		--pe-lift: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px #8a5cf5;
+		--pe-stack-edge: rgba(138, 92, 245, 0.6);
 		--pe-scrim: rgba(0, 0, 0, 0.5);
 		--pe-hit: rgba(255, 190, 0, 0.32);
 		--pe-now: rgba(255, 128, 0, 0.62);

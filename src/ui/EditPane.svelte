@@ -93,7 +93,7 @@
 						ondelete={() => doc.remove(row.id)}
 						{query}
 						matches={counts.get(row.id) ?? 0}
-						current={current && current.id === row.id && !current.inName ? current : null}
+						current={current && current.id === row.id ? current : null}
 					/>
 				{/if}
 			</div>

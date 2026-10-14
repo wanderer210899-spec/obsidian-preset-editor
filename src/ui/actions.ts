@@ -21,6 +21,8 @@ export interface SortableOptions {
 	onGroupStart?: (id: string, others: string[]) => void;
 	/** M-3: a group drag ended at position `to` among the rows not in the group. */
 	onGroupEnd?: (to: number) => void;
+	/** E-8: no dragging while the list is filtered. */
+	disabled?: boolean;
 }
 
 /**
@@ -41,6 +43,7 @@ export function sortable(node: HTMLElement, options: SortableOptions) {
 	};
 	const instance = Sortable.create(node, {
 		handle: current.handle,
+		disabled: current.disabled ?? false,
 		draggable: '[data-row]',
 		animation: 150,
 		forceFallback: true,
@@ -77,6 +80,7 @@ export function sortable(node: HTMLElement, options: SortableOptions) {
 	return {
 		update(next: SortableOptions) {
 			current = next;
+			instance.option('disabled', next.disabled ?? false);
 		},
 		destroy() {
 			instance.destroy();

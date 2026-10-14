@@ -4,6 +4,79 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-14 · Order panel search accepted; released as 1.5.4
+
+**Decision:**
+- The owner tested 1.5.4 and said it works. It merges into main as v1.5.4.
+- Proposed with the build and not changed by the owner:
+  - In select mode, the search box stays. The Select link hides, since Done is in the row below.
+  - While the list is filtered, the drag handles fade out.
+  - Prompts keep their place number from the full list when filtered.
+  - With no match, the panel says: No prompts match "…".
+  - The stack shows one card edge for two prompts, and two for three or more. The "+ names" label stays.
+  - The Variables panel and the Order panel share one search box.
+
+**Context:** Built on `fix/1.5.4-order-search`. SRS E-8, I-4, M-3, C-4, C-7, C-10.
+
+## 2026-10-14 · Built-in prompts can be renamed, as in SillyTavern
+
+**Decision:** Built-in prompts like Main Prompt can be renamed. This stays as it is, the same as SillyTavern.
+
+**Context:** The owner renamed a Main Prompt and asked if it was a bug. It isn't: SillyTavern's edit form lets you rename it too. SillyTavern knows each built-in by a hidden ID, so the name is only a label.
+
+## 2026-10-14 · Dragging several prompts looks like a stack (1.5.4)
+
+**Decision:** In select mode, dragging several picked prompts shows the dragged prompt as a stack. This makes it clear they move together. No mockup for now; the look is shown in the build for the owner's yes.
+
+**Context:** The owner found it hard to tell a one-prompt drag from a group drag (M-3).
+
+## 2026-10-14 · How the Chinese gets checked (1.6)
+
+**Decision:**
+- A word list comes first: about 15 common words with their Chinese. The owner approves it before anything else is translated.
+- Where SillyTavern uses two words for one thing, the word from its prompt manager screen wins (e.g. Order = 排序, not 顺序).
+- Words SillyTavern doesn't have get a suggestion, and the owner picks.
+- The review table is one Markdown file, grouped by screen, with three columns: Where, English, Chinese. The owner edits the Chinese column directly.
+
+**Context:** The owner reads Chinese and reviews the translations personally.
+
+## 2026-10-14 · Versions can hold more than one feature
+
+**Decision:** A version no longer has to be exactly one feature. The plugin is built, and the changes left are small. A few minor versions can hold them.
+
+**Context:** Came up while planning the translation and the closable hint.
+
+## 2026-10-14 · Order panel: name search, and find looks at text only (1.5.4)
+
+**Decision:**
+- The Order panel gets a search box. It looks at prompt names only. Prompts that don't match are hidden, like the Variables search (T-7).
+- The search box and Select sit together on the panel's top row, following the Variables panel's layout.
+- "Find in prompts" then looks at prompt text only, in Edit and in Preview. Prompt names no longer count.
+- While the list is filtered, prompts can't be dragged.
+- In select mode, "Select all" picks only the prompts that show.
+
+**Context:** The owner wants each search to have one job: the Order panel finds prompts by name, and find steps through prompt text. This makes find and replace simpler too.
+
+## 2026-10-14 · The Order panel hint is removed (1.5.4)
+
+**Decision:**
+- The Order panel hint ("Drag a handle to reorder · click a name to jump to it") is removed.
+- The owner first chose a hint you could close for good. That idea was dropped: the panel is simple enough without it.
+- The Preview key, the library phone tip and the empty Variables panel note stay as they are.
+
+**Context:** The owner finds the plugin's features simple. Permanent hints clutter the screen.
+
+## 2026-10-14 · The plugin follows Obsidian's language: Simplified Chinese
+
+**Decision:**
+- The plugin shows its text in Simplified Chinese when Obsidian is set to Simplified Chinese. Every other language gets English.
+- Traditional Chinese is not planned.
+- Where SillyTavern has its own Chinese word for something, the plugin uses the same word.
+- Prompt names stay as they are in the file, in Chinese too. SillyTavern's prompt list shows the file's names and doesn't translate them.
+- The owner reads Chinese and reviews the translations personally.
+
+**Context:** The owner asked for a translation layer, like other Obsidian plugins that follow Obsidian's language.
+
 ## 2026-10-14 · Find and replace accepted; released as 1.5.3
 
 **Decision:**
