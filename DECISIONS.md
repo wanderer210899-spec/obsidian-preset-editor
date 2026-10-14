@@ -4,6 +4,17 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-14 · Find and replace: the details (1.5.3)
+
+**Decision:**
+- The current match (the one "2 of 5" points to) is a stronger orange. The other matches stay yellow. This is the same in Edit and Preview.
+- Match case is a small "Aa" button inside the find box, after the count. When it's on, it shows in the accent colour.
+- When the current match is in a prompt name (replace box closed), the prompt opens and scrolls into view. The name gets no mark, since a name box can't show one.
+- Each "Replace" press is its own Undo step. Quick presses are not grouped the way typing is.
+- Layout: an arrow button sits under the find box. When the replace box is open, it shows under the arrow, with two icon buttons, "Replace" and "Replace all". They are the same size as the find buttons.
+
+**Context:** Asked before building 1.5.3. SRS C-7 to C-10.
+
 ## 2026-10-14 · Variable search accepted; released as 1.5.2
 
 **Decision:**
