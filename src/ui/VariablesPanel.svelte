@@ -60,6 +60,10 @@
 		overscroll-behavior: contain;
 		padding: 2px 16px 24px;
 	}
+	/* I-5: in the mobile app, the last row clears Obsidian's bottom bar, with one row to spare. */
+	:global(body.is-mobile) .vars {
+		padding-bottom: calc(var(--navbar-height, 0px) + var(--safe-area-inset-bottom, 0px) + 44px);
+	}
 	.var {
 		padding: 12px 0 14px;
 		border-top: 1px solid var(--background-modifier-border);

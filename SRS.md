@@ -1,6 +1,6 @@
 # Preset Editor: Software Requirements Specification
 
-Draft 0.14 · 12 October 2026
+Draft 0.15 · 14 October 2026
 
 Follows SRS standard principles: https://www.computer.org/resources/software-requirements-specifications#requirements-fundamentals
 
@@ -32,18 +32,21 @@ Each version adds one feature on top of the last.
 | 1.3     | Variables panel. Closing tags while typing (3.9). Folding prompts and search (3.10).      | Done        |
 | 1.4     | Library panel: New preset, rename, move and delete presets, one or several at once. Ribbon button and plugin shortcuts. | Done        |
 | 1.5     | Select several prompts at once. Copy or move them to another preset, delete them, or drag them together (3.7). | Done        |
-| Later   | Snapshots or version history.                                                             | Planned     |
+| 1.5.1   | Mobile: the last row in the Order panel and Variables panel clears Obsidian's bottom bar (I-5). | Done        |
+| 1.5.2   | Search in the Variables panel (T-7).                                                      | Planned     |
+| 1.5.3   | Find and replace in Edit. Find steps match by match, with a Match case switch (C-7 to C-10). | Planned     |
 
 **Not planned**
 
 - AI settings, and the preset's other text fields (impersonation, formats, prefill, etc.).
+- Snapshots or version history. Copies of a preset, kept in a folder, do the same job.
 
 **Never in scope**
 
 - Any link to a SillyTavern install. The plugin only works on files in the Obsidian vault.
 - Global variables.
 
-### 1.3 Where things stand (12 October 2026)
+### 1.3 Where things stand (14 October 2026)
 
 **1.0 is done** (v1.0.0). A preset edited in the plugin was loaded into SillyTavern, and every change came across. Undo and Redo (E-6) were checked on a phone.
 
@@ -57,9 +60,12 @@ Each version adds one feature on top of the last.
 
 **1.5 is done** (v1.5.0). Select mode in the Order panel (3.7): copy or move several prompts to another preset, delete them, or drag them together. The owner tested it on desktop and on a phone in the test copy of Obsidian.
 
-- Built: everything marked 1.0 to 1.5 below.
+**1.5.1 is done** (v1.5.1). In the mobile app, the last row of the Order panel and Variables panel clears Obsidian's bottom bar (I-5). Checked by the owner on a phone.
+
+- Built: everything marked 1.0 to 1.5.1 below.
 - Dragging (Q-1) was checked on a phone, through a test copy of Obsidian.
 - Real use: from 1.5, the plugin is ready for testing in real use, installed by hand from a GitHub release. Changes may come up from that.
+- Real use found four things (14 October 2026). They become 1.5.1 to 1.5.3, plus a note on a SillyTavern gap (V-13).
 - Not yet checked: a full test in the Obsidian phone app. This can only happen once the plugin can be installed. Scrolling, for example, feels different in the test copy.
 
 ### 1.4 Terms
@@ -190,6 +196,9 @@ The version each part arrives in is shown in brackets.
 - **V-6.** _(1.2)_ Only the **New** macro engine is used. There is no Legacy engine and no engine switch.
 - **V-11.** _(1.2)_ A variable read before any prompt sets it is empty, as in a brand-new SillyTavern chat. The Preview marks it as empty. In `{{if}}` it counts as "no".
 - **V-12.** _(1.2)_ An `{{if}}` whose condition uses something that can't be worked out (V-3, V-5) stays as typed, the whole block. Nothing inside it is worked out.
+- **V-13.** An `{{if}}` block inside the short form `{{.name = …}}` is not worked out. SillyTavern's New engine doesn't do it either, so the Preview follows it. If SillyTavern fixes this, the Preview follows.
+  - Works: `{{setvar::name::{{if .flag}}yes{{else}}no{{/if}}}}`
+  - Doesn't work: `{{.name = {{if .flag}}yes{{else}}no{{/if}}}}`
 
 ### 3.5 Variables panel (panel 1.0 · content 1.3)
 
@@ -201,6 +210,7 @@ It looks like the Variables tab in the `first draft/` mockup. Until 1.3 the pane
 - **T-4.** Every variable macro as typed counts, even one inside an `{{if}}` part that doesn't run. Example: `{{if .flag}}{{getvar::x}}{{/if}}` lists `x` as read, even when `flag` is empty. The final value only comes from what runs.
 - **T-5.** A variable read before a later prompt sets it gets no extra warning. The Preview already shows it as empty there (V-11).
 - **T-6.** Global variables never show (see "Never in scope" in 1.2).
+- **T-7.** _(1.5.2)_ A search box at the top of the panel. It looks at variable names, values, and the prompt names under "Set in" and "Read in". Variables that don't match are hidden. It looks like the library's search box. No mockup for now.
 
 ### 3.6 Saving (1.0)
 
@@ -299,6 +309,17 @@ Long presets get a minimal view, so many prompts are easier to scan. The look fo
 - **C-2.** ~~Empty prompts act as dividers.~~ Dropped: the new mockup replaces dividers.
 - **C-3.** ~~Dividers show in SillyTavern.~~ Dropped with C-2.
 - **C-4.** A "Find in prompts" search bar finds text in prompt names and text. It works in Edit and in Preview. Each searches what it shows: Edit the typed text, Preview the worked-out text.
+- **C-7.** _(1.5.3)_ Find steps through matches one at a time, in Edit and in Preview. "2 of 5" counts matches, not prompts. (Until 1.5.3 it stepped through prompts.)
+- **C-8.** _(1.5.3)_ A "Match case" switch in the find bar. It works for find and replace. It starts off, so find ignores case as before.
+- **C-9.** _(1.5.3)_ Replace, in Edit only. Preview shows worked-out text, so it can't be replaced there.
+  - An arrow button below the find box shows or hides the replace box. The replace box starts hidden each time find opens.
+  - Ctrl+H opens find with the replace box already showing. On a Mac, the same keys as Obsidian's own replace.
+  - On a phone, one tap on the arrow shows the replace box.
+  - It looks exactly like the find bar: same theme and buttons. No mockup.
+- **C-10.** _(1.5.3)_ What replace changes:
+  - Prompt text only, never prompt names. Prompts that are off are included, as in find.
+  - "Replace" changes the current match, then jumps to the next one.
+  - "Replace all" changes every match. It's one Undo step.
 
 Details are in open item 8.
 
@@ -318,6 +339,8 @@ Details are in open item 8.
   - _(1.3)_ The editor follows the "Outline" design in `UI design mock/main editor tweak/`: folding prompts and a "Find in prompts" search bar (3.10).
   - _(1.3)_ Variables panel: no hint line at the top ("In the order they were first used…").
   - Preview: placeholders with settings show their role, not "Inserted" (V-9). Chat History is a shaded block that holds the in-chat prompts, and each in-chat prompt has a tag saying where it goes (V-7). This follows the owner's Chat History mockup. There is no engine switch and no "Not run by Legacy" note (V-6).
+
+- **I-5.** _(1.5.1)_ In the Obsidian mobile app, the Order panel, the Variables panel and the library list scroll far enough that the last row clears Obsidian's bottom bar, with about one prompt row of space to spare. Desktop stays as it is.
 
 ## 5. Quality
 
@@ -375,4 +398,12 @@ Details are in open item 8.
    - ~~Is the open prompt remembered when the preset is reopened?~~ Settled: no, every prompt starts folded (C-6).
    - ~~Does search also look in Preview?~~ Settled: yes (C-4).
    - ~~In Preview, does search find the typed text or the worked-out text?~~ Settled: each view searches what it shows (C-4).
+9. **Find and replace:** (1.5.3)
+   - ~~Edit only, or Preview too?~~ Settled: Edit only (C-9).
+   - ~~Replace in names too?~~ Settled: prompt text only (C-10).
+   - ~~One at a time, or all at once?~~ Settled: both, and find steps match by match (C-7, C-10).
+   - ~~Upper and lower case?~~ Settled: a Match case switch (C-8).
+   - ~~Undo for Replace all?~~ Settled: one step (C-10).
+   - ~~How is replace opened?~~ Settled: an arrow below the find box, or Ctrl+H (C-9).
+   - What happens when the current match is in a prompt name and "Replace" is pressed?
 5. ~~**In-chat prompts in the Preview:** does "roughly where SillyTavern would put them" mean grouped around the Chat History placeholder, in SillyTavern's order?~~ Settled: see V-7. (1.1)
