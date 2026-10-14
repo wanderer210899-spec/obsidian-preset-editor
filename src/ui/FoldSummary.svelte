@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '../i18n';
 	import { foldSummary } from './folding';
 
 	interface Props {
@@ -17,11 +18,11 @@
 
 <!-- C-1: a folded prompt shows its first line and how many lines it has. Clicking it opens the prompt. -->
 <button type="button" class="sum" style:padding-left={indent} style:opacity={dimmed ? 0.45 : 1} onclick={onopen}>
-	<span class="first">{s.firstLine || 'Empty'}</span>
+	<span class="first">{s.firstLine || t('prompt.empty')}</span>
 	{#if matches}
-		<span class="count hit">{matches === 1 ? '1 match' : `${matches} matches`}</span>
+		<span class="count hit">{matches === 1 ? t('prompt.matchOne') : t('prompt.matches', { n: matches })}</span>
 	{:else if s.lines}
-		<span class="count">{s.lines === 1 ? '1 line' : `${s.lines} lines`}</span>
+		<span class="count">{s.lines === 1 ? t('prompt.lineOne') : t('prompt.lines', { n: s.lines })}</span>
 	{/if}
 </button>
 

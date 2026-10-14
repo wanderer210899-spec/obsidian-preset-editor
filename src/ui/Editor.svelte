@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount, tick, untrack } from 'svelte';
 	import { assemble } from '../assemble';
+	import { t } from '../i18n';
 	import { workOutMacros } from '../macros';
 	import { listVariables, type VariableInfo } from '../variables';
 	import { findRanges, indexAfter, listMatches, makeQuery, NO_QUERY, replaceRanges, wrapIndex } from '../search';
@@ -97,7 +98,7 @@
 		return out;
 	});
 	const countText = $derived(
-		!q.text ? '' : matches.length ? `${Math.min(matchIndex, matches.length - 1) + 1} of ${matches.length}` : 'No matches',
+		!q.text ? '' : matches.length ? t('find.count', { k: Math.min(matchIndex, matches.length - 1) + 1, n: matches.length }) : t('find.noMatches'),
 	);
 	const noHover = window.matchMedia('(hover: none)').matches;
 
@@ -329,8 +330,8 @@
 	{#if !narrow}
 		<Segmented
 			options={[
-				{ value: 'edit' as Mode, label: 'Edit' },
-				{ value: 'preview' as Mode, label: 'Preview' },
+				{ value: 'edit' as Mode, label: t('editor.edit') },
+				{ value: 'preview' as Mode, label: t('editor.preview') },
 			]}
 			value={mode}
 			onpick={setMode}
@@ -345,8 +346,8 @@
 			class:off={!canUndo}
 			role="button"
 			tabindex="-1"
-			title="Undo"
-			aria-label="Undo"
+			title={t('editor.undo')}
+			aria-label={t('editor.undo')}
 			aria-disabled={!canUndo}
 			onmousedown={(e) => e.preventDefault()}
 			onclick={undo}
@@ -359,8 +360,8 @@
 			class:off={!canRedo}
 			role="button"
 			tabindex="-1"
-			title="Redo"
-			aria-label="Redo"
+			title={t('editor.redo')}
+			aria-label={t('editor.redo')}
 			aria-disabled={!canRedo}
 			onmousedown={(e) => e.preventDefault()}
 			onclick={redo}
@@ -374,8 +375,8 @@
 		class:open={searchOpen}
 		role="button"
 		tabindex="0"
-		title={narrow ? 'Find in prompts' : 'Find in prompts (Ctrl+F)'}
-		aria-label="Find in prompts"
+		title={narrow ? t('editor.find') : t('editor.findKey')}
+		aria-label={t('editor.find')}
 		onclick={() => (searchOpen ? closeSearch() : openSearch())}
 	>
 		<svg width={narrow ? 20 : 17} height={narrow ? 20 : 17} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
@@ -386,7 +387,7 @@
 		class:open={!narrow && panelOpen}
 		role="button"
 		tabindex="0"
-		title={narrow ? 'Prompt order & variables' : 'Toggle prompt order & variables'}
+		title={narrow ? t('editor.panel') : t('editor.panelToggle')}
 		onclick={togglePanel}
 	>
 		<svg width={narrow ? 20 : 17} height={narrow ? 20 : 17} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M15 3v18"></path></svg>
@@ -402,8 +403,8 @@
 				height="34px"
 				fontSize="14px"
 				options={[
-					{ value: 'edit' as Mode, label: 'Edit' },
-					{ value: 'preview' as Mode, label: 'Preview' },
+					{ value: 'edit' as Mode, label: t('editor.edit') },
+					{ value: 'preview' as Mode, label: t('editor.preview') },
 				]}
 				value={mode}
 				onpick={setMode}

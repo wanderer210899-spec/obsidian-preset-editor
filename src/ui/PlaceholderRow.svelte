@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '../i18n';
 	import type { PromptData } from '../preset';
 	import { rulesFor } from '../kinds';
 	import FoldChevron from './FoldChevron.svelte';
@@ -43,7 +44,7 @@
 				<input
 					class="name-input"
 					data-name
-					aria-label="Prompt name"
+					aria-label={t('prompt.name')}
 					size={Math.max(1, name.length)}
 					value={name}
 					oninput={(e) => update({ name: e.currentTarget.value })}
@@ -52,7 +53,7 @@
 				{name}
 			{/if}
 		</span>
-		<span class="note">Inserted by SillyTavern</span>
+		<span class="note">{t('prompt.insertedBy')}</span>
 	</div>
 	{#if editable && open}
 		<div class="meta">
@@ -60,7 +61,7 @@
 		</div>
 	{/if}
 	<div class="toggle">
-		<Toggle on={row.enabled} {ontoggle} flushLeft title={row.enabled ? 'On — click to switch off' : 'Off — click to switch on'} />
+		<Toggle on={row.enabled} {ontoggle} flushLeft title={row.enabled ? t('prompt.on') : t('prompt.off')} />
 	</div>
 	{#if !sizes.narrow}
 		<!-- Same width as a prompt row's lock/delete icon, so all toggles line up. -->

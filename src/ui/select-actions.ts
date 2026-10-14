@@ -2,6 +2,7 @@
  * Select mode actions (SRS 3.7): delete, drag, copy and move the picked
  * prompts, and their messages (M-7). No Svelte or Obsidian code.
  */
+import { t } from '../i18n';
 import { rulesFor } from '../kinds';
 import * as say from './select-messages';
 import type { EditorDocument, MessageHandle, Notify, PresetChoice, PresetPort, TakeBack, UiRow } from './types';
@@ -71,8 +72,8 @@ export class PickedActions {
 		this.notify({
 			lines: [say.copiedTo(go.map(nameOf), target.name), ...this.skippedLine(locked)],
 			links: [
-				{ label: 'Undo', run: () => void this.takeBack(takeBack, target) },
-				{ label: 'Open', run: () => this.port.open(target.path) },
+				{ label: t('msg.undo'), run: () => void this.takeBack(takeBack, target) },
+				{ label: t('msg.open'), run: () => this.port.open(target.path) },
 			],
 		});
 		return true;
@@ -105,7 +106,7 @@ export class PickedActions {
 			},
 		);
 		this.showUndoable([say.movedTo(go.map(nameOf), target.name), ...this.skippedLine(locked)], {
-			label: 'Open',
+			label: t('msg.open'),
 			run: () => this.port.open(target.path),
 		});
 		return true;
@@ -123,7 +124,7 @@ export class PickedActions {
 		this.changed();
 		this.closesOnChange = this.notify({
 			lines,
-			links: [{ label: 'Undo', run: () => this.undo() }, ...(extra ? [extra] : [])],
+			links: [{ label: t('msg.undo'), run: () => this.undo() }, ...(extra ? [extra] : [])],
 		});
 	}
 

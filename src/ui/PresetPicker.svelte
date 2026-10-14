@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { t } from '../i18n';
 	import { portal } from './actions';
 	import type { PresetChoice, PresetPort, SpotRow } from './types';
 
@@ -27,10 +28,10 @@
 	let spot = $state<number | null>(null);
 	let busy = $state(false);
 
-	const what = $derived(names.length === 1 ? (names[0] ?? '') : `${names.length} prompts`);
-	const title = $derived(target ? target.name : `${verb} ${what} to…`);
+	const what = $derived(names.length === 1 ? (names[0] ?? '') : t('picker.prompts', { n: names.length }));
+	const title = $derived(target ? target.name : t(verb === 'Copy' ? 'picker.copyTitle' : 'picker.moveTitle', { what }));
 	const sub = $derived(
-		!target ? 'Pick a preset' : names.length === 1 ? `Tap where ${what} goes` : `Tap where the ${what} go`,
+		!target ? t('picker.pickPreset') : t(names.length === 1 ? 'picker.tapOne' : 'picker.tapMany', { what }),
 	);
 
 	const byName = (a: { name: string }, b: { name: string }) =>
@@ -88,7 +89,7 @@
 		{#if narrow}<div class="pp-grab"><span></span></div>{/if}
 		<div class="pp-head">
 			{#if target}
-				<div class="pp-icon" role="button" tabindex="0" aria-label="Back" onclick={back}>
+				<div class="pp-icon" role="button" tabindex="0" aria-label={t('picker.back')} onclick={back}>
 					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>
 				</div>
 			{/if}
@@ -96,7 +97,7 @@
 				<div class="pp-title">{title}</div>
 				<div class="pp-sub">{sub}</div>
 			</div>
-			<div class="pp-icon" role="button" tabindex="0" aria-label="Close" onclick={onclose}>
+			<div class="pp-icon" role="button" tabindex="0" aria-label={t('picker.close')} onclick={onclose}>
 				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
 			</div>
 		</div>
@@ -104,7 +105,7 @@
 		{#if !target}
 			<label class="pp-search">
 				<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
-				<input type="text" placeholder="Search presets" aria-label="Search presets" bind:value={query} />
+				<input type="text" placeholder={t('picker.search')} aria-label={t('picker.search')} bind:value={query} />
 			</label>
 			<div class="pp-scroll">
 				{#each groups as group (group.folder)}
@@ -121,9 +122,9 @@
 							>
 								<span class="pp-name">{p.name}</span>
 								{#if p.current}
-									<span class="pp-note">This preset</span>
+									<span class="pp-note">{t('picker.thisPreset')}</span>
 								{:else}
-									<span class="pp-note">{p.prompts === 1 ? '1 prompt' : `${p.prompts} prompts`}</span>
+									<span class="pp-note">{p.prompts === 1 ? t('picker.promptOne') : t('picker.prompts', { n: p.prompts })}</span>
 									<svg class="pp-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg>
 								{/if}
 							</div>
@@ -131,7 +132,7 @@
 					</div>
 				{/each}
 				{#if presets && !groups.length}
-					<div class="pp-empty">No presets found</div>
+					<div class="pp-empty">{t('picker.noPresets')}</div>
 				{/if}
 			</div>
 		{:else}
@@ -150,7 +151,7 @@
 			</div>
 			<div class="pp-foot">
 				<div class="pp-go" class:pp-off={spot === null || busy} role="button" tabindex="0" aria-disabled={spot === null || busy} onclick={confirm}>
-					{verb} {what} here
+					{t(verb === 'Copy' ? 'picker.copyHere' : 'picker.moveHere', { what })}
 				</div>
 			</div>
 		{/if}

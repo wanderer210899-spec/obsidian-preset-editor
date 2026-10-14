@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '../../i18n';
 	import { pressable } from './actions';
 	import Icon from './Icon.svelte';
 
@@ -15,22 +16,22 @@
 </script>
 
 {#if narrow}
-	<div class="pl-bar pl-narrow" role="toolbar" aria-label="Picked presets">
+	<div class="pl-bar pl-narrow" role="toolbar" aria-label={t('library.pickedBar')}>
 		<div role="button" tabindex="0" use:pressable class="pl-big" class:pl-off={off} aria-disabled={off} onclick={() => !off && onMove()}>
-			<Icon name="move" size={22} /><span>Move to…</span>
+			<Icon name="move" size={22} /><span>{t('library.moveTo')}</span>
 		</div>
 		<div role="button" tabindex="0" use:pressable class="pl-big pl-danger" class:pl-off={off} aria-disabled={off} onclick={() => !off && onDelete()}>
-			<Icon name="trash" size={22} /><span>Delete</span>
+			<Icon name="trash" size={22} /><span>{t('library.delete')}</span>
 		</div>
 	</div>
 {:else}
-	<div class="pl-bar" role="toolbar" aria-label="Picked presets">
-		<span class="pl-count">{count} picked</span>
+	<div class="pl-bar" role="toolbar" aria-label={t('library.pickedBar')}>
+		<span class="pl-count">{t('library.picked', { n: count })}</span>
 		<span class="pl-sep"></span>
-		<div role="button" tabindex="0" use:pressable class="pl-act" class:pl-off={off} aria-disabled={off} onclick={() => !off && onMove()}>Move to…</div>
-		<div role="button" tabindex="0" use:pressable class="pl-act pl-danger" class:pl-off={off} aria-disabled={off} onclick={() => !off && onDelete()}>Delete</div>
+		<div role="button" tabindex="0" use:pressable class="pl-act" class:pl-off={off} aria-disabled={off} onclick={() => !off && onMove()}>{t('library.moveTo')}</div>
+		<div role="button" tabindex="0" use:pressable class="pl-act pl-danger" class:pl-off={off} aria-disabled={off} onclick={() => !off && onDelete()}>{t('library.delete')}</div>
 		<span class="pl-sep"></span>
-		<div role="button" tabindex="0" use:pressable class="pl-stop" aria-label="Stop picking" onclick={onStop}><Icon name="x" size={15} stroke={2} /></div>
+		<div role="button" tabindex="0" use:pressable class="pl-stop" aria-label={t('library.stopPicking')} onclick={onStop}><Icon name="x" size={15} stroke={2} /></div>
 	</div>
 {/if}
 

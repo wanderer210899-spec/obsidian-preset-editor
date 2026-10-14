@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { t } from '../i18n';
+
 	interface Props {
 		open: boolean;
 		width: string;
@@ -12,7 +14,7 @@
 <button
 	type="button"
 	class="chev"
-	aria-label={open ? 'Hide prompt text' : 'Show prompt text'}
+	aria-label={open ? t('prompt.hide') : t('prompt.show')}
 	aria-expanded={open}
 	style:width
 	style:height

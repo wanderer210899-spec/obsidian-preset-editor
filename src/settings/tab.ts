@@ -1,4 +1,5 @@
 import { type App, normalizePath, Notice, type Plugin, PluginSettingTab, Setting, TFolder } from 'obsidian';
+import { t } from '../i18n';
 import { FolderSuggest } from './folder-suggest';
 import type { SettingsStore } from './store';
 
@@ -19,27 +20,25 @@ export class SettingsTab extends PluginSettingTab {
 		// Without this Obsidian setting, .json files aren't in the file list (DECISIONS.md, 2026-10-10).
 		if (!detectsAllExtensions(this.app)) {
 			new Setting(containerEl)
-				.setName('JSON files are hidden')
-				.setDesc(
-					'Obsidian only shows presets in the file list when "Detect all file extensions" is on, in Settings → Files and links.',
-				);
+				.setName(t('settings.jsonHidden'))
+				.setDesc(t('settings.jsonHiddenDesc'));
 		}
 
 		let path = '';
 		new Setting(containerEl)
-			.setName('Preset folders')
-			.setDesc('Vault folders that hold SillyTavern presets.')
+			.setName(t('settings.folders'))
+			.setDesc(t('settings.foldersDesc'))
 			.addText((text) => {
-				text.setPlaceholder('Folder').onChange((value) => (path = value));
+				text.setPlaceholder(t('settings.folderPlaceholder')).onChange((value) => (path = value));
 				new FolderSuggest(this.app, text.inputEl);
 			})
-			.addButton((button) => button.setButtonText('Add').onClick(() => this.add(path)));
+			.addButton((button) => button.setButtonText(t('settings.add')).onClick(() => this.add(path)));
 
 		for (const folder of this.store.presetFolders) {
 			new Setting(containerEl).setName(folder).addExtraButton((button) =>
 				button
 					.setIcon('trash')
-					.setTooltip('Remove')
+					.setTooltip(t('settings.remove'))
 					.onClick(async () => {
 						await this.store.removePresetFolder(folder);
 						this.display();
@@ -48,15 +47,15 @@ export class SettingsTab extends PluginSettingTab {
 		}
 
 		new Setting(containerEl)
-			.setName('Auto complete')
-			.setDesc('While typing prompt text: close {{ }}, {{if}} and XML tags, and rename the partner of an XML tag.')
+			.setName(t('settings.autoComplete'))
+			.setDesc(t('settings.autoCompleteDesc'))
 			.addToggle((toggle) => toggle.setValue(this.store.autoComplete).onChange((on) => this.store.setAutoComplete(on)));
 	}
 
 	private async add(input: string): Promise<void> {
 		const path = normalizePath(input.trim());
 		if (!(this.app.vault.getAbstractFileByPath(path) instanceof TFolder) || path === '/') {
-			new Notice(`Folder not found: ${input}`);
+			new Notice(t('settings.folderNotFound', { folder: input }));
 			return;
 		}
 		await this.store.addPresetFolder(path);

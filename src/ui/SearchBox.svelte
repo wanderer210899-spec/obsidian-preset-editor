@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { t } from '../i18n';
+
 	/**
 	 * A panel's search box: the library's look (B2 mockups), with its field
 	 * colour. Used by the Variables panel (T-7) and the Order panel (E-8).
@@ -16,7 +18,7 @@
 	<svg width={narrow ? 16 : 15} height={narrow ? 16 : 15} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
 	<input type="text" {placeholder} aria-label={placeholder} bind:value />
 	{#if value}
-		<div role="button" tabindex="0" class="clear" aria-label="Clear search" onclick={() => (value = '')}>
+		<div role="button" tabindex="0" class="clear" aria-label={t('order.clearSearch')} onclick={() => (value = '')}>
 			<svg width={narrow ? 14 : 13} height={narrow ? 14 : 13} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg>
 		</div>
 	{/if}

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '../../i18n';
 	import { pressable } from './actions';
 	/** L-1: the presets opened last, as cards on top. */
 	interface Card {
@@ -16,7 +17,7 @@
 </script>
 
 <div class="pl-recent" class:pl-narrow={narrow}>
-	<h2>Recent</h2>
+	<h2>{t('library.recent')}</h2>
 	<div class="pl-cards">
 		{#each cards as c (c.path)}
 			<div role="button" tabindex="0" use:pressable class="pl-card" onclick={() => onOpen(c.path)}>

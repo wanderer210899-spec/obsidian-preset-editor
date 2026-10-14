@@ -1,4 +1,5 @@
 import { ItemView, Platform, Scope, type WorkspaceLeaf } from 'obsidian';
+import { t } from '../i18n';
 import type { LibraryActions } from './actions';
 import type { LibraryPrefs } from './prefs';
 import { PresetsIndex } from './presets-index';
@@ -37,7 +38,7 @@ export class LibraryView extends ItemView {
 	}
 
 	getDisplayText(): string {
-		return 'Preset library';
+		return t('library.title');
 	}
 
 	getIcon(): string {

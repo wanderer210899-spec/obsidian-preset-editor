@@ -1,11 +1,12 @@
 <script lang="ts">
+	import { t } from '../i18n';
 	import { kindOf } from '../kinds';
 	import PlaceholderRow from './PlaceholderRow.svelte';
 	import PromptRow from './PromptRow.svelte';
 	import type { Query } from '../search';
 	import type { CurrentMatch, EditorDocument, SaveState, Sizes, UiRow } from './types';
 
-	const STATUS: Record<SaveState, string> = { saved: 'Saved', saving: 'Saving…', error: 'Not saved' };
+	const STATUS: Record<SaveState, string> = { saved: t('editor.saved'), saving: t('editor.saving'), error: t('editor.notSaved') };
 
 	interface Props {
 		doc: EditorDocument;
@@ -54,7 +55,7 @@
 
 <div class="pane" class:narrow={sizes.narrow} class:tap={tapToReveal}>
 	<div class="h1">{title}</div>
-	<div class="status">{onCount} of {rows.length} prompts on · {STATUS[status]}</div>
+	<div class="status">{t('editor.promptsOn', { on: onCount, total: rows.length })} · {STATUS[status]}</div>
 	<!-- E-2: no dragging here from 1.3; prompts are dragged in the Order panel. -->
 	<div>
 		{#each rows as row, i (row.id)}
@@ -65,7 +66,7 @@
 				data-anchor={row.id}
 			>
 				<div class="add-here" class:revealed={revealed === i} role="button" tabindex="-1" onclick={() => tapDivider(i)}>
-					<div class="bar"></div><span>Add prompt here</span><div class="bar"></div>
+					<div class="bar"></div><span>{t('prompt.addHere')}</span><div class="bar"></div>
 				</div>
 				{#if kindOf(row.id).startsWith('placeholder')}
 					<PlaceholderRow
@@ -100,7 +101,7 @@
 		{/each}
 	</div>
 	<div class="add-end" role="button" tabindex="0" onclick={() => oninsert(rows.length)}>
-		<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5v14"></path></svg>Add prompt
+		<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5v14"></path></svg>{t('prompt.add')}
 	</div>
 </div>
 
