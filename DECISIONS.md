@@ -16,7 +16,8 @@ Decisions the product owner has made about how the plugin behaves, with the date
 - The Order panel gets a search box. It looks at prompt names only. Prompts that don't match are hidden, like the Variables search (T-7).
 - The search box and Select sit together on the panel's top row, following the Variables panel's layout.
 - "Find in prompts" then looks at prompt text only, in Edit and in Preview. Prompt names no longer count.
-- Still open: dragging while the list is filtered, and what "Select all" picks then.
+- While the list is filtered, prompts can't be dragged.
+- In select mode, "Select all" picks only the prompts that show.
 
 **Context:** The owner wants each search to have one job: the Order panel finds prompts by name, and find steps through prompt text. This makes find and replace simpler too.
 
@@ -35,6 +36,7 @@ Decisions the product owner has made about how the plugin behaves, with the date
 - The plugin shows its text in Simplified Chinese when Obsidian is set to Simplified Chinese. Every other language gets English.
 - Traditional Chinese is not planned.
 - Where SillyTavern has its own Chinese word for something, the plugin uses the same word.
+- Prompt names stay as they are in the file, in Chinese too. SillyTavern's prompt list shows the file's names and doesn't translate them.
 - The owner reads Chinese and reviews the translations personally.
 
 **Context:** The owner asked for a translation layer, like other Obsidian plugins that follow Obsidian's language.

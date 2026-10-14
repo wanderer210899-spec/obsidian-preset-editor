@@ -169,6 +169,8 @@ The version each part arrives in is shown in brackets.
   - Mobile: Undo and Redo buttons in Obsidian's tab header, next to the panel button. Both show once either can be used; the one with nothing to do is greyed out. The buttons only show in the Obsidian mobile app (phones and tablets).
 - **E-7.** Clicking a prompt in the Order panel, Preview or Variables panel jumps to it in the editor. (1.0 only has the Order panel. The others come with their content.)
 - **E-8.** _(1.5.4)_ A search box at the top of the Order panel, laid out like the Variables panel's search (T-7), with Select on the same row. It looks at prompt names only. Prompts that don't match are hidden. No mockup for now.
+  - While the list is filtered, prompts can't be dragged.
+  - In select mode, "Select all" picks only the prompts that show.
 
 ### 3.3 What each kind of prompt allows (1.0, follows SillyTavern)
 
@@ -341,7 +343,7 @@ The plugin follows Obsidian's language, like other Obsidian plugins.
 
 - **N-1.** When Obsidian is set to Simplified Chinese, the plugin's text is in Simplified Chinese. Any other language gets English. Traditional Chinese is not planned.
 - **N-2.** All of the plugin's own text is translated: the editor, the panels, the library, messages, the settings page and command names.
-- **N-3.** What the user typed or the file holds stays as it is: prompt text, preset names and macros. Obsidian's own boxes, like the delete box (L-13), follow Obsidian's language by themselves.
+- **N-3.** What the user typed or the file holds stays as it is: prompt text, prompt names, preset names and macros. SillyTavern's own Chinese version also shows prompt names ("Main Prompt", "Chat History") as they are in the file. Obsidian's own boxes, like the delete box (L-13), follow Obsidian's language by themselves.
 - **N-4.** Where SillyTavern has its own Simplified Chinese word for something, the plugin uses the same word.
 - **N-5.** The owner reviews every translation before 1.6 is released.
 
@@ -433,9 +435,9 @@ Details are in open item 11.
    - ~~What happens when the current match is in a prompt name and "Replace" is pressed?~~ Settled: while the replace box is open, names aren't searched (C-10).
 5. ~~**In-chat prompts in the Preview:** does "roughly where SillyTavern would put them" mean grouped around the Chat History placeholder, in SillyTavern's order?~~ Settled: see V-7. (1.1)
 10. **Order panel search:** (1.5.4)
-    - Can prompts be dragged while the list is filtered?
-    - Does "Select all" pick only the prompts that show?
+    - ~~Can prompts be dragged while the list is filtered?~~ Settled: no (E-8).
+    - ~~Does "Select all" pick only the prompts that show?~~ Settled: yes (E-8).
 11. **Simplified Chinese:** (1.6)
-    - Do prompt names from the file, like "Main Prompt" or "Chat History", stay as typed in the file? (N-3)
+    - ~~Do prompt names from the file, like "Main Prompt" or "Chat History", stay as typed in the file?~~ Settled: yes, as in SillyTavern (N-3).
     - Which key words go on the word list, before anything else is translated? (N-4)
     - What does the review table look like? (N-5)
