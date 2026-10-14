@@ -4,6 +4,20 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-14 · Order panel search accepted; released as 1.5.4
+
+**Decision:**
+- The owner tested 1.5.4 and said it works. It merges into main as v1.5.4.
+- Proposed with the build and not changed by the owner:
+  - In select mode, the search box stays. The Select link hides, since Done is in the row below.
+  - While the list is filtered, the drag handles fade out.
+  - Prompts keep their place number from the full list when filtered.
+  - With no match, the panel says: No prompts match "…".
+  - The stack shows one card edge for two prompts, and two for three or more. The "+ names" label stays.
+  - The Variables panel and the Order panel share one search box.
+
+**Context:** Built on `fix/1.5.4-order-search`. SRS E-8, I-4, M-3, C-4, C-7, C-10.
+
 ## 2026-10-14 · Built-in prompts can be renamed, as in SillyTavern
 
 **Decision:** Built-in prompts like Main Prompt can be renamed. This stays as it is, the same as SillyTavern.
