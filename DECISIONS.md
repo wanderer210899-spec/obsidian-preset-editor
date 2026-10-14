@@ -4,6 +4,20 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-14 · Find and replace accepted; released as 1.5.3
+
+**Decision:**
+- The owner tested find and replace. It merges into main as v1.5.3. More real-use testing will follow.
+- Proposed with the build and not changed by the owner:
+  - In Preview, the arrow and replace box are hidden. If the replace box was open, it comes back in Edit.
+  - Ctrl+H in Preview opens find. The replace box shows when you switch to Edit.
+  - Enter in the replace box presses "Replace". Esc closes find.
+  - Closing find turns Match case off and clears the replace box.
+  - Tapping the arrow puts the cursor in the replace box.
+  - Switching Match case jumps back to the first match.
+
+**Context:** Built on `fix/1.5.3-find-replace`. SRS C-7 to C-10.
+
 ## 2026-10-14 · Find and replace: the details (1.5.3)
 
 **Decision:**

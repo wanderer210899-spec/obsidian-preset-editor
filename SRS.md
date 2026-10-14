@@ -34,7 +34,7 @@ Each version adds one feature on top of the last.
 | 1.5     | Select several prompts at once. Copy or move them to another preset, delete them, or drag them together (3.7). | Done        |
 | 1.5.1   | Mobile: the last row in the Order panel and Variables panel clears Obsidian's bottom bar (I-5). | Done        |
 | 1.5.2   | Search in the Variables panel (T-7).                                                      | Done        |
-| 1.5.3   | Find and replace in Edit. Find steps match by match, with a Match case switch (C-7 to C-10). | Planned     |
+| 1.5.3   | Find and replace in Edit. Find steps match by match, with a Match case switch (C-7 to C-10). | Done        |
 
 **Not planned**
 
@@ -64,7 +64,9 @@ Each version adds one feature on top of the last.
 
 **1.5.2 is done** (v1.5.2). A search box in the Variables panel (T-7). Checked by the owner on a phone and on desktop.
 
-- Built: everything marked 1.0 to 1.5.2 below.
+**1.5.3 is done** (v1.5.3). Find and replace in Edit (C-7 to C-10). Find steps match by match, with a Match case button. Checked by the owner; more real-use testing to follow.
+
+- Built: everything marked 1.0 to 1.5.3 below.
 - Dragging (Q-1) was checked on a phone, through a test copy of Obsidian.
 - Real use: from 1.5, the plugin is ready for testing in real use, installed by hand from a GitHub release. Changes may come up from that.
 - Real use found four things (14 October 2026). They become 1.5.1 to 1.5.3, plus a note on a SillyTavern gap (V-13).
