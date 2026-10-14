@@ -4,6 +4,20 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-14 · Variable search accepted; released as 1.5.2
+
+**Decision:**
+- The owner tested the variable search on a phone and on desktop. It merges into main as v1.5.2.
+- Proposed with the build and not changed by the owner:
+  - The search box only shows when there's at least one variable.
+  - With no match, the panel says: No variables match "…".
+  - An × in the box clears the search.
+  - The search box stays at the top while the list scrolls.
+  - The search clears when you switch to the Order tab or close the panel.
+  - The count on the Variables tab always shows the total.
+
+**Context:** Built on `fix/1.5.2-variable-search`. SRS T-7.
+
 ## 2026-10-14 · Replace mode ignores prompt names
 
 **Decision:** While the replace box is open, find only looks in prompt text. Name matches aren't counted or lit up. Closing the replace box brings them back. Example: searching "mood" in a prompt named "Mood rules" with the text "Keep the mood calm. The mood shifts slowly." shows "1 of 3" with the replace box closed, and "1 of 2" with it open.
