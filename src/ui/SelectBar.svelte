@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { t } from '../i18n';
+
 	/** M-2: the bar for picked prompts, as in mockups O.2 (narrow) and O.8 (wide). */
 	interface Props {
 		count: number;
@@ -14,24 +16,24 @@
 	};
 </script>
 
-<div class="sb-bar" class:sb-narrow={narrow} role="toolbar" aria-label="Picked prompts">
+<div class="sb-bar" class:sb-narrow={narrow} role="toolbar" aria-label={t('order.pickedBar')}>
 	<div class="sb-btn" class:sb-off={off} role="button" tabindex="0" aria-disabled={off} onclick={run(oncopy)}>
 		{#if narrow}
 			<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>
 		{/if}
-		<span>Copy to…</span>
+		<span>{t('order.copyTo')}</span>
 	</div>
 	<div class="sb-btn" class:sb-off={off} role="button" tabindex="0" aria-disabled={off} onclick={run(onmove)}>
 		{#if narrow}
 			<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
 		{/if}
-		<span>Move to…</span>
+		<span>{t('order.moveTo')}</span>
 	</div>
 	<div class="sb-btn sb-danger" class:sb-off={off} role="button" tabindex="0" aria-disabled={off} onclick={run(ondelete)}>
 		{#if narrow}
 			<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"></path></svg>
 		{/if}
-		<span>Delete</span>
+		<span>{t('order.delete')}</span>
 	</div>
 </div>
 

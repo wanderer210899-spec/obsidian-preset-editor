@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '../../i18n';
 	import { portal, pressable } from './actions';
 	import Icon from './Icon.svelte';
 	import type { MenuItem } from './types';
@@ -32,7 +33,7 @@
 			{/each}
 		</div>
 		<div class="pl-foot">
-			<div role="button" tabindex="0" use:pressable class="pl-cancel" onclick={onClose}>Cancel</div>
+			<div role="button" tabindex="0" use:pressable class="pl-cancel" onclick={onClose}>{t('library.cancel')}</div>
 		</div>
 	</div>
 </div>

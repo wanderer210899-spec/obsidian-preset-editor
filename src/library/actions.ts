@@ -1,4 +1,5 @@
 import { type App, normalizePath, Notice, TFile, TFolder } from 'obsidian';
+import { t } from '../i18n';
 import { blankPresetText, untitledName } from '../new-preset';
 import { baseName, nameProblem, presetCount } from './catalog';
 
@@ -42,9 +43,9 @@ export class LibraryActions {
 			await this.app.fileManager.renameFile(file, normalizePath(`${file.parent?.path ?? ''}/${name}.json`));
 		} catch (e) {
 			console.error('Preset Editor: rename failed', e);
-			return "Couldn't rename this preset";
+			return t('library.couldNotRename');
 		}
-		new Notice(`Renamed to “${name}”`);
+		new Notice(t('library.renamed', { name }));
 		return null;
 	}
 
@@ -68,8 +69,8 @@ export class LibraryActions {
 			}
 		}
 		const where = baseName(folder);
-		if (moved) new Notice(`Moved ${presetCount(moved)} to ${where}`);
-		if (stuck.length) new Notice(`Couldn't move ${stuck.map((n) => `“${n}”`).join(', ')}: ${where} already has a preset with that name.`);
+		if (moved) new Notice(t('library.moved', { what: presetCount(moved), folder: where }));
+		if (stuck.length) new Notice(t('library.couldNotMove', { names: stuck.map((n) => `“${n}”`).join(', '), folder: where }));
 	}
 
 	/**
@@ -84,8 +85,8 @@ export class LibraryActions {
 			await this.app.fileManager.promptForDeletion(file);
 			if (!this.file(path)) gone.push(file.basename);
 		}
-		if (gone.length === 1) new Notice(`Deleted “${gone[0]}”`);
-		else if (gone.length > 1) new Notice(`Deleted ${presetCount(gone.length)}`);
+		if (gone.length === 1) new Notice(t('library.deleted', { what: `“${gone[0]}”` }));
+		else if (gone.length > 1) new Notice(t('library.deleted', { what: presetCount(gone.length) }));
 	}
 
 	/** L-4 to L-6: makes a new preset in `folder`. Returns its path, or null if it failed. */
@@ -98,7 +99,7 @@ export class LibraryActions {
 			return file.path;
 		} catch (e) {
 			console.error('Preset Editor: new preset failed', e);
-			new Notice("Couldn't make a new preset.");
+			new Notice(t('library.couldNotCreate'));
 			return null;
 		}
 	}

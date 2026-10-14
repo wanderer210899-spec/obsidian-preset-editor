@@ -2,6 +2,7 @@
  * The library's list logic (SRS L-1, L-10, L-11): folders, sorting, search,
  * recent presets and time labels. Pure data in, data out. No Obsidian code.
  */
+import { t } from '../i18n';
 
 /** One valid preset in a preset folder. */
 export interface PresetEntry {
@@ -28,11 +29,12 @@ export interface LibrarySnapshot {
 /** L-11: the sort choices, as in the B2 mockups. */
 export type SortKey = 'edited' | 'name' | 'prompts';
 
-export const SORT_LABELS: Record<SortKey, string> = {
-	edited: 'Last edited',
-	name: 'Name, A to Z',
-	prompts: 'Most prompts',
-};
+export const SORT_KEYS: readonly SortKey[] = ['edited', 'name', 'prompts'];
+
+/** "Last edited", "Name, A to Z", "Most prompts". */
+export function sortLabel(key: SortKey): string {
+	return t(key === 'edited' ? 'library.sortEdited' : key === 'name' ? 'library.sortName' : 'library.sortPrompts');
+}
 
 export interface FolderNode {
 	path: string;
@@ -175,23 +177,21 @@ export function pushRecent(recentPaths: readonly string[], path: string): string
 	return [path, ...recentPaths.filter((p) => p !== path)].slice(0, RECENT_COUNT * 3);
 }
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
 /** "Just now", "5m ago", "2h ago", "Yesterday", "3 Oct", as in the mockups. Older years add the year. */
 export function timeLabel(mtime: number, now: number): string {
 	const minutes = Math.floor((now - mtime) / 60000);
-	if (minutes < 1) return 'Just now';
-	if (minutes < 60) return `${minutes}m ago`;
-	if (minutes < 1440) return `${Math.round(minutes / 60)}h ago`;
-	if (minutes < 2880) return 'Yesterday';
+	if (minutes < 1) return t('time.justNow');
+	if (minutes < 60) return t('time.minutes', { n: minutes });
+	if (minutes < 1440) return t('time.hours', { n: Math.round(minutes / 60) });
+	if (minutes < 2880) return t('time.yesterday');
 	const d = new Date(mtime);
-	const label = `${d.getDate()} ${MONTHS[d.getMonth()]}`;
-	return d.getFullYear() === new Date(now).getFullYear() ? label : `${label} ${d.getFullYear()}`;
+	const date = { day: d.getDate(), month: t('time.months').split(',')[d.getMonth()] ?? '', year: d.getFullYear() };
+	return d.getFullYear() === new Date(now).getFullYear() ? t('time.date', date) : t('time.dateYear', date);
 }
 
 /** "1 preset" / "3 presets". */
 export function presetCount(n: number): string {
-	return n === 1 ? '1 preset' : `${n} presets`;
+	return n === 1 ? t('library.presetOne') : t('library.presetsCount', { n });
 }
 
 /** Characters a file name can't hold, as Obsidian says. */
@@ -202,8 +202,8 @@ const BAD_NAME = /[\\/:*?"<>|]/;
  * `taken` is every other file name (without ".json") in the same folder.
  */
 export function nameProblem(name: string, taken: readonly string[]): string | null {
-	if (BAD_NAME.test(name)) return 'A name can\'t contain any of these: * " \\ / < > : | ?';
+	if (BAD_NAME.test(name)) return t('library.badName');
 	const lower = name.toLowerCase();
-	if (taken.some((t) => t.toLowerCase() === lower)) return 'That name is already used in this folder';
+	if (taken.some((t) => t.toLowerCase() === lower)) return t('library.nameTaken');
 	return null;
 }

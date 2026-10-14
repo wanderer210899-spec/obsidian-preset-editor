@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '../i18n';
 	import { filterVariables, type VariableInfo } from '../variables';
 	import SearchBox from './SearchBox.svelte';
 
@@ -18,41 +19,40 @@
 <div class="panel">
 	{#if vars.length}
 		<!-- T-7: looks like the library's search box. -->
-		<div class="searchrow"><SearchBox bind:value={query} placeholder="Search variables" {narrow} /></div>
+		<div class="searchrow"><SearchBox bind:value={query} placeholder={t('vars.search')} {narrow} /></div>
 	{/if}
 	<div class="vars">
 		{#each shown as v (v.name)}
 			<div class="var">
 				<div class="top">
 					<span class="name">{v.name}</span>
-					<span class="value" class:empty={v.value === ''}>{v.value === '' ? 'empty' : v.value}</span>
+					<span class="value" class:empty={v.value === ''}>{v.value === '' ? t('vars.empty') : v.value}</span>
 				</div>
 				<div class="uses">
-					<span class="label">Set in</span>
+					<span class="label">{t('vars.setIn')}</span>
 					<div class="chips">
 						{#each v.setIn as p (p.id)}
 							{@render chip(p.id, p.name)}
 						{/each}
-						{#if !v.setIn.length}<span class="label never">Never set — reads empty</span>{/if}
+						{#if !v.setIn.length}<span class="label never">{t('vars.neverSet')}</span>{/if}
 					</div>
-					<span class="label">Read in</span>
+					<span class="label">{t('vars.readIn')}</span>
 					<div class="chips">
 						{#each v.readIn as p (p.id)}
 							{@render chip(p.id, p.name)}
 						{/each}
-						{#if !v.readIn.length}<span class="label">Not read</span>{/if}
+						{#if !v.readIn.length}<span class="label">{t('vars.notRead')}</span>{/if}
 					</div>
 				</div>
 			</div>
 		{:else}
 			{#if vars.length}
-				<div class="nomatch">No variables match “{query.trim()}”</div>
+				<div class="nomatch">{t('vars.noMatch', { query: query.trim() })}</div>
 			{:else}
 				<div class="none">
-					<div class="none-title">No variables found</div>
+					<div class="none-title">{t('vars.noneTitle')}</div>
 					<div class="none-text">
-						Macros like {'{{setvar::name::value}}'} create local variables while the prompt is assembled. None of the prompts that
-						are switched on use one.
+						{t('vars.noneText', { macro: '{{setvar::name::value}}' })}
 					</div>
 				</div>
 			{/if}
@@ -62,7 +62,7 @@
 
 {#snippet chip(id: string, name: string)}
 	<!-- E-7 -->
-	<div class="chip" role="button" tabindex="0" title="Jump to prompt" style:min-height={narrow ? '32px' : '24px'} onclick={() => onjump(id)}>
+	<div class="chip" role="button" tabindex="0" title={t('vars.jump')} style:min-height={narrow ? '32px' : '24px'} onclick={() => onjump(id)}>
 		{name}<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"></path></svg>
 	</div>
 {/snippet}

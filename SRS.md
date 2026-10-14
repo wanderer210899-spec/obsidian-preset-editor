@@ -1,6 +1,6 @@
 # Preset Editor: Software Requirements Specification
 
-Draft 0.16 · 14 October 2026
+Draft 0.17 · 14 October 2026
 
 Follows SRS standard principles: https://www.computer.org/resources/software-requirements-specifications#requirements-fundamentals
 
@@ -36,7 +36,7 @@ Each version adds to the last. From 1.5.4, a version can hold a few small change
 | 1.5.2   | Search in the Variables panel (T-7).                                                      | Done        |
 | 1.5.3   | Find and replace in Edit. Find steps match by match, with a Match case switch (C-7 to C-10). | Done        |
 | 1.5.4   | Order panel: a search box for prompt names (E-8), and no hint line (I-4). Find in prompts looks at prompt text only (C-4). Dragging several prompts looks like a stack (M-3). | Done        |
-| 1.6     | The plugin follows Obsidian's language: Simplified Chinese (3.11).                       | Planned     |
+| 1.6     | The plugin follows Obsidian's language: Simplified Chinese (3.11).                       | Done        |
 
 **Not planned**
 
@@ -70,11 +70,13 @@ Each version adds to the last. From 1.5.4, a version can hold a few small change
 
 **1.5.4 is done** (v1.5.4). The Order panel has a search box for prompt names (E-8) and no hint line (I-4). Find in prompts looks at prompt text only (C-4). Dragging several prompts looks like a stack (M-3). Checked by the owner.
 
-- Built: everything marked 1.0 to 1.5.4 below.
+**1.6 is done** (v1.6.0). The plugin follows Obsidian's language: Simplified Chinese or English (3.11). The owner looked over the translations and said they look right. More checking comes with real use. A new preset is still called "Untitled preset" in Chinese (open item 11).
+
+- Built: everything marked 1.0 to 1.6 below.
 - Dragging (Q-1) was checked on a phone, through a test copy of Obsidian.
 - Real use: from 1.5, the plugin is ready for testing in real use, installed by hand from a GitHub release. Changes may come up from that.
 - Real use found four things (14 October 2026). They become 1.5.1 to 1.5.3, plus a note on a SillyTavern gap (V-13).
-- Next: 1.6 (Simplified Chinese).
+- Next: nothing planned yet. Real use of 1.6 may bring changes.
 - Not yet checked: a full test in the Obsidian phone app. This can only happen once the plugin can be installed. Scrolling, for example, feels different in the test copy.
 
 ### 1.4 Terms
@@ -348,6 +350,7 @@ The plugin follows Obsidian's language, like other Obsidian plugins.
 - **N-1.** When Obsidian is set to Simplified Chinese, the plugin's text is in Simplified Chinese. Any other language gets English. Traditional Chinese is not planned.
 - **N-2.** All of the plugin's own text is translated: the editor, the panels, the library, messages, the settings page and command names.
 - **N-3.** What the user typed or the file holds stays as it is: prompt text, prompt names, preset names and macros. SillyTavern's own Chinese version also shows prompt names ("Main Prompt", "Chat History") as they are in the file. Obsidian's own boxes, like the delete box (L-13), follow Obsidian's language by themselves.
+  - Names the plugin makes up are translated. A new prompt is named 未命名 (instead of "Untitled prompt"). The name is saved in the file, so it stays if the language changes later.
 - **N-4.** Where SillyTavern has its own Simplified Chinese word for something, the plugin uses the same word.
   - A word list comes first: about 15 words that show up everywhere (Preset, Prompt, Depth, Order…), each with its Chinese. The owner approves it before the rest is translated.
   - Where SillyTavern uses two words for one thing, the word from its prompt manager screen wins.
@@ -355,6 +358,7 @@ The plugin follows Obsidian's language, like other Obsidian plugins.
 - **N-5.** The owner reviews every translation before 1.6 is released.
   - The review table is one Markdown file in the project, grouped by screen. Columns: Where, English, Chinese.
   - The owner changes the Chinese column directly. The developer copies it into the plugin.
+  - The review file stays on the owner's computer. It is not saved in git.
 
 Details are in open item 11.
 
@@ -451,3 +455,6 @@ Details are in open item 11.
     - ~~Do prompt names from the file, like "Main Prompt" or "Chat History", stay as typed in the file?~~ Settled: yes, as in SillyTavern (N-3).
     - ~~How is the word list made?~~ Settled: N-4. The words themselves get picked when 1.6 starts.
     - ~~What does the review table look like?~~ Settled: N-5.
+    - ~~What is a new prompt called in Chinese?~~ Settled: 未命名 (N-3).
+    - ~~Is the review file saved in git?~~ Settled: no, it stays local (N-5).
+    - What is a new preset called in Chinese ("Untitled preset")?

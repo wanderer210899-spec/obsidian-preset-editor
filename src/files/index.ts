@@ -5,6 +5,7 @@
  * including a single click, is unchanged (F-2, F-6).
  */
 import { type App, Notice, type Plugin, TFile } from 'obsidian';
+import { t } from '../i18n';
 import { readPreset } from '../preset';
 
 /** True if `path` is inside one of `folders`, at any depth. */
@@ -27,7 +28,7 @@ export function registerFileMenu(
 			if (!isInPresetFolder(file.path, folders())) return;
 			menu.addItem((item) =>
 				item
-					.setTitle('Open in Preset Editor')
+					.setTitle(t('cmd.openInEditor'))
 					.setIcon('sliders-horizontal')
 					.onClick(() => void openIfPreset(plugin.app, file, open)),
 			);
@@ -38,7 +39,7 @@ export function registerFileMenu(
 /** F-3: opens the file only if it is a valid preset; otherwise says so. */
 async function openIfPreset(app: App, file: TFile, open: (file: TFile) => Promise<void>): Promise<void> {
 	if (!readPreset(await app.vault.cachedRead(file))) {
-		new Notice(`${file.name} isn't a valid preset and can't be opened.`);
+		new Notice(t('editor.notValid', { file: file.name }));
 		return;
 	}
 	await open(file);

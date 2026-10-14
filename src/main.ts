@@ -1,5 +1,6 @@
-import { Plugin } from 'obsidian';
+import { getLanguage, Plugin } from 'obsidian';
 import { registerFileMenu } from './files';
+import { setLanguage } from './i18n';
 import { listPresets, registerLibrary } from './library';
 import { SettingsStore, SettingsTab } from './settings';
 import { openPresetEditor, PresetEditorView, VIEW_TYPE } from './view';
@@ -8,6 +9,8 @@ export default class PresetEditorPlugin extends Plugin {
 	settings!: SettingsStore;
 
 	async onload() {
+		// N-1: Obsidian restarts when its language changes, so reading it once is enough.
+		setLanguage(getLanguage());
 		this.settings = new SettingsStore(
 			() => this.loadData(),
 			(data) => this.saveData(data),

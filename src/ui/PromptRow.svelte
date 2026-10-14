@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '../i18n';
 	import type { PromptData } from '../preset';
 	import { rulesFor } from '../kinds';
 	import type { Query } from '../search';
@@ -41,7 +42,7 @@
 	<input
 		class="name"
 		data-name
-		aria-label="Prompt name"
+		aria-label={t('prompt.name')}
 		style:font-size={sizes.nameFs}
 		style:opacity={row.enabled ? 1 : 0.45}
 		value={p.name ?? ''}
@@ -56,7 +57,7 @@
 	</div>
 	{#if !sizes.narrow}{@render deleteOrLock('28px', 15, 13)}{/if}
 	<div class="toggle">
-		<Toggle on={row.enabled} {ontoggle} flushLeft title={row.enabled ? 'On — click to switch off' : 'Off — click to switch on'} />
+		<Toggle on={row.enabled} {ontoggle} flushLeft title={row.enabled ? t('prompt.on') : t('prompt.off')} />
 	</div>
 </div>
 {#if open}
@@ -74,11 +75,11 @@
 
 {#snippet deleteOrLock(size: string, trashPx: number, lockPx: number)}
 	{#if removable}
-		<div class="del" class:folded={!open} role="button" tabindex="0" title="Delete prompt" aria-label="Delete prompt" style:width={size} style:height={size} onclick={ondelete}>
+		<div class="del" class:folded={!open} role="button" tabindex="0" title={t('prompt.delete')} aria-label={t('prompt.delete')} style:width={size} style:height={size} onclick={ondelete}>
 			<svg width={trashPx} height={trashPx} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
 		</div>
 	{:else}
-		<div class="lock" class:folded={!open} title="Built-in prompts can’t be deleted" style:width={size} style:height={size}>
+		<div class="lock" class:folded={!open} title={t('prompt.cantDelete')} style:width={size} style:height={size}>
 			<svg width={lockPx} height={lockPx} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
 		</div>
 	{/if}

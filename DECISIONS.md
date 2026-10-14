@@ -4,6 +4,27 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-14 · Simplified Chinese accepted; released as 1.6.0
+
+**Decision:**
+- The owner tried 1.6 in Chinese and said it looks right so far. It merges into main as v1.6.0.
+- The owner keeps checking the Chinese in real use. Changes go in the local review file, then into the plugin.
+- Proposed with the build and not changed by the owner:
+  - The plugin's name, "Preset Editor", stays in English, as in Obsidian's command list.
+  - Where Obsidian has its own Chinese word (前一个, 后一个, 清除搜索, 在新标签页中打开, 文件与链接, 检测所有类型文件), the plugin uses it.
+- Still open: what a new preset is called in Chinese. For now it stays "Untitled preset".
+
+**Context:** Built on `feature/1.6-chinese`. SRS 3.11, N-1 to N-5, open item 11.
+
+## 2026-10-14 · Simplified Chinese: new prompt name, review file kept local (1.6)
+
+**Decision:**
+- With Obsidian in Simplified Chinese, a new prompt is named 未命名 instead of "Untitled prompt". The name is saved in the file like any other name.
+- The translation review file stays on the owner's computer. It is not saved in git and never goes to GitHub.
+- 1.6 starts now, on the `version-1.6` branch.
+
+**Context:** Asked before building 1.6. Still open: the name for a new preset ("Untitled preset"). SRS N-3, N-5.
+
 ## 2026-10-14 · Order panel search accepted; released as 1.5.4
 
 **Decision:**

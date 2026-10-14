@@ -2,10 +2,9 @@
  * New preset module (SRS L-4, L-5): the text of a new preset and its name.
  * Pure text in, text out. No Obsidian or UI code.
  */
+import { t } from '../i18n';
 import { readPreset, writePreset } from '../preset';
 import { DEFAULT_PRESET } from './default-preset';
-
-const BASE_NAME = 'Untitled preset';
 
 /** L-5: SillyTavern's Default preset with every prompt's text left blank. */
 export function blankPresetText(): string {
@@ -18,7 +17,8 @@ export function blankPresetText(): string {
 
 /** L-4: "Untitled preset", then "Untitled preset 1", "Untitled preset 2", … until one is free. */
 export function untitledName(isTaken: (name: string) => boolean): string {
-	let name = BASE_NAME;
-	for (let i = 1; isTaken(name); i++) name = `${BASE_NAME} ${i}`;
+	const base = t('library.untitled');
+	let name = base;
+	for (let i = 1; isTaken(name); i++) name = `${base} ${i}`;
 	return name;
 }

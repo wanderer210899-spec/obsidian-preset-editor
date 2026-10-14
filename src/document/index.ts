@@ -3,6 +3,7 @@
  * with the edits the editor can make (SRS E-2 to E-6). It has no Obsidian
  * or UI code. Saving is done elsewhere from `content`.
  */
+import { t } from '../i18n';
 import type { OrderEntry, PresetContent, PromptData } from '../preset';
 
 /** One prompt as the editor shows it: in order, with its on/off state. */
@@ -214,7 +215,7 @@ export class PresetDocument {
 			system_prompt: false,
 			enabled: false,
 			marker: false,
-			name: 'Untitled prompt',
+			name: t('prompt.untitled'),
 			role: 'system',
 			content: '',
 			injection_position: 0,

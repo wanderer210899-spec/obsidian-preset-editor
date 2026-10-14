@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '../i18n';
 	import type { PromptData } from '../preset';
 	import { triggerLabel } from './triggers';
 	import type { Sizes } from './types';
@@ -20,11 +21,11 @@
 
 	const role = $derived(p.role || 'system');
 	const summary = $derived.by(() => {
-		const bits = [p.injection_position === 1 ? `In-chat · D${p.injection_depth ?? 4} · #${p.injection_order ?? 100}` : 'Relative'];
+		const bits = [p.injection_position === 1 ? t('ps.summaryInChat', { depth: p.injection_depth ?? 4, order: p.injection_order ?? 100 }) : t('ps.relative')];
 		// One trigger is named; several are counted; none (= all replies) shows nothing.
 		const triggers = p.injection_trigger ?? [];
 		if (triggers.length === 1) bits.push(triggerLabel(triggers[0] ?? ''));
-		else if (triggers.length > 1) bits.push(`${triggers.length} triggers`);
+		else if (triggers.length > 1) bits.push(t('ps.triggerCount', { n: triggers.length }));
 		return bits.join(' · ');
 	});
 </script>
@@ -32,10 +33,10 @@
 <!-- Role picker and settings button, shared by prompt rows and placeholder rows. -->
 <label class="role">
 	<span class="dot" style:background={ROLE_DOT[role] ?? 'var(--text-faint)'}></span>
-	<select aria-label="Role" style:font-size={sizes.selFs} value={role} onchange={(e) => update({ role: e.currentTarget.value })}>
-		<option value="system">System</option>
-		<option value="user">User</option>
-		<option value="assistant">Assistant</option>
+	<select aria-label={t('ps.role')} style:font-size={sizes.selFs} value={role} onchange={(e) => update({ role: e.currentTarget.value })}>
+		<option value="system">{t('ps.system')}</option>
+		<option value="user">{t('ps.user')}</option>
+		<option value="assistant">{t('ps.assistant')}</option>
 	</select>
 	<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="m6 9 6 6 6-6"></path></svg>
 </label>

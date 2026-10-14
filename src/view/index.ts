@@ -6,6 +6,7 @@
 import { type App, FileView, Notice, Platform, Scope, TFile, type WorkspaceLeaf } from 'obsidian';
 import { Autosave } from '../autosave';
 import { PresetDocument } from '../document';
+import { t } from '../i18n';
 import { readPreset, writePreset } from '../preset';
 import { type PresetListEntry, presetPort } from '../prompt-transfer';
 import { type EditorHandle, type Message, type MessageHandle, mountEditor } from '../ui';
@@ -112,7 +113,7 @@ export class PresetEditorView extends FileView {
 	}
 
 	getDisplayText(): string {
-		return this.file?.basename ?? 'Preset Editor';
+		return this.file?.basename ?? t('editor.tabTitle');
 	}
 
 	getIcon(): string {
@@ -137,7 +138,7 @@ export class PresetEditorView extends FileView {
 		this.diskText = await this.app.vault.read(file);
 		const content = readPreset(this.diskText);
 		if (!content) {
-			new Notice(`${file.name} isn't a valid preset and can't be opened.`);
+			new Notice(t('editor.notValid', { file: file.name }));
 			return;
 		}
 		const doc = new PresetDocument(content);
@@ -147,7 +148,7 @@ export class PresetEditorView extends FileView {
 			},
 			(status) => {
 				this.editor?.setStatus(status);
-				if (status === 'error') new Notice(`Couldn't save ${file.name}.`);
+				if (status === 'error') new Notice(t('editor.couldNotSave', { file: file.name }));
 			},
 		);
 		this.doc = doc;
@@ -199,7 +200,7 @@ export class PresetEditorView extends FileView {
 			this.doc.load(content);
 			return;
 		}
-		new Notice(`${file.name} is no longer a valid preset and can't be shown.`);
+		new Notice(t('editor.noLongerValid', { file: file.name }));
 		this.stopListening?.();
 		this.editor?.destroy();
 		this.contentEl.empty();
