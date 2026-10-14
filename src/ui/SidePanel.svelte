@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { SvelteSet } from 'svelte/reactivity';
+	import { t } from '../i18n';
 	import { kindOf } from '../kinds';
 	import type { VariableInfo } from '../variables';
 	import { sortable } from './actions';
@@ -168,15 +169,15 @@
 	<Segmented
 		fill
 		options={[
-			{ value: 'order' as Tab, label: 'Order', count: rows.length },
-			{ value: 'vars' as Tab, label: 'Variables', count: vars.length },
+			{ value: 'order' as Tab, label: t('order.tab'), count: rows.length },
+			{ value: 'vars' as Tab, label: t('order.varsTab'), count: vars.length },
 		]}
 		value={tab}
 		onpick={onpicktab}
 		height={sizes.narrow ? '36px' : '26px'}
 	/>
 	{#if sizes.narrow}
-		<div class="close" role="button" tabindex="0" title="Close" onclick={onclose}>
+		<div class="close" role="button" tabindex="0" title={t('order.close')} onclick={onclose}>
 			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
 		</div>
 	{/if}
@@ -185,16 +186,16 @@
 {#if tab === 'order'}
 	<!-- E-8: the search box and Select share the top row, as in the Variables panel (I-4: no hint line). -->
 	<div class="searchrow">
-		<SearchBox bind:value={query} placeholder="Search prompts" narrow={sizes.narrow} />
+		<SearchBox bind:value={query} placeholder={t('order.search')} narrow={sizes.narrow} />
 		{#if !selecting}
-			<div class="link" role="button" tabindex="0" onclick={() => start()}>Select</div>
+			<div class="link" role="button" tabindex="0" onclick={() => start()}>{t('order.select')}</div>
 		{/if}
 	</div>
 	{#if selecting}
 		<div class="selhd">
-			<div class="link" role="button" tabindex="0" onclick={selectAll}>Select all</div>
-			<div class="count">{picked.size} selected</div>
-			<div class="link" role="button" tabindex="0" onclick={stop}>Done</div>
+			<div class="link" role="button" tabindex="0" onclick={selectAll}>{t('order.selectAll')}</div>
+			<div class="count">{t('order.selected', { n: picked.size })}</div>
+			<div class="link" role="button" tabindex="0" onclick={stop}>{t('order.done')}</div>
 		</div>
 	{/if}
 	<div
@@ -226,7 +227,7 @@
 						role="checkbox"
 						tabindex="0"
 						aria-checked={picked.has(row.id)}
-						aria-label="Pick {row.prompt.name ?? row.id}"
+						aria-label={t('order.pickName', { name: row.prompt.name ?? row.id })}
 						onclick={() => toggle(row.id)}
 					>
 						<span class="circle" class:on={picked.has(row.id)} style:width={sizes.narrow ? '22px' : '18px'} style:height={sizes.narrow ? '22px' : '18px'}>
@@ -241,7 +242,7 @@
 					class="name"
 					role="button"
 					tabindex="0"
-					title={selecting ? 'Pick' : 'Jump to prompt'}
+					title={selecting ? t('order.pick') : t('order.jump')}
 					class:ph={kindOf(row.id).startsWith('placeholder')}
 					style:opacity={row.enabled ? 1 : 0.45}
 					onpointerdown={(e) => down(e, row.id)}
@@ -261,14 +262,14 @@
 					role="switch"
 					aria-checked={row.enabled}
 					tabindex="0"
-					title={row.enabled ? 'On — click to switch off' : 'Off — click to switch on'}
+					title={row.enabled ? t('prompt.on') : t('prompt.off')}
 					onclick={() => doc.setEnabled(row.id, !row.enabled)}
 				>
 					<span class="dot" class:on={row.enabled}></span>
 				</div>
 			</div>
 		{:else}
-			<div class="nomatch">No prompts match “{query.trim()}”</div>
+			<div class="nomatch">{t('order.noMatch', { query: query.trim() })}</div>
 		{/each}
 	</div>
 	{#if selecting}

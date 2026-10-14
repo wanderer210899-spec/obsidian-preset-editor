@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '../i18n';
 	import type { PromptData } from '../preset';
 	import { hasForbidOverrides, rulesFor } from '../kinds';
 	import Segmented from './Segmented.svelte';
@@ -49,17 +50,17 @@
 
 <div class="pop" class:narrow={sizes.narrow} data-pop-keep>
 	<div class="line">
-		<div class="title">Prompt settings</div>
-		<div class="close" role="button" tabindex="0" title="Close" style:width={sizes.btnH} style:height={sizes.btnH} onclick={onclose}>
+		<div class="title">{t('ps.title')}</div>
+		<div class="close" role="button" tabindex="0" title={t('ps.close')} style:width={sizes.btnH} style:height={sizes.btnH} onclick={onclose}>
 			<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
 		</div>
 	</div>
 	<div class="line">
-		<div class="label">Position</div>
+		<div class="label">{t('ps.position')}</div>
 		<Segmented
 			options={[
-				{ value: 0, label: 'Relative' },
-				{ value: 1, label: 'In-chat' },
+				{ value: 0, label: t('ps.relative') },
+				{ value: 1, label: t('ps.inChat') },
 			]}
 			value={inChat ? 1 : 0}
 			onpick={setPosition}
@@ -67,11 +68,11 @@
 		/>
 	</div>
 	<div class="line" style:opacity={inChat ? 1 : 0.45}>
-		<div class="label">Depth · Order</div>
+		<div class="label">{t('ps.depthOrder')}</div>
 		<input
 			type="number"
 			inputmode="numeric"
-			aria-label="Depth"
+			aria-label={t('ps.depth')}
 			style:font-size={sizes.inFs}
 			value={prompt.injection_depth ?? DEFAULT_DEPTH}
 			onchange={(e) => update({ injection_depth: toNumber(e.currentTarget.value) })}
@@ -79,45 +80,45 @@
 		<input
 			type="number"
 			inputmode="numeric"
-			aria-label="Order"
+			aria-label={t('ps.order')}
 			style:font-size={sizes.inFs}
 			value={prompt.injection_order ?? DEFAULT_ORDER}
 			onchange={(e) => update({ injection_order: toNumber(e.currentTarget.value) })}
 		/>
 	</div>
-	{#if !inChat}<div class="note">Only used when In-chat</div>{/if}
+	{#if !inChat}<div class="note">{t('ps.onlyInChat')}</div>{/if}
 	<div class="line top">
-		<div class="label" style:padding-top="4px">Triggers</div>
+		<div class="label" style:padding-top="4px">{t('ps.triggers')}</div>
 		<div class="chips">
 			{#each TRIGGERS as [value, label] (value)}
 				<div class="chip" class:on={triggers.includes(value)} role="button" tabindex="0" style:min-height={sizes.ctlH} onclick={() => toggleTrigger(value)}>
-					{label}
+					{t(label)}
 				</div>
 			{/each}
-			{#if !triggers.length}<span class="none">None picked = all</span>{/if}
+			{#if !triggers.length}<span class="none">{t('ps.nonePicked')}</span>{/if}
 		</div>
 	</div>
 	{#if hasForbidOverrides(prompt.identifier)}
 		<div class="line">
-			<div class="label">Forbid overrides</div>
+			<div class="label">{t('ps.forbid')}</div>
 			<Toggle on={prompt.forbid_overrides === true} ontoggle={() => update({ forbid_overrides: prompt.forbid_overrides !== true })} />
 		</div>
 	{/if}
 	<div class="foot">
 		<div class="act" role="button" tabindex="0" style:min-height={sizes.btnH} onclick={() => oninsert(0)}>
-			<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"></path></svg>Insert above
+			<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"></path></svg>{t('ps.insertAbove')}
 		</div>
 		<div class="act" role="button" tabindex="0" style:min-height={sizes.btnH} onclick={() => oninsert(1)}>
-			<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"></path></svg>Insert below
+			<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"></path></svg>{t('ps.insertBelow')}
 		</div>
 		<div style:flex="1"></div>
 		{#if removable}
 			<div class="act danger" role="button" tabindex="0" style:min-height={sizes.btnH} onclick={ondelete}>
-				<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>Delete
+				<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>{t('ps.delete')}
 			</div>
 		{:else}
 			<div class="locked" style:min-height={sizes.btnH}>
-				<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Built-in · can’t delete
+				<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>{t('ps.builtIn')}
 			</div>
 		{/if}
 	</div>

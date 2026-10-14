@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { t } from '../i18n';
 	import { findRanges, NO_QUERY, type Query } from '../search';
 	import { createPromptEditor, type PromptEditor } from '../text-editor';
 	import { getTextSettings } from './text-settings';
@@ -22,7 +23,7 @@
 	onMount(() => {
 		editor = createPromptEditor(host, {
 			text,
-			placeholder: 'Write the prompt…',
+			placeholder: t('prompt.textBox'),
 			autoComplete: settings.autoComplete,
 			onChange: (t) => onchange(t),
 		});

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount, tick } from 'svelte';
+	import { t } from '../i18n';
 
 	interface Props {
 		query: string;
@@ -88,27 +89,27 @@
 				value={query}
 				oninput={(e) => onquery(e.currentTarget.value)}
 				onkeydown={onKeyDown}
-				placeholder="Find in prompts"
-				aria-label="Find in prompts"
+				placeholder={t('find.box')}
+				aria-label={t('find.box')}
 			/>
 			<span class="count">{count}</span>
 			<button
 				type="button"
 				class="case"
 				class:on={matchCase}
-				aria-label="Match case"
+				aria-label={t('find.matchCase')}
 				aria-pressed={matchCase}
-				title="Match case"
+				title={t('find.matchCase')}
 				onclick={onmatchcase}>Aa</button
 			>
 		</label>
-		<button type="button" class="btn" aria-label="Previous match" title="Previous match (Shift+Enter)" onclick={() => onstep(-1)}>
+		<button type="button" class="btn" aria-label={t('find.previous')} title={t('find.previousKey')} onclick={() => onstep(-1)}>
 			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"></path></svg>
 		</button>
-		<button type="button" class="btn" aria-label="Next match" title="Next match (Enter)" onclick={() => onstep(1)}>
+		<button type="button" class="btn" aria-label={t('find.next')} title={t('find.nextKey')} onclick={() => onstep(1)}>
 			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
 		</button>
-		<button type="button" class="btn" aria-label="Close search" title="Close (Esc)" onclick={onclose}>
+		<button type="button" class="btn" aria-label={t('find.close')} title={t('find.closeKey')} onclick={onclose}>
 			<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
 		</button>
 	</div>
@@ -116,9 +117,9 @@
 		<button
 			type="button"
 			class="btn arrow"
-			aria-label={replaceOpen ? 'Hide replace' : 'Show replace'}
+			aria-label={replaceOpen ? t('find.hideReplace') : t('find.showReplace')}
 			aria-expanded={replaceOpen}
-			title={replaceOpen ? 'Hide replace' : 'Replace'}
+			title={replaceOpen ? t('find.hideReplace') : t('find.replace')}
 			onclick={toggleReplace}
 		>
 			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d={replaceOpen ? 'm18 15-6-6-6 6' : 'm6 9 6 6 6-6'}></path></svg>
@@ -131,14 +132,14 @@
 						value={replacement}
 						oninput={(e) => onreplacement(e.currentTarget.value)}
 						onkeydown={onReplaceKeyDown}
-						placeholder="Replace with…"
-						aria-label="Replace with"
+						placeholder={t('find.replaceWithBox')}
+						aria-label={t('find.replaceWith')}
 					/>
 				</label>
-				<button type="button" class="btn" aria-label="Replace" title="Replace (Enter)" onclick={onreplace}>
+				<button type="button" class="btn" aria-label={t('find.replace')} title={t('find.replaceKey')} onclick={onreplace}>
 					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4c0-1.1.9-2 2-2"></path><path d="M20 2c1.1 0 2 .9 2 2"></path><path d="M22 8c0 1.1-.9 2-2 2"></path><path d="M16 10c-1.1 0-2-.9-2-2"></path><path d="m3 7 3 3 3-3"></path><path d="M6 10V5c0-1.7 1.3-3 3-3h1"></path><rect width="8" height="8" x="2" y="14" rx="2"></rect></svg>
 				</button>
-				<button type="button" class="btn" aria-label="Replace all" title="Replace all" onclick={onreplaceall}>
+				<button type="button" class="btn" aria-label={t('find.replaceAll')} title={t('find.replaceAll')} onclick={onreplaceall}>
 					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4c0-1.1.9-2 2-2"></path><path d="M20 2c1.1 0 2 .9 2 2"></path><path d="M22 8c0 1.1-.9 2-2 2"></path><path d="M16 10c-1.1 0-2-.9-2-2"></path><path d="m3 7 3 3 3-3"></path><path d="M6 10V5c0-1.7 1.3-3 3-3h1"></path><rect width="8" height="8" x="2" y="14" rx="2"></rect><rect width="8" height="8" x="14" y="14" rx="2"></rect></svg>
 				</button>
 				<!-- Keeps the replace box the same width as the find box. -->

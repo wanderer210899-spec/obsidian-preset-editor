@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount, untrack } from 'svelte';
 	import { SvelteSet } from 'svelte/reactivity';
+	import { t } from '../../i18n';
 	import {
 		baseName,
 		buildTree,
@@ -11,8 +12,9 @@
 		type PresetEntry,
 		recentPresets,
 		searchPresets,
-		SORT_LABELS,
+		SORT_KEYS,
 		type SortKey,
+		sortLabel,
 		timeLabel,
 	} from '../catalog';
 	import { headerSlot, pressable } from './actions';
@@ -83,7 +85,7 @@
 		const out: Item[] = [];
 		if (q) {
 			for (const p of results) out.push({ kind: 'preset', p, depth: -1 });
-			if (!results.length) out.push({ kind: 'empty', text: `No presets match “${q}”`, depth: -1 });
+			if (!results.length) out.push({ kind: 'empty', text: t('library.noMatch', { query: q }), depth: -1 });
 			return out;
 		}
 		const add = (node: FolderNode) => {
@@ -91,7 +93,7 @@
 			if (!openFolders.has(node.path)) return;
 			for (const p of node.presets) out.push({ kind: 'preset', p, depth: node.depth });
 			node.children.forEach(add);
-			if (!node.presets.length && !node.children.length) out.push({ kind: 'empty', text: 'No presets here yet', depth: node.depth });
+			if (!node.presets.length && !node.children.length) out.push({ kind: 'empty', text: t('library.emptyFolder'), depth: node.depth });
 		};
 		tree.forEach(add);
 		return out;
@@ -267,20 +269,20 @@
 		return choices.map((c) => ({
 			label: c.name,
 			folderDepth: c.depth,
-			disabledNote: c.path === here ? 'Already here' : undefined,
+			disabledNote: c.path === here ? t('library.alreadyHere') : undefined,
 			onPick: () => void moveTo(paths, c.path),
 		}));
 	}
 
 	function moveTitle(paths: string[]): string {
 		const one = paths.length === 1 ? byPath.get(paths[0] ?? '') : undefined;
-		return `Move ${one ? `“${one.name}”` : presetCount(paths.length)} to…`;
+		return t('library.moveTitle', { what: one ? `“${one.name}”` : presetCount(paths.length) });
 	}
 
 	const newItems = $derived<MenuItem[]>(choices.map((c) => ({ label: c.name, folderDepth: c.depth, onPick: () => void newIn(c.path) })));
 	const sortItems = $derived<MenuItem[]>(
-		(Object.keys(SORT_LABELS) as SortKey[]).map((k) => ({
-			label: SORT_LABELS[k],
+		SORT_KEYS.map((k) => ({
+			label: sortLabel(k),
 			checked: sort === k,
 			onPick: () => {
 				closeAll();
@@ -292,19 +294,19 @@
 	/** L-12: the desktop menu. */
 	function rowMenu(p: PresetEntry): MenuItem[] {
 		return [
-			{ label: 'Open in new tab', onPick: () => tap(p) },
-			{ label: 'Rename', separator: true, onPick: () => startRename(p) },
-			{ label: 'Move to…', onPick: () => askMove([p.path]) },
-			{ label: 'Delete', danger: true, separator: true, onPick: () => void remove([p.path]) },
+			{ label: t('library.openNewTab'), onPick: () => tap(p) },
+			{ label: t('library.rename'), separator: true, onPick: () => startRename(p) },
+			{ label: t('library.moveTo'), onPick: () => askMove([p.path]) },
+			{ label: t('library.delete'), danger: true, separator: true, onPick: () => void remove([p.path]) },
 		];
 	}
 
 	/** L-12: the phone sheet. No "Open": a tap already does that. */
 	function rowSheet(p: PresetEntry): MenuItem[] {
 		return [
-			{ label: 'Rename', onPick: () => startRename(p) },
-			{ label: 'Move to…', onPick: () => askMove([p.path]) },
-			{ label: 'Delete', danger: true, onPick: () => void remove([p.path]) },
+			{ label: t('library.rename'), onPick: () => startRename(p) },
+			{ label: t('library.moveTo'), onPick: () => askMove([p.path]) },
+			{ label: t('library.delete'), danger: true, onPick: () => void remove([p.path]) },
 		];
 	}
 
@@ -323,20 +325,20 @@
 		if (sheet.kind === 'row') {
 			const p = byPath.get(sheet.path);
 			if (!p) return null;
-			return { title: p.name, sub: `${baseName(p.folder)} · ${p.prompts} prompts`, items: rowSheet(p) };
+			return { title: p.name, sub: `${baseName(p.folder)} · ${t('library.prompts', { n: p.prompts })}`, items: rowSheet(p) };
 		}
-		if (sheet.kind === 'sort') return { title: 'Sort by', sub: undefined, items: sortItems };
-		if (sheet.kind === 'new') return { title: 'New preset in…', sub: 'It starts as a copy of SillyTavern’s Default, with empty prompts', items: newItems };
+		if (sheet.kind === 'sort') return { title: t('library.sortBy'), sub: undefined, items: sortItems };
+		if (sheet.kind === 'new') return { title: t('library.newIn'), sub: t('library.newSub'), items: newItems };
 		return { title: moveTitle(sheet.paths), sub: undefined, items: moveItems(sheet.paths) };
 	});
 
-	const pickedText = $derived(`${picked.size} picked`);
+	const pickedText = $derived(t('library.picked', { n: picked.size }));
 	const showRecent = $derived(!q && !selecting && recent.length > 0);
 	const showTip = $derived(narrow && isMobile && !tipUsed && !q && !selecting && snap.presets.length > 0);
 </script>
 
 {#if narrow}
-	<div role="button" tabindex="0" use:pressable class="pl-vars clickable-icon view-action pl-hplus" aria-label="New preset" use:headerSlot={header} onclick={() => newPreset()}>
+	<div role="button" tabindex="0" use:pressable class="pl-vars clickable-icon view-action pl-hplus" aria-label={t('library.newPreset')} use:headerSlot={header} onclick={() => newPreset()}>
 		<Icon name="plus" size={20} stroke={2} />
 	</div>
 {/if}
@@ -347,24 +349,24 @@
 			{#if narrow}
 				<label class="pl-search">
 					<Icon name="search" size={16} stroke={2} />
-					<input type="text" placeholder="Search presets" aria-label="Search presets" bind:value={query} onfocus={closeAll} />
-					{#if query}<div role="button" tabindex="0" use:pressable class="pl-clear" aria-label="Clear search" onclick={() => (query = '')}><Icon name="x" size={14} stroke={2.2} /></div>{/if}
+					<input type="text" placeholder={t('library.search')} aria-label={t('library.search')} bind:value={query} onfocus={closeAll} />
+					{#if query}<div role="button" tabindex="0" use:pressable class="pl-clear" aria-label={t('library.clearSearch')} onclick={() => (query = '')}><Icon name="x" size={14} stroke={2.2} /></div>{/if}
 				</label>
 			{:else}
 				<div class="pl-top">
-					<h1>Presets</h1>
+					<h1>{t('library.presets')}</h1>
 					<span class="pl-grow"></span>
 					<label class="pl-search">
 						<Icon name="search" size={15} stroke={2} />
-						<input type="text" placeholder="Search presets" aria-label="Search presets" bind:value={query} onfocus={closeAll} />
-						{#if query}<div role="button" tabindex="0" use:pressable class="pl-clear" aria-label="Clear search" onclick={() => (query = '')}><Icon name="x" size={13} stroke={2.2} /></div>{/if}
+						<input type="text" placeholder={t('library.search')} aria-label={t('library.search')} bind:value={query} onfocus={closeAll} />
+						{#if query}<div role="button" tabindex="0" use:pressable class="pl-clear" aria-label={t('library.clearSearch')} onclick={() => (query = '')}><Icon name="x" size={13} stroke={2.2} /></div>{/if}
 					</label>
 					<div class="pl-anchor" class:pl-raised={pop?.kind === 'new'}>
 						<div role="button" tabindex="0" use:pressable class="pl-newbtn" aria-haspopup="menu" aria-expanded={pop?.kind === 'new'} onclick={() => (pop = pop?.kind === 'new' ? null : { kind: 'new' })}>
-							<Icon name="plus" size={14} stroke={2.2} /><span>New preset</span>
+							<Icon name="plus" size={14} stroke={2.2} /><span>{t('library.newPreset')}</span>
 						</div>
 						{#if pop?.kind === 'new'}
-							<div class="pl-spot-new"><MenuList items={newItems} title="New preset in…" label="New preset in" width={220} /></div>
+							<div class="pl-spot-new"><MenuList items={newItems} title={t('library.newIn')} label={t('library.newInLabel')} width={220} /></div>
 						{/if}
 					</div>
 				</div>
@@ -383,15 +385,15 @@
 
 			<div class="pl-folders">
 				{#if q}
-					<h2 class="pl-head">{results.length === 1 ? '1 result' : `${results.length} results`}</h2>
+					<h2 class="pl-head">{results.length === 1 ? t('library.resultOne') : t('library.results', { n: results.length })}</h2>
 				{:else if selecting}
 					<div class="pl-headrow">
-						<h2 class="pl-head pl-strong">{narrow ? pickedText : `${pickedText} · click presets to pick them`}</h2>
-						<div role="button" tabindex="0" use:pressable class="pl-link" onclick={stopSelect}>Done</div>
+						<h2 class="pl-head pl-strong">{narrow ? pickedText : t('library.pickedHint', { picked: pickedText })}</h2>
+						<div role="button" tabindex="0" use:pressable class="pl-link" onclick={stopSelect}>{t('library.done')}</div>
 					</div>
 				{:else}
 					<div class="pl-headrow">
-						<h2 class="pl-head">Folders</h2>
+						<h2 class="pl-head">{t('library.folders')}</h2>
 						<div class="pl-anchor" class:pl-raised={pop?.kind === 'sort'}>
 							<div role="button" tabindex="0" use:pressable
 								class="pl-sortbtn"
@@ -404,20 +406,20 @@
 									} else pop = pop?.kind === 'sort' ? null : { kind: 'sort' };
 								}}
 							>
-								<span>{narrow ? SORT_LABELS[sort] : `Sort: ${SORT_LABELS[sort].toLowerCase()}`}</span>
+								<span>{narrow ? sortLabel(sort) : t('library.sortShown', { label: sortLabel(sort).toLowerCase() })}</span>
 								<Icon name="chevron-down" size={12} stroke={2} />
 							</div>
 							{#if pop?.kind === 'sort'}
-								<div class="pl-spot-sort"><MenuList items={sortItems} label="Sort by" /></div>
+								<div class="pl-spot-sort"><MenuList items={sortItems} label={t('library.sortBy')} /></div>
 							{/if}
 						</div>
-						<div role="button" tabindex="0" use:pressable class="pl-link" onclick={startSelect}>Select</div>
+						<div role="button" tabindex="0" use:pressable class="pl-link" onclick={startSelect}>{t('library.select')}</div>
 					</div>
 				{/if}
 
 				<div class="pl-list">
 					{#if !snap.roots.length}
-						<div class="pl-empty">No preset folders yet. Add one in the plugin settings.</div>
+						<div class="pl-empty">{t('library.noFolders')}</div>
 					{/if}
 					{#each items as item (item.kind === 'folder' ? `f:${item.node.path}` : item.kind === 'preset' ? `p:${item.p.path}` : `e:${item.depth}:${item.text}`)}
 						{#if item.kind === 'folder'}
@@ -438,7 +440,7 @@
 								{moreOnHover}
 								{selecting}
 								name={p.name}
-								prompts="{p.prompts} prompts"
+								prompts={t('library.prompts', { n: p.prompts })}
 								when={timeLabel(p.mtime, now)}
 								depth={item.depth}
 								folderName={item.depth < 0 ? baseName(p.folder) : undefined}
@@ -464,7 +466,7 @@
 						{/if}
 					{/each}
 				</div>
-				{#if showTip}<p class="pl-tip">Tip: press and hold a preset to pick several.</p>{/if}
+				{#if showTip}<p class="pl-tip">{t('library.tip')}</p>{/if}
 			</div>
 		</div>
 	</div>

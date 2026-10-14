@@ -1,4 +1,5 @@
 import { type App, SuggestModal } from 'obsidian';
+import { t } from '../i18n';
 import type { FolderChoice } from './catalog';
 
 /** L-3, L-6: "New preset in…" from the command palette. */
@@ -9,7 +10,7 @@ export class FolderPickModal extends SuggestModal<FolderChoice> {
 		private readonly onPick: (folder: string) => void,
 	) {
 		super(app);
-		this.setPlaceholder('New preset in…');
+		this.setPlaceholder(t('cmd.folderModal'));
 	}
 
 	getSuggestions(query: string): FolderChoice[] {

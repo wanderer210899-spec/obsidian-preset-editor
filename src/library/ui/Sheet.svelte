@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '../../i18n';
 	import { portal, pressable } from './actions';
 	import Icon from './Icon.svelte';
 	import type { MenuItem } from './types';
@@ -22,7 +23,7 @@
 				<span class="pl-title">{title}</span>
 				{#if sub}<span class="pl-sub">{sub}</span>{/if}
 			</span>
-			<div role="button" tabindex="0" use:pressable class="pl-close" aria-label="Close" onclick={onClose}><Icon name="x" size={16} stroke={2} /></div>
+			<div role="button" tabindex="0" use:pressable class="pl-close" aria-label={t('library.close')} onclick={onClose}><Icon name="x" size={16} stroke={2} /></div>
 		</div>
 		<div class="pl-list">
 			{#each items as item, i (i)}

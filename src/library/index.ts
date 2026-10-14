@@ -5,6 +5,7 @@
  * It also lists the presets for the editor's Copy to… and Move to… (listPresets).
  */
 import { FileView, Notice, type Plugin, TFile } from 'obsidian';
+import { t } from '../i18n';
 import { LibraryActions } from './actions';
 import { folderChoices } from './catalog';
 import { FolderPickModal } from './folder-modal';
@@ -63,12 +64,12 @@ export function registerLibrary(plugin: Plugin, options: LibraryOptions): void {
 		await app.workspace.revealLeaf(leaf);
 	};
 
-	plugin.addRibbonIcon('sliders-horizontal', 'Open preset library', () => void openLibrary());
-	plugin.addCommand({ id: 'open-library', name: 'Open preset library', callback: () => void openLibrary() });
+	plugin.addRibbonIcon('sliders-horizontal', t('cmd.openLibrary'), () => void openLibrary());
+	plugin.addCommand({ id: 'open-library', name: t('cmd.openLibrary'), callback: () => void openLibrary() });
 	// L-3, L-6: in the library it shows "New preset in…"; elsewhere a folder list.
 	plugin.addCommand({
 		id: 'new-preset',
-		name: 'New preset',
+		name: t('cmd.newPreset'),
 		callback: () => {
 			const library = app.workspace.getActiveViewOfType(LibraryView);
 			if (library) {
@@ -77,7 +78,7 @@ export function registerLibrary(plugin: Plugin, options: LibraryOptions): void {
 			}
 			const { roots, folders } = listFolders(app, options.presetFolders());
 			if (!roots.length) {
-				new Notice('Add a preset folder in the plugin settings first.');
+				new Notice(t('cmd.addFolderFirst'));
 				return;
 			}
 			new FolderPickModal(app, folderChoices(roots, folders), async (folder) => {

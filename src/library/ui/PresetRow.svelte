@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '../../i18n';
 	import { focusSelect, pressable } from './actions';
 	import Icon from './Icon.svelte';
 	import MenuList from './MenuList.svelte';
@@ -122,7 +123,7 @@
 				<span class="pl-inputline">
 					<input
 						type="text"
-						aria-label="Preset name"
+						aria-label={t('library.presetName')}
 						enterkeyhint="done"
 						value={renameValue}
 						use:focusSelect
@@ -131,12 +132,12 @@
 						onblur={onRenameSave}
 					/>
 					{#if narrow}
-						<div role="button" tabindex="0" use:pressable class="pl-save" onpointerdown={(e) => e.preventDefault()} onclick={onRenameSave}>Save</div>
+						<div role="button" tabindex="0" use:pressable class="pl-save" onpointerdown={(e) => e.preventDefault()} onclick={onRenameSave}>{t('library.save')}</div>
 					{/if}
 				</span>
 				{#if renameError}<span class="pl-err">{renameError}</span>{/if}
 			</span>
-			{#if !narrow}<span class="pl-hint">Enter to save · Esc to cancel</span>{/if}
+			{#if !narrow}<span class="pl-hint">{t('library.renameHint')}</span>{/if}
 		</div>
 	{:else}
 		<div role="button" tabindex="0" use:pressable
@@ -167,7 +168,7 @@
 			{/if}
 		</div>
 		{#if !selecting}
-			<div role="button" tabindex="0" use:pressable class="pl-more" aria-label="More actions for {name}" aria-haspopup="menu" aria-expanded={menuOpen} onclick={onMore}>
+			<div role="button" tabindex="0" use:pressable class="pl-more" aria-label={t('library.more', { name })} aria-haspopup="menu" aria-expanded={menuOpen} onclick={onMore}>
 				<Icon name="more" size={narrow ? 16 : 15} />
 			</div>
 		{:else if narrow}
@@ -175,7 +176,7 @@
 		{/if}
 	{/if}
 	{#if menuOpen && !narrow}
-		<div class="pl-menuspot"><MenuList items={menuItems} label="Actions for {name}" /></div>
+		<div class="pl-menuspot"><MenuList items={menuItems} label={t('library.actions', { name })} /></div>
 	{/if}
 </div>
 

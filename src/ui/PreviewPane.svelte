@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PreviewBlock } from '../assemble';
+	import { t } from '../i18n';
 	import type { WorkedOut } from '../macros';
 	import { markParts, type Query } from '../search';
 	import type { CurrentMatch, Sizes } from './types';
@@ -30,7 +31,10 @@
 	/** V-9: the role, or "Inserted" for Chat History and Chat Examples. */
 	function roleOf(b: PreviewBlock<WorkedOut>): string {
 		const role = b.type === 'history' ? null : b.role;
-		return role ? role.charAt(0).toUpperCase() + role.slice(1) : 'Inserted';
+		if (role === 'system') return t('ps.system');
+		if (role === 'user') return t('ps.user');
+		if (role === 'assistant') return t('ps.assistant');
+		return role ? role.charAt(0).toUpperCase() + role.slice(1) : t('preview.inserted');
 	}
 
 	function dotOf(b: PreviewBlock<WorkedOut>): string {
@@ -39,21 +43,21 @@
 
 	/** V-7: where an in-chat prompt goes. */
 	function whereOf(depth: number): string {
-		return depth === 0 ? 'At the end' : `${depth} from the end`;
+		return depth === 0 ? t('preview.atEnd') : t('preview.fromEnd', { n: depth });
 	}
 
 	/** V-7: how many in-chat prompts the chat history holds. */
 	function insideOf(n: number): string {
-		return `${n} in-chat ${n === 1 ? 'prompt' : 'prompts'} inside`;
+		return n === 1 ? t('preview.insideOne') : t('preview.inside', { n });
 	}
 </script>
 
 <!-- Preview screen (SRS 3.4). -->
 <div class="pane" class:narrow={sizes.narrow}>
 	<div class="legend">
-		<span><span class="key-val"></span>Worked-out value</span>
-		<span><span class="key-kept">{'{ }'}</span>Left as typed</span>
-		<span><span class="key-ph"></span>Placeholder</span>
+		<span><span class="key-val"></span>{t('preview.value')}</span>
+		<span><span class="key-kept">{'{ }'}</span>{t('preview.kept')}</span>
+		<span><span class="key-ph"></span>{t('preview.placeholder')}</span>
 	</div>
 	{#each blocks as b, i (i)}
 		{#if b.type === 'history'}
@@ -64,7 +68,7 @@
 					{#each b.inChat as p, j (j)}
 						<div class="blk" data-pv={p.id}>{@render block(p)}</div>
 					{/each}
-					{#if b.inChat.length}<div class="history-end">End of chat history</div>{/if}
+					{#if b.inChat.length}<div class="history-end">{t('preview.endOfHistory')}</div>{/if}
 				</div>
 			</div>
 		{:else}
@@ -76,7 +80,7 @@
 {#snippet block(b: PreviewBlock<WorkedOut>)}
 	<div class="lab">
 		<div class="role"><span class="dot" style:background={dotOf(b)}></span>{roleOf(b)}</div>
-		<div class="chip" role="button" tabindex="0" title="Edit this prompt" onclick={() => onjump(b.id)}>
+		<div class="chip" role="button" tabindex="0" title={t('preview.editThis')} onclick={() => onjump(b.id)}>
 			{b.name}<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"></path></svg>
 		</div>
 		{#if b.type !== 'history' && b.depth !== null}
@@ -86,7 +90,7 @@
 	<div class="content">
 		{#if b.type === 'text'}
 			<!-- V-11: a variable that isn't set shows the "empty" tag. -->
-			<div class="txt">{#each markParts(b.text.parts, query, currentIn(b.id)) as p}{#if p.value && !p.text}<span class="empty">empty</span>{:else}<span class:val={p.value} class:kept={p.kept} class:pe-hit={p.hit} class:pe-now={p.now}>{p.text}</span>{/if}{/each}</div>
+			<div class="txt">{#each markParts(b.text.parts, query, currentIn(b.id)) as p}{#if p.value && !p.text}<span class="empty">{t('preview.empty')}</span>{:else}<span class:val={p.value} class:kept={p.kept} class:pe-hit={p.hit} class:pe-now={p.now}>{p.text}</span>{/if}{/each}</div>
 		{:else}
 			<div class="ph-line">
 				<div class="ph">{b.name}</div>
