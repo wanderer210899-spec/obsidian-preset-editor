@@ -32,7 +32,7 @@ Each version adds one feature on top of the last.
 | 1.3     | Variables panel. Closing tags while typing (3.9). Folding prompts and search (3.10).      | Done        |
 | 1.4     | Library panel: New preset, rename, move and delete presets, one or several at once. Ribbon button and plugin shortcuts. | Done        |
 | 1.5     | Select several prompts at once. Copy or move them to another preset, delete them, or drag them together (3.7). | Done        |
-| 1.5.1   | Phone: more space after the last row in the Order panel, Variables panel and library (I-5). | Planned     |
+| 1.5.1   | Mobile: the last row in the Order panel and Variables panel clears Obsidian's bottom bar (I-5). | Planned     |
 | 1.5.2   | Search in the Variables panel (T-7).                                                      | Planned     |
 | 1.5.3   | Find and replace in Edit. Find steps match by match, with a Match case switch (C-7 to C-10). | Planned     |
 
@@ -338,7 +338,7 @@ Details are in open item 8.
   - _(1.3)_ Variables panel: no hint line at the top ("In the order they were first used…").
   - Preview: placeholders with settings show their role, not "Inserted" (V-9). Chat History is a shaded block that holds the in-chat prompts, and each in-chat prompt has a tag saying where it goes (V-7). This follows the owner's Chat History mockup. There is no engine switch and no "Not run by Legacy" note (V-6).
 
-- **I-5.** _(1.5.1)_ On a phone, the Order panel, the Variables panel and the library list have extra space after the last row, about one prompt row tall. Obsidian's bottom bar no longer covers the last row. Desktop stays as it is.
+- **I-5.** _(1.5.1)_ In the Obsidian mobile app, the Order panel, the Variables panel and the library list scroll far enough that the last row clears Obsidian's bottom bar, with about one prompt row of space to spare. Desktop stays as it is.
 
 ## 5. Quality
 

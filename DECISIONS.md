@@ -29,9 +29,9 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ## 2026-10-14 · Phone: space after the last row (1.5.1)
 
-**Decision:** On a phone, the Order panel, Variables panel and library list get extra space after the last row, about one prompt row tall. Desktop stays as it is for now. The owner will say if it becomes a problem there.
+**Decision:** In the Obsidian mobile app, the Order panel, Variables panel and library list scroll far enough that the last row clears Obsidian's bottom bar, with about one prompt row to spare. Desktop stays as it is for now. The owner will say if it becomes a problem there.
 
-**Context:** Found in real use after 1.5. On a phone, Obsidian's bottom bar covered the last prompt in the Order panel. SRS I-5.
+**Context:** Found in real use after 1.5. On a phone, Obsidian's bottom bar covered the last prompt in the Order panel. The owner asked for one extra prompt row of space. In the test copy, the bar and the phone's bottom edge cover 84px, more than one row, so the space also counts the bar's height. The library already had enough space. SRS I-5.
 
 ## 2026-10-14 · `{{if}}` inside `{{.name = …}}` follows SillyTavern
 
