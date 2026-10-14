@@ -16,11 +16,21 @@ import {
 import { autoComplete, autoCompleteSlot, tagMarks } from './closing';
 import { macroSpans } from './highlight';
 
+interface Range {
+	from: number;
+	to: number;
+}
+
 export interface PromptEditor {
 	/** Replaces the text, unless it is already the same. Doesn't call `onChange`. */
 	setText(text: string): void;
-	/** Marks these parts of the text (class `pe-hit`), e.g. search matches. Replaces the last marks. */
-	setHits(ranges: readonly { from: number; to: number }[]): void;
+	/**
+	 * Marks these parts of the text (class `pe-hit`), e.g. search matches.
+	 * The one equal to `current` also gets `pe-now` (C-7). Replaces the last marks.
+	 */
+	setHits(ranges: readonly Range[], current?: Range | null): void;
+	/** Scrolls so position `pos` is in the middle of the screen. */
+	reveal(pos: number): void;
 	/** W-5: switches auto complete (closing tags while typing) on or off. */
 	setAutoComplete(on: boolean): void;
 	destroy(): void;
@@ -39,7 +49,7 @@ const fromOutside = Annotation.define<boolean>();
 
 /**
  * Elements get the classes `pe-macro`, `pe-variable`, `pe-control`, `pe-hit`
- * (search) and `pe-pair` (the tag pair the cursor is in).
+ * and `pe-now` (search) and `pe-pair` (the tag pair the cursor is in).
  * The box has no undo of its own: the plugin's undo timeline covers it (SRS E-6).
  */
 export function createPromptEditor(parent: HTMLElement, options: PromptEditorOptions): PromptEditor {
@@ -74,8 +84,21 @@ export function createPromptEditor(parent: HTMLElement, options: PromptEditorOpt
 				annotations: fromOutside.of(true),
 			});
 		},
-		setHits(ranges) {
-			view.dispatch({ effects: setHitsEffect.of(ranges) });
+		setHits(ranges, current = null) {
+			view.dispatch({ effects: setHitsEffect.of({ ranges, current }) });
+		},
+		reveal(pos) {
+			const at = Math.min(pos, view.state.doc.length);
+			const go = () => view.dispatch({ effects: EditorView.scrollIntoView(at, { y: 'center' }) });
+			if (view.inView) return go();
+			// Off screen, CodeMirror can't measure itself, so it skips the scroll. Bring the box on screen first.
+			view.dom.scrollIntoView({ block: 'nearest' });
+			let frames = 0;
+			const wait = () => {
+				if (view.inView) go();
+				else if (++frames < 20) requestAnimationFrame(wait);
+			};
+			requestAnimationFrame(wait);
 		},
 		setAutoComplete(on) {
 			view.dispatch({ effects: autoCompleteSlot.reconfigure(autoComplete(on)) });
@@ -87,7 +110,8 @@ export function createPromptEditor(parent: HTMLElement, options: PromptEditorOpt
 }
 
 const HIT = Decoration.mark({ class: 'pe-hit' });
-const setHitsEffect = StateEffect.define<readonly { from: number; to: number }[]>();
+const NOW = Decoration.mark({ class: 'pe-hit pe-now' });
+const setHitsEffect = StateEffect.define<{ ranges: readonly Range[]; current: Range | null }>();
 
 /** Marks set from outside with `setHits`. They move with the text while typing. */
 const hits = StateField.define<DecorationSet>({
@@ -98,7 +122,12 @@ const hits = StateField.define<DecorationSet>({
 			if (!e.is(setHitsEffect)) continue;
 			const len = tr.state.doc.length;
 			const builder = new RangeSetBuilder<Decoration>();
-			for (const r of e.value) if (r.from < r.to && r.to <= len) builder.add(r.from, r.to, HIT);
+			const { ranges, current } = e.value;
+			for (const r of ranges) {
+				if (r.from >= r.to || r.to > len) continue;
+				const now = current && r.from === current.from && r.to === current.to;
+				builder.add(r.from, r.to, now ? NOW : HIT);
+			}
 			marks = builder.finish();
 		}
 		return marks;

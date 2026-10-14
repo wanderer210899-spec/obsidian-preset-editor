@@ -1,16 +1,19 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { findRanges } from '../search';
+	import { findRanges, NO_QUERY, type Query } from '../search';
 	import { createPromptEditor, type PromptEditor } from '../text-editor';
 	import { getTextSettings } from './text-settings';
+	import type { CurrentMatch } from './types';
 
 	interface Props {
 		text: string;
-		/** C-4: the search, already normalised ('' = none). Matches are highlighted. */
-		query?: string;
+		/** C-4: the search. Matches are highlighted. */
+		query?: Query;
+		/** C-7: the current match, when it's in this text. */
+		current?: CurrentMatch | null;
 		onchange: (text: string) => void;
 	}
-	let { text, query = '', onchange }: Props = $props();
+	let { text, query = NO_QUERY, current = null, onchange }: Props = $props();
 
 	const settings = getTextSettings();
 	let host: HTMLDivElement;
@@ -31,7 +34,17 @@
 	});
 
 	$effect(() => {
-		editor?.setHits(findRanges(text, query));
+		editor?.setHits(findRanges(text, query), current);
+	});
+
+	/** C-7: scrolls to the current match once per step, not while typing. */
+	let shownSeq = -1;
+	$effect(() => {
+		if (!editor || !current || current.seq === shownSeq) return;
+		shownSeq = current.seq;
+		// A prompt that has just opened needs a frame to be laid out first.
+		const pos = current.from;
+		requestAnimationFrame(() => editor?.reveal(pos));
 	});
 
 	$effect(() => {
@@ -80,6 +93,10 @@
 	.pe-text :global(.pe-hit) {
 		background: var(--pe-hit);
 		border-radius: 2px;
+	}
+	/* C-7: the match "2 of 5" points to. */
+	.pe-text :global(.pe-now) {
+		background: var(--pe-now);
 	}
 	/* W-4: the tag pair the cursor is in. */
 	.pe-text :global(.pe-pair) {

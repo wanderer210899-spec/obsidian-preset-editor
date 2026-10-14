@@ -2,7 +2,8 @@
 	import { kindOf } from '../kinds';
 	import PlaceholderRow from './PlaceholderRow.svelte';
 	import PromptRow from './PromptRow.svelte';
-	import type { EditorDocument, SaveState, Sizes, UiRow } from './types';
+	import type { Query } from '../search';
+	import type { CurrentMatch, EditorDocument, SaveState, Sizes, UiRow } from './types';
 
 	const STATUS: Record<SaveState, string> = { saved: 'Saved', saving: 'Saving…', error: 'Not saved' };
 
@@ -17,14 +18,18 @@
 		/** C-5: the one open prompt, or null when all are folded. */
 		openId: string | null;
 		ontoggleopen: (id: string) => void;
-		/** C-4: the search, already normalised ('' = none). */
-		query: string;
+		/** C-4: the search. */
+		query: Query;
+		/** C-4: how many matches each prompt has. */
+		counts: ReadonlyMap<string, number>;
+		/** C-7: the match "2 of 5" points to. */
+		current: CurrentMatch | null;
 		/** No hover (narrow layout or touch): the first tap on a divider shows "Add prompt here". */
 		tapToReveal: boolean;
 		ontogglepop: (id: string) => void;
 		oninsert: (at: number) => void;
 	}
-	let { doc, rows, title, status, sizes, pop, flash, openId, ontoggleopen, query, tapToReveal, ontogglepop, oninsert }: Props = $props();
+	let { doc, rows, title, status, sizes, pop, flash, openId, ontoggleopen, query, counts, current, tapToReveal, ontogglepop, oninsert }: Props = $props();
 
 	/** The divider shown by a first tap (DECISIONS.md, 2026-10-10). */
 	let revealed = $state<number | null>(null);
@@ -87,6 +92,8 @@
 						oninsert={(offset) => oninsert(i + offset)}
 						ondelete={() => doc.remove(row.id)}
 						{query}
+						matches={counts.get(row.id) ?? 0}
+						current={current && current.id === row.id && !current.inName ? current : null}
 					/>
 				{/if}
 			</div>

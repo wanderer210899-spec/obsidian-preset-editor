@@ -92,6 +92,9 @@ export class PresetEditorView extends FileView {
 		this.scope.register(['Mod'], 'y', run((e) => e.redo()));
 		// C-4: Ctrl+F opens "Find in prompts" while the Preset Editor is in use.
 		this.scope.register(['Mod'], 'f', run((e) => e.openSearch()));
+		// C-9: Ctrl+H opens it with the replace box showing. On a Mac, Obsidian's own replace keys.
+		if (Platform.isMacOS) this.scope.register(['Mod', 'Alt'], 'f', run((e) => e.openSearch(true)));
+		else this.scope.register(['Mod'], 'h', run((e) => e.openSearch(true)));
 		// Esc only acts while this tab is in use (DECISIONS.md, 2026-10-11). Obsidian still gets the key too.
 		this.scope.register([], 'Escape', () => {
 			this.editor?.escape();

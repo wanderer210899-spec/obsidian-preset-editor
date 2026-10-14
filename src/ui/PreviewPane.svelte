@@ -1,18 +1,25 @@
 <script lang="ts">
 	import type { PreviewBlock } from '../assemble';
 	import type { WorkedOut } from '../macros';
-	import { markParts } from '../search';
-	import type { Sizes } from './types';
+	import { markParts, type Query } from '../search';
+	import type { CurrentMatch, Sizes } from './types';
 
 	interface Props {
 		/** The full prompt, put together by the editor (V-1, V-4). */
 		blocks: PreviewBlock<WorkedOut>[];
 		sizes: Sizes;
-		/** C-4: the search, already normalised ('' = none). Matches are highlighted. */
-		query: string;
+		/** C-4: the search. Matches are highlighted. */
+		query: Query;
+		/** C-7: the match "2 of 5" points to. */
+		current: CurrentMatch | null;
 		onjump: (id: string) => void;
 	}
-	let { blocks, sizes, query, onjump }: Props = $props();
+	let { blocks, sizes, query, current, onjump }: Props = $props();
+
+	/** C-7: the current match, when it's in this prompt's text. */
+	function currentIn(id: string): CurrentMatch | null {
+		return current && current.id === id && !current.inName ? current : null;
+	}
 
 	const ROLE_DOT: Record<string, string> = {
 		system: 'var(--text-faint)',
@@ -79,7 +86,7 @@
 	<div class="content">
 		{#if b.type === 'text'}
 			<!-- V-11: a variable that isn't set shows the "empty" tag. -->
-			<div class="txt">{#each markParts(b.text.parts, query) as p}{#if p.value && !p.text}<span class="empty">empty</span>{:else}<span class:val={p.value} class:kept={p.kept} class:pe-hit={p.hit}>{p.text}</span>{/if}{/each}</div>
+			<div class="txt">{#each markParts(b.text.parts, query, currentIn(b.id)) as p}{#if p.value && !p.text}<span class="empty">empty</span>{:else}<span class:val={p.value} class:kept={p.kept} class:pe-hit={p.hit} class:pe-now={p.now}>{p.text}</span>{/if}{/each}</div>
 		{:else}
 			<div class="ph-line">
 				<div class="ph">{b.name}</div>
@@ -270,6 +277,10 @@
 	.pe-hit {
 		background: var(--pe-hit);
 		border-radius: 2px;
+	}
+	/* C-7: the match "2 of 5" points to. */
+	.pe-hit.pe-now {
+		background: var(--pe-now);
 	}
 	.empty {
 		padding: 0 4px;

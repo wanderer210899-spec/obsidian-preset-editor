@@ -12,8 +12,8 @@ export interface EditorHandle {
 	/** E-6: undo or redo one step, showing the prompt it changed. */
 	undo(): void;
 	redo(): void;
-	/** C-4: Ctrl+F opens the search bar. */
-	openSearch(): void;
+	/** C-4: Ctrl+F opens the search bar. C-9: Ctrl+H opens it with the replace box showing. */
+	openSearch(withReplace?: boolean): void;
 	/** Esc closes the search bar, the settings popover and the phone panel. */
 	escape(): void;
 	setStatus(status: SaveState): void;
@@ -49,7 +49,7 @@ export function mountEditor(
 	return {
 		undo: () => editor.undo(),
 		redo: () => editor.redo(),
-		openSearch: () => editor.openSearch(),
+		openSearch: (withReplace) => editor.openSearch(withReplace),
 		escape: () => editor.escape(),
 		setStatus: (status) => editor.setStatus(status),
 		setTitle: (t) => editor.setTitle(t),
