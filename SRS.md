@@ -32,7 +32,7 @@ Each version adds one feature on top of the last.
 | 1.3     | Variables panel. Closing tags while typing (3.9). Folding prompts and search (3.10).      | Done        |
 | 1.4     | Library panel: New preset, rename, move and delete presets, one or several at once. Ribbon button and plugin shortcuts. | Done        |
 | 1.5     | Select several prompts at once. Copy or move them to another preset, delete them, or drag them together (3.7). | Done        |
-| 1.5.1   | Mobile: the last row in the Order panel and Variables panel clears Obsidian's bottom bar (I-5). | Planned     |
+| 1.5.1   | Mobile: the last row in the Order panel and Variables panel clears Obsidian's bottom bar (I-5). | Done        |
 | 1.5.2   | Search in the Variables panel (T-7).                                                      | Planned     |
 | 1.5.3   | Find and replace in Edit. Find steps match by match, with a Match case switch (C-7 to C-10). | Planned     |
 
@@ -60,7 +60,9 @@ Each version adds one feature on top of the last.
 
 **1.5 is done** (v1.5.0). Select mode in the Order panel (3.7): copy or move several prompts to another preset, delete them, or drag them together. The owner tested it on desktop and on a phone in the test copy of Obsidian.
 
-- Built: everything marked 1.0 to 1.5 below.
+**1.5.1 is done** (v1.5.1). In the mobile app, the last row of the Order panel and Variables panel clears Obsidian's bottom bar (I-5). Checked by the owner on a phone.
+
+- Built: everything marked 1.0 to 1.5.1 below.
 - Dragging (Q-1) was checked on a phone, through a test copy of Obsidian.
 - Real use: from 1.5, the plugin is ready for testing in real use, installed by hand from a GitHub release. Changes may come up from that.
 - Real use found four things (14 October 2026). They become 1.5.1 to 1.5.3, plus a note on a SillyTavern gap (V-13).

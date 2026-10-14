@@ -4,6 +4,12 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-14 · 1.5.1 accepted on a phone
+
+**Decision:** The owner tested 1.5.1 on a phone. The last prompt now clears Obsidian's bottom bar. It merges into main as v1.5.1.
+
+**Context:** First of the real-use fixes after 1.5.
+
 ## 2026-10-14 · Find and replace (1.5.3)
 
 **Decision:**
