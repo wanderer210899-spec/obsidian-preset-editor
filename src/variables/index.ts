@@ -46,3 +46,16 @@ export function listVariables(rows: readonly OrderedPrompt[]): VariableInfo[] {
 	const values = finalVariables(texts);
 	return [...found.values()].map((info) => ({ ...info, value: values.get(info.name) ?? '' }));
 }
+
+/**
+ * T-7: the variables whose name, final value, or a prompt name under
+ * "Set in" or "Read in" holds `query`, ignoring case. An empty query keeps them all.
+ */
+export function filterVariables(vars: readonly VariableInfo[], query: string): VariableInfo[] {
+	const q = query.trim().toLowerCase();
+	if (!q) return [...vars];
+	const has = (text: string) => text.toLowerCase().includes(q);
+	return vars.filter(
+		(v) => has(v.name) || has(v.value) || v.setIn.some((p) => has(p.name)) || v.readIn.some((p) => has(p.name)),
+	);
+}

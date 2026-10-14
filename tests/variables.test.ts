@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import type { OrderedPrompt } from '../src/assemble';
 import type { PromptData } from '../src/preset';
-import { listVariables, type VariableInfo } from '../src/variables';
+import { filterVariables, listVariables, type VariableInfo } from '../src/variables';
 
 const row = (identifier: string, content: string, fields: Partial<PromptData> = {}, enabled = true): OrderedPrompt => ({
 	id: identifier,
@@ -85,4 +85,20 @@ test('no variable macros: an empty list', () => {
 
 test('closing tags and unclosed macros are not variables', () => {
 	assert.deepEqual(shape(listVariables([row('p', '{{/getvar}} {{setvar::x::1')])), []);
+});
+
+test('T-7: search looks at names, values, and the prompts under Set in and Read in, ignoring case', () => {
+	const vars = listVariables([
+		row('Main Prompt', '{{setvar::tone::Wistful}}{{setvar::maxWords::250}}'),
+		row('Style rules', '{{getvar::tone}} {{getvar::pacing}}'),
+	]);
+	const names = (q: string) => filterVariables(vars, q).map((v) => v.name);
+	assert.deepEqual(names(''), ['tone', 'maxWords', 'pacing']);
+	assert.deepEqual(names('  '), ['tone', 'maxWords', 'pacing']);
+	assert.deepEqual(names('MAXW'), ['maxWords']);
+	assert.deepEqual(names('wistful'), ['tone']);
+	assert.deepEqual(names('250'), ['maxWords']);
+	assert.deepEqual(names('main prompt'), ['tone', 'maxWords']);
+	assert.deepEqual(names('style'), ['tone', 'pacing']);
+	assert.deepEqual(names('nothing like this'), []);
 });
