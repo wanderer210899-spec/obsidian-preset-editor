@@ -4,6 +4,28 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-14 · Built-in prompts can be renamed, as in SillyTavern
+
+**Decision:** Built-in prompts like Main Prompt can be renamed. This stays as it is, the same as SillyTavern.
+
+**Context:** The owner renamed a Main Prompt and asked if it was a bug. It isn't: SillyTavern's edit form lets you rename it too. SillyTavern knows each built-in by a hidden ID, so the name is only a label.
+
+## 2026-10-14 · Dragging several prompts looks like a stack (1.5.4)
+
+**Decision:** In select mode, dragging several picked prompts shows the dragged prompt as a stack. This makes it clear they move together. No mockup for now; the look is shown in the build for the owner's yes.
+
+**Context:** The owner found it hard to tell a one-prompt drag from a group drag (M-3).
+
+## 2026-10-14 · How the Chinese gets checked (1.6)
+
+**Decision:**
+- A word list comes first: about 15 common words with their Chinese. The owner approves it before anything else is translated.
+- Where SillyTavern uses two words for one thing, the word from its prompt manager screen wins (e.g. Order = 排序, not 顺序).
+- Words SillyTavern doesn't have get a suggestion, and the owner picks.
+- The review table is one Markdown file, grouped by screen, with three columns: Where, English, Chinese. The owner edits the Chinese column directly.
+
+**Context:** The owner reads Chinese and reviews the translations personally.
+
 ## 2026-10-14 · Versions can hold more than one feature
 
 **Decision:** A version no longer has to be exactly one feature. The plugin is built, and the changes left are small. A few minor versions can hold them.

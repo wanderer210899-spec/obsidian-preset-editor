@@ -35,7 +35,7 @@ Each version adds to the last. From 1.5.4, a version can hold a few small change
 | 1.5.1   | Mobile: the last row in the Order panel and Variables panel clears Obsidian's bottom bar (I-5). | Done        |
 | 1.5.2   | Search in the Variables panel (T-7).                                                      | Done        |
 | 1.5.3   | Find and replace in Edit. Find steps match by match, with a Match case switch (C-7 to C-10). | Done        |
-| 1.5.4   | Order panel: a search box for prompt names (E-8), and no hint line (I-4). Find in prompts looks at prompt text only (C-4). | Planned     |
+| 1.5.4   | Order panel: a search box for prompt names (E-8), and no hint line (I-4). Find in prompts looks at prompt text only (C-4). Dragging several prompts looks like a stack (M-3). | Planned     |
 | 1.6     | The plugin follows Obsidian's language: Simplified Chinese (3.11).                       | Planned     |
 
 **Not planned**
@@ -183,6 +183,7 @@ The version each part arrives in is shown in brackets.
 
 - **P-1.** "Forbid overrides" only shows on Main Prompt and Post-History Instructions.
 - **P-2.** Placeholders with settings can also be renamed and given a role, as in SillyTavern. They use the same controls as other prompts.
+- **P-3.** Built-in prompts can be renamed, as in SillyTavern. SillyTavern knows each one by a hidden ID, not its name, so a renamed Main Prompt still works as Main Prompt.
 
 ### 3.4 Preview (screen 1.0 · content 1.1 · macros 1.2)
 
@@ -238,6 +239,7 @@ The look follows mockups O.1 to O.8. Works on desktop and mobile.
   - On a phone, pressing and holding a prompt also starts select mode.
   - Select mode ends after every action: Copy to…, Move to…, Delete, or a group drag.
 - **M-3.** Dragging one picked prompt moves all the picked prompts. They land together, in the order they were in.
+  - _(1.5.4)_ While several picked prompts are dragged, the dragged prompt looks like a stack, so it's clear they move together. No mockup for now.
 - **M-1.** Copy to… and Move to… send the picked prompts to another preset.
   - First pick the preset from a list grouped by folder, with search. The preset you're in is greyed out.
   - Then tap the spot in that preset where they go. No spot is chosen until you tap one.
@@ -345,7 +347,12 @@ The plugin follows Obsidian's language, like other Obsidian plugins.
 - **N-2.** All of the plugin's own text is translated: the editor, the panels, the library, messages, the settings page and command names.
 - **N-3.** What the user typed or the file holds stays as it is: prompt text, prompt names, preset names and macros. SillyTavern's own Chinese version also shows prompt names ("Main Prompt", "Chat History") as they are in the file. Obsidian's own boxes, like the delete box (L-13), follow Obsidian's language by themselves.
 - **N-4.** Where SillyTavern has its own Simplified Chinese word for something, the plugin uses the same word.
+  - A word list comes first: about 15 words that show up everywhere (Preset, Prompt, Depth, Order…), each with its Chinese. The owner approves it before the rest is translated.
+  - Where SillyTavern uses two words for one thing, the word from its prompt manager screen wins.
+  - Words SillyTavern doesn't have (like Placeholder or Library) get a suggestion, and the owner picks.
 - **N-5.** The owner reviews every translation before 1.6 is released.
+  - The review table is one Markdown file in the project, grouped by screen. Columns: Where, English, Chinese.
+  - The owner changes the Chinese column directly. The developer copies it into the plugin.
 
 Details are in open item 11.
 
@@ -437,7 +444,8 @@ Details are in open item 11.
 10. **Order panel search:** (1.5.4)
     - ~~Can prompts be dragged while the list is filtered?~~ Settled: no (E-8).
     - ~~Does "Select all" pick only the prompts that show?~~ Settled: yes (E-8).
+    - How exactly does the stack look while dragging (M-3)? Shown in the build for the owner's yes.
 11. **Simplified Chinese:** (1.6)
     - ~~Do prompt names from the file, like "Main Prompt" or "Chat History", stay as typed in the file?~~ Settled: yes, as in SillyTavern (N-3).
-    - Which key words go on the word list, before anything else is translated? (N-4)
-    - What does the review table look like? (N-5)
+    - ~~How is the word list made?~~ Settled: N-4. The words themselves get picked when 1.6 starts.
+    - ~~What does the review table look like?~~ Settled: N-5.
