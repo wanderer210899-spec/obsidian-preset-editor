@@ -3,7 +3,7 @@
 	import { assemble } from '../assemble';
 	import { workOutMacros } from '../macros';
 	import { listVariables, type VariableInfo } from '../variables';
-	import { matchingIds, normaliseQuery, wrapIndex } from '../search';
+	import { findRanges, indexAfter, listMatches, makeQuery, NO_QUERY, replaceRanges, wrapIndex } from '../search';
 	import { portal } from './actions';
 	import EditPane from './EditPane.svelte';
 	import { toggleOpen } from './folding';
@@ -14,7 +14,7 @@
 	import Segmented from './Segmented.svelte';
 	import SidePanel from './SidePanel.svelte';
 	import { setTextSettings } from './text-settings';
-	import { type EditorDocument, type Mode, type Notify, type PresetPort, type SaveState, sizesFor, type Tab } from './types';
+	import { type CurrentMatch, type EditorDocument, type Mode, type Notify, type PresetPort, type SaveState, sizesFor, type Tab } from './types';
 
 	interface Props {
 		doc: EditorDocument;
@@ -47,6 +47,13 @@
 	let searchOpen = $state(false);
 	let query = $state('');
 	let matchIndex = $state(0);
+	/** C-7: goes up with each step, so the view scrolls to the current match once. */
+	let jumpSeq = $state(0);
+	/** C-8 */
+	let matchCase = $state(false);
+	/** C-9: the replace box. */
+	let replaceOpen = $state(false);
+	let replacement = $state('');
 	let searchBar = $state<SearchBar>();
 	let narrow = $state(false);
 	let canUndo = $state(untrack(() => doc.canUndo()));
@@ -73,11 +80,23 @@
 		if (narrow ? drawer : panelOpen) lastVars = listVariables(rows);
 		return lastVars;
 	});
-	const q = $derived(searchOpen ? normaliseQuery(query) : '');
-	/** C-4: the prompts that match, in the order the current view shows them. */
-	const matches = $derived(matchingIds(mode === 'edit' ? editSearchables(rows) : previewSearchables(blocks), q));
+	const q = $derived(searchOpen ? makeQuery(query, matchCase) : NO_QUERY);
+	/** C-9, C-10: replace works in Edit only. While it's open, names aren't searched. */
+	const replacing = $derived(replaceOpen && mode === 'edit');
+	const searchables = $derived(mode === 'edit' ? editSearchables(rows, !replacing) : previewSearchables(blocks));
+	/** C-7: every match, in the order the current view shows them. */
+	const matches = $derived(listMatches(searchables, q));
+	const current = $derived<CurrentMatch | null>(
+		matches.length ? { ...matches[Math.min(matchIndex, matches.length - 1)]!, seq: jumpSeq } : null,
+	);
+	/** C-4: how many matches each prompt has (shown on folded prompts). */
+	const counts = $derived.by(() => {
+		const out = new Map<string, number>();
+		for (const m of matches) out.set(m.id, (out.get(m.id) ?? 0) + 1);
+		return out;
+	});
 	const countText = $derived(
-		!q ? '' : matches.length ? `${Math.min(matchIndex, matches.length - 1) + 1} of ${matches.length}` : 'No matches',
+		!q.text ? '' : matches.length ? `${Math.min(matchIndex, matches.length - 1) + 1} of ${matches.length}` : 'No matches',
 	);
 	const noHover = window.matchMedia('(hover: none)').matches;
 
@@ -139,16 +158,24 @@
 		if (pop !== openId) pop = null;
 	}
 
-	/** C-4: Ctrl+F and the search button. If the bar is open, its text is selected. */
-	export function openSearch() {
+	/**
+	 * C-4: Ctrl+F and the search button. If the bar is open, its text is selected.
+	 * C-9: Ctrl+H also shows the replace box.
+	 */
+	export function openSearch(withReplace = false) {
+		if (withReplace) setReplaceOpen(true);
 		if (searchOpen) searchBar?.focus();
 		else searchOpen = true;
 	}
 
+	/** Closing resets everything, so the replace box starts hidden and Match case starts off next time (C-8, C-9). */
 	function closeSearch() {
 		searchOpen = false;
 		query = '';
 		matchIndex = 0;
+		matchCase = false;
+		replaceOpen = false;
+		replacement = '';
 	}
 
 	function onQuery(next: string) {
@@ -156,25 +183,71 @@
 		void goToMatch(0);
 	}
 
+	function toggleMatchCase() {
+		matchCase = !matchCase;
+		void goToMatch(0);
+	}
+
 	/**
-	 * C-4: shows match number `k` (wrapping round). In Edit the prompt opens;
-	 * in Preview the view stays in Preview. Scrolls to the first highlight.
+	 * C-10: showing or hiding the replace box adds or drops name matches.
+	 * The current match stays if it's still there; otherwise the next one in the text takes over.
+	 */
+	function setReplaceOpen(open: boolean) {
+		const was = current;
+		replaceOpen = open;
+		if (!was) return;
+		const k = matches.findIndex((m) => m.id === was.id && m.inName === was.inName && m.from === was.from);
+		if (k !== -1) matchIndex = k;
+		else void goToMatch(indexAfter(matches, ids(), was.id, was.inName ? 0 : was.from));
+	}
+
+	/** The prompts the current view searches, in order. */
+	function ids(): string[] {
+		return searchables.map((s) => s.id);
+	}
+
+	/**
+	 * C-7: shows match number `k` (wrapping round). In Edit the prompt opens;
+	 * in Preview the view stays in Preview. A match in the text scrolls into
+	 * the middle; a match in a name scrolls its prompt to the top.
 	 */
 	async function goToMatch(k: number) {
-		const ids = matches;
-		matchIndex = wrapIndex(k, ids.length);
-		const id = ids[matchIndex];
-		if (!id) return;
-		if (mode === 'edit') openRow(id);
+		matchIndex = wrapIndex(k, matches.length);
+		jumpSeq++;
+		const m = matches[matchIndex];
+		if (!m) return;
+		if (mode === 'edit') openRow(m.id);
+		// Edit: the text box scrolls to its own match (PromptText).
+		if (mode === 'edit' && !m.inName) return;
 		await tick();
 		await new Promise(requestAnimationFrame);
 		const attr = mode === 'edit' ? 'data-anchor' : 'data-pv';
-		const row = scroller.querySelector<HTMLElement>(`[${attr}="${CSS.escape(id)}"]`);
+		const row = scroller.querySelector<HTMLElement>(`[${attr}="${CSS.escape(m.id)}"]`);
 		if (!row) return;
-		const hit = row.querySelector<HTMLElement>('.pe-hit');
+		const hit = m.inName ? null : row.querySelector<HTMLElement>('.pe-now');
 		const target = hit ?? row;
-		const top = target.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop - (hit ? 140 : 12);
+		const top =
+			target.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop - (hit ? scroller.clientHeight / 2 : 12);
 		scroller.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+	}
+
+	/** C-10: replaces the current match, then goes to the next one. One undo step. */
+	function replaceOne() {
+		const m = current;
+		if (!replacing || !m || m.inName) return;
+		const text = rows.find((r) => r.id === m.id)?.prompt.content ?? '';
+		doc.setTexts([{ id: m.id, content: replaceRanges(text, [m], replacement) }]);
+		void goToMatch(indexAfter(matches, ids(), m.id, m.from + replacement.length));
+	}
+
+	/** C-10: replaces every match, in prompts that are on or off. One undo step. */
+	function replaceAll() {
+		if (!replacing || !matches.length) return;
+		const changes = searchables
+			.filter((s) => counts.has(s.id))
+			.map((s) => ({ id: s.id, content: replaceRanges(s.text, findRanges(s.text, q), replacement) }));
+		doc.setTexts(changes);
+		void goToMatch(0);
 	}
 
 	/** Opens a prompt so a jump, Undo or a new prompt lands on its text. */
@@ -357,9 +430,18 @@
 			{query}
 			count={countText}
 			{narrow}
+			{matchCase}
+			canReplace={mode === 'edit'}
+			{replaceOpen}
+			{replacement}
 			onquery={onQuery}
 			onstep={(by) => void goToMatch(matchIndex + by)}
 			onclose={closeSearch}
+			onmatchcase={toggleMatchCase}
+			ontogglereplace={() => setReplaceOpen(!replaceOpen)}
+			onreplacement={(text) => (replacement = text)}
+			onreplace={replaceOne}
+			onreplaceall={replaceAll}
 		/>
 	{/if}
 	<div class="body">
@@ -376,12 +458,14 @@
 					{openId}
 					ontoggleopen={toggleRow}
 					query={q}
+					{counts}
+					{current}
 					tapToReveal={narrow || noHover}
 					ontogglepop={(id) => (pop = pop === id ? null : id)}
 					oninsert={insert}
 				/>
 			{:else}
-				<PreviewPane {blocks} {sizes} query={q} onjump={jump} />
+				<PreviewPane {blocks} {sizes} query={q} {current} onjump={jump} />
 			{/if}
 		</div>
 		{#if narrow && drawer}
@@ -428,6 +512,7 @@
 		--pe-lift: 0 12px 30px rgba(0, 0, 0, 0.12), 0 0 0 1px #8a5cf5;
 		--pe-scrim: rgba(0, 0, 0, 0.28);
 		--pe-hit: rgba(255, 190, 0, 0.42);
+		--pe-now: rgba(255, 128, 0, 0.6);
 		--pe-pair: rgba(56, 132, 255, 0.16);
 	}
 	:global(body.theme-dark) .pe-vars {
@@ -449,6 +534,7 @@
 		--pe-lift: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px #8a5cf5;
 		--pe-scrim: rgba(0, 0, 0, 0.5);
 		--pe-hit: rgba(255, 190, 0, 0.32);
+		--pe-now: rgba(255, 128, 0, 0.62);
 		--pe-pair: rgba(96, 165, 255, 0.22);
 	}
 	.header {

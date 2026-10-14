@@ -1,4 +1,5 @@
 import type { PromptData } from '../preset';
+import type { Match } from '../search';
 
 /** One prompt as shown in the editor. */
 export interface UiRow {
@@ -19,12 +20,19 @@ export interface StepLink {
 	redo(): void;
 }
 
+/** C-7: the match "2 of 5" points to. `seq` goes up with each step, so the view scrolls to it once. */
+export interface CurrentMatch extends Match {
+	seq: number;
+}
+
 /** What the UI needs from the open preset. Positions are indexes into `rows()`. */
 export interface EditorDocument {
 	rows(): UiRow[];
 	onChange(listener: () => void): () => void;
 	setEnabled(id: string, enabled: boolean): void;
 	update(id: string, patch: Partial<PromptData>): void;
+	/** C-10: changes the text of several prompts as one undo step. */
+	setTexts(changes: readonly { id: string; content: string }[]): void;
 	move(id: string, to: number): void;
 	insert(at: number): string;
 	remove(id: string): void;

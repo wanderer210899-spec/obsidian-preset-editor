@@ -128,6 +128,25 @@ export class PresetDocument {
 		this.changed();
 	}
 
+	/**
+	 * C-10: changes the text of several prompts as one undo step, never
+	 * grouped with typing. Used by Replace and Replace all.
+	 */
+	setTexts(changes: readonly { id: string; content: string }[]): void {
+		const real = changes.filter((c) => {
+			const p = this.find(c.id);
+			return p && p.content !== c.content;
+		});
+		const first = real[0];
+		if (!first) return;
+		this.record(first.id);
+		for (const c of real) {
+			const i = this.prompts.findIndex((p) => p.identifier === c.id);
+			this.prompts[i] = { ...this.prompts[i]!, content: c.content };
+		}
+		this.changed();
+	}
+
 	/** E-2: moves a prompt to position `to` in `rows()`. */
 	move(id: string, to: number): void {
 		const from = this.order.findIndex((e) => e.identifier === id);

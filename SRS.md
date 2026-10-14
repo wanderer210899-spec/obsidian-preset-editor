@@ -34,7 +34,7 @@ Each version adds one feature on top of the last.
 | 1.5     | Select several prompts at once. Copy or move them to another preset, delete them, or drag them together (3.7). | Done        |
 | 1.5.1   | Mobile: the last row in the Order panel and Variables panel clears Obsidian's bottom bar (I-5). | Done        |
 | 1.5.2   | Search in the Variables panel (T-7).                                                      | Done        |
-| 1.5.3   | Find and replace in Edit. Find steps match by match, with a Match case switch (C-7 to C-10). | Planned     |
+| 1.5.3   | Find and replace in Edit. Find steps match by match, with a Match case switch (C-7 to C-10). | Done        |
 
 **Not planned**
 
@@ -64,7 +64,9 @@ Each version adds one feature on top of the last.
 
 **1.5.2 is done** (v1.5.2). A search box in the Variables panel (T-7). Checked by the owner on a phone and on desktop.
 
-- Built: everything marked 1.0 to 1.5.2 below.
+**1.5.3 is done** (v1.5.3). Find and replace in Edit (C-7 to C-10). Find steps match by match, with a Match case button. Checked by the owner; more real-use testing to follow.
+
+- Built: everything marked 1.0 to 1.5.3 below.
 - Dragging (Q-1) was checked on a phone, through a test copy of Obsidian.
 - Real use: from 1.5, the plugin is ready for testing in real use, installed by hand from a GitHub release. Changes may come up from that.
 - Real use found four things (14 October 2026). They become 1.5.1 to 1.5.3, plus a note on a SillyTavern gap (V-13).
@@ -312,16 +314,19 @@ Long presets get a minimal view, so many prompts are easier to scan. The look fo
 - **C-3.** ~~Dividers show in SillyTavern.~~ Dropped with C-2.
 - **C-4.** A "Find in prompts" search bar finds text in prompt names and text. It works in Edit and in Preview. Each searches what it shows: Edit the typed text, Preview the worked-out text.
 - **C-7.** _(1.5.3)_ Find steps through matches one at a time, in Edit and in Preview. "2 of 5" counts matches, not prompts. (Until 1.5.3 it stepped through prompts.)
-- **C-8.** _(1.5.3)_ A "Match case" switch in the find bar. It works for find and replace. It starts off, so find ignores case as before.
+  - The current match is a stronger orange. The other matches stay yellow.
+  - When the current match is in a prompt name, the prompt opens and scrolls into view. The name gets no mark.
+- **C-8.** _(1.5.3)_ A "Match case" switch in the find bar. It works for find and replace. It starts off, so find ignores case as before. It's a small "Aa" button inside the find box, after the count. When it's on, it shows in the accent colour.
 - **C-9.** _(1.5.3)_ Replace, in Edit only. Preview shows worked-out text, so it can't be replaced there.
   - An arrow button below the find box shows or hides the replace box. The replace box starts hidden each time find opens.
   - Ctrl+H opens find with the replace box already showing. On a Mac, the same keys as Obsidian's own replace.
   - On a phone, one tap on the arrow shows the replace box.
   - It looks exactly like the find bar: same theme and buttons. No mockup.
+  - The arrow sits under the find box. The replace box shows under the arrow, with two icon buttons, "Replace" and "Replace all", the same size as the find buttons.
 - **C-10.** _(1.5.3)_ What replace changes:
   - Prompt text only, never prompt names. Prompts that are off are included, as in find.
   - While the replace box is open, find only looks in prompt text. Name matches aren't counted or lit up. Closing the replace box brings them back. So the count always equals what "Replace all" changes.
-  - "Replace" changes the current match, then jumps to the next one.
+  - "Replace" changes the current match, then jumps to the next one. Each press is its own Undo step.
   - "Replace all" changes every match. It's one Undo step.
 
 Details are in open item 8.

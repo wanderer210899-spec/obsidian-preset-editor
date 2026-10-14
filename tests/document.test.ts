@@ -112,6 +112,28 @@ test('typing after a pause, or in another field, is a new step', () => {
 	assert.equal(doc.content.prompts[2]?.content, '');
 });
 
+test('C-10: replacing text in several prompts is one undo step, never grouped with typing', () => {
+	let now = 0;
+	const doc = new PresetDocument(sample(), () => now);
+	const text = (id: string) => doc.rows().find((r) => r.id === id)?.prompt.content;
+	doc.setTexts([
+		{ id: 'main', content: 'hello' },
+		{ id: 'a', content: 'more' },
+	]);
+	assert.equal(text('main'), 'hello');
+	assert.equal(text('a'), 'more');
+	now = 10;
+	doc.setTexts([{ id: 'main', content: 'hello!' }]);
+	assert.equal(doc.undo(), 'main');
+	assert.equal(text('main'), 'hello');
+	assert.equal(doc.undo(), 'main');
+	assert.equal(text('main'), 'hi');
+	assert.equal(text('a'), '');
+	assert.equal(doc.canUndo(), false);
+	doc.setTexts([{ id: 'main', content: 'hi' }]);
+	assert.equal(doc.canUndo(), false, 'no change, no step');
+});
+
 test('on/off is not undone, and stays as it is through undo and redo', () => {
 	const doc = new PresetDocument(sample());
 	doc.setEnabled('a', false);
