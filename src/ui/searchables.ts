@@ -9,21 +9,16 @@ import type { WorkedOut } from '../macros';
 import type { Searchable } from '../search';
 import type { UiRow } from './types';
 
-/**
- * Edit: each prompt's name and typed text. With `names` off (C-10, the
- * replace box is open), only the text is searched.
- */
-export function editSearchables(rows: readonly UiRow[], names = true): Searchable[] {
-	return rows
-		.filter((r) => !kindOf(r.id).startsWith('placeholder'))
-		.map((r) => ({ id: r.id, name: names ? (r.prompt.name ?? '') : '', text: r.prompt.content ?? '' }));
+/** Edit: each prompt's typed text. Names are not searched (C-4). */
+export function editSearchables(rows: readonly UiRow[]): Searchable[] {
+	return rows.filter((r) => !kindOf(r.id).startsWith('placeholder')).map((r) => ({ id: r.id, text: r.prompt.content ?? '' }));
 }
 
-/** Preview: each prompt's name and text as the Preview shows it, in Preview order. */
+/** Preview: each prompt's text as the Preview shows it, in Preview order. */
 export function previewSearchables(blocks: readonly PreviewBlock<WorkedOut>[]): Searchable[] {
 	const out: Searchable[] = [];
 	const add = (b: PromptBlock<WorkedOut>) => {
-		if (b.type === 'text') out.push({ id: b.id, name: b.name, text: shownText(b.text) });
+		if (b.type === 'text') out.push({ id: b.id, text: shownText(b.text) });
 	};
 	for (const b of blocks) {
 		if (b.type === 'history') b.inChat.forEach(add);

@@ -4,9 +4,11 @@
 	import type { VariableInfo } from '../variables';
 	import { sortable } from './actions';
 	import Grip from './Grip.svelte';
+	import { filterByName } from './order-search';
 	import PresetPicker from './PresetPicker.svelte';
 	import type { PickedActions } from './select-actions';
 	import SelectBar from './SelectBar.svelte';
+	import SearchBox from './SearchBox.svelte';
 	import Segmented from './Segmented.svelte';
 	import type { EditorDocument, PresetChoice, PresetPort, Sizes, Tab, UiRow } from './types';
 	import VariablesPanel from './VariablesPanel.svelte';
@@ -35,8 +37,15 @@
 	const picked = new SvelteSet<string>();
 	/** M-1: the open Copy to… or Move to… list. */
 	let picker = $state<{ verb: 'Copy' | 'Move'; ids: string[]; names: string[] } | null>(null);
-	/** M-3: the row being dragged with the picked ones, and their names for its label. */
-	let dragging = $state<{ id: string; others: string } | null>(null);
+	/** M-3: the row being dragged with the picked ones, their names for its label, and how many. */
+	let dragging = $state<{ id: string; others: string; count: number } | null>(null);
+	/** E-8: what's typed in the search box, and the prompts whose names match. */
+	let query = $state('');
+	const shown = $derived(filterByName(rows, query));
+	/** E-8: no dragging while the list is filtered. */
+	const filtered = $derived(query.trim() !== '');
+	/** Each prompt keeps its place number in the full list. */
+	const numberOf = $derived(new Map(rows.map((r, i) => [r.id, i + 1])));
 	/** M-3: the prompts a group drag just moved light up, as in O.4. */
 	let lit = $state<string[]>([]);
 	let litTimer: ReturnType<typeof setTimeout> | undefined;
@@ -66,8 +75,9 @@
 		else picked.add(id);
 	}
 
+	/** E-8: picks the prompts that show. */
 	function selectAll() {
-		for (const r of rows) picked.add(r.id);
+		for (const r of shown) picked.add(r.id);
 	}
 
 	/** The picked prompts in list order. */
@@ -98,7 +108,7 @@
 
 	function groupStart(id: string, others: string[]) {
 		const names = rows.filter((r) => others.includes(r.id)).map((r) => r.prompt.name ?? r.id);
-		dragging = { id, others: names.join(', ') };
+		dragging = { id, others: names.join(', '), count: others.length };
 	}
 
 	function groupEnd(to: number) {
@@ -173,16 +183,18 @@
 </div>
 
 {#if tab === 'order'}
+	<!-- E-8: the search box and Select share the top row, as in the Variables panel (I-4: no hint line). -->
+	<div class="searchrow">
+		<SearchBox bind:value={query} placeholder="Search prompts" narrow={sizes.narrow} />
+		{#if !selecting}
+			<div class="link" role="button" tabindex="0" onclick={() => start()}>Select</div>
+		{/if}
+	</div>
 	{#if selecting}
 		<div class="selhd">
 			<div class="link" role="button" tabindex="0" onclick={selectAll}>Select all</div>
 			<div class="count">{picked.size} selected</div>
 			<div class="link" role="button" tabindex="0" onclick={stop}>Done</div>
-		</div>
-	{:else}
-		<div class="hintrow">
-			<div class="hint">Drag a handle to reorder · {sizes.narrow ? 'tap' : 'click'} a name to jump to it</div>
-			<div class="link" role="button" tabindex="0" onclick={() => start()}>Select</div>
 		</div>
 	{/if}
 	<div
@@ -193,18 +205,21 @@
 			groupOf,
 			onGroupStart: groupStart,
 			onGroupEnd: groupEnd,
+			disabled: filtered,
 		}}
 	>
-		{#each rows as row, i (row.id)}
+		{#each shown as row (row.id)}
 			<div
 				class="orow"
 				class:flash={flash === row.id || lit.includes(row.id)}
 				class:open={openId === row.id && !selecting}
 				class:picked={selecting && picked.has(row.id)}
+				class:stack={dragging?.id === row.id}
+				class:stack2={dragging?.id === row.id && dragging.count > 1}
 				data-row={row.id}
 				style:height={sizes.oRowH}
 			>
-				<Grip width={sizes.gripW} height="100%" />
+				<Grip width={sizes.gripW} height="100%" off={filtered} />
 				{#if selecting}
 					<div
 						class="pick"
@@ -221,7 +236,7 @@
 						</span>
 					</div>
 				{/if}
-				<span class="n">{i + 1}</span>
+				<span class="n">{numberOf.get(row.id)}</span>
 				<div
 					class="name"
 					role="button"
@@ -252,6 +267,8 @@
 					<span class="dot" class:on={row.enabled}></span>
 				</div>
 			</div>
+		{:else}
+			<div class="nomatch">No prompts match “{query.trim()}”</div>
 		{/each}
 	</div>
 	{#if selecting}
@@ -289,22 +306,20 @@
 		cursor: pointer;
 		color: var(--text-muted);
 	}
-	.hintrow,
+	.searchrow {
+		flex: none;
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		margin: 2px 16px 6px;
+		font-size: 13px;
+	}
 	.selhd {
 		flex: none;
 		display: flex;
-		align-items: flex-start;
+		align-items: center;
 		gap: 8px;
 		padding: 2px 14px 8px;
-		font-size: 12px;
-	}
-	.hint {
-		flex: 1;
-		min-width: 0;
-		color: var(--text-muted);
-	}
-	.selhd {
-		align-items: center;
 		font-size: 13px;
 	}
 	.selhd .count {
@@ -316,9 +331,6 @@
 		flex: none;
 		color: var(--text-accent);
 		cursor: pointer;
-	}
-	.hintrow .link {
-		font-size: 13px;
 	}
 	.list {
 		flex: 1;
@@ -387,6 +399,28 @@
 	.orow:global(.pe-lifted) {
 		background: var(--background-primary);
 		box-shadow: var(--pe-lift);
+	}
+	/* M-3: a group drag looks like a stack: one card peeks out below for two prompts, two cards for three or more. */
+	.orow.stack:global(.pe-lifted) {
+		box-shadow:
+			0 0 0 1px #8a5cf5,
+			0 5px 0 -2px var(--background-primary),
+			0 5px 0 -1px var(--pe-stack-edge),
+			var(--pe-lift);
+	}
+	.orow.stack2:global(.pe-lifted) {
+		box-shadow:
+			0 0 0 1px #8a5cf5,
+			0 5px 0 -2px var(--background-primary),
+			0 5px 0 -1px var(--pe-stack-edge),
+			0 10px 0 -4px var(--background-primary),
+			0 10px 0 -3px var(--pe-stack-edge),
+			var(--pe-lift);
+	}
+	.nomatch {
+		padding: 16px 8px;
+		font-size: 13px;
+		color: var(--text-muted);
 	}
 	.n {
 		width: 18px;

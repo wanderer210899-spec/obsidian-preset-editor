@@ -42,27 +42,24 @@ export function countMatches(text: string, query: Query): number {
 }
 
 /**
- * One thing a view can search: a prompt's id, its name, and the text the view
- * shows for it. `name` is '' when names aren't searched (C-10, replace box open).
+ * One thing a view can search: a prompt's id and the text the view shows for
+ * it. Names are not searched (C-4); the Order panel finds those (E-8).
  */
 export interface Searchable {
 	id: string;
-	name: string;
 	text: string;
 }
 
-/** C-7: one match. `from` and `to` are in the prompt's name or text. */
+/** C-7: one match. `from` and `to` are in the prompt's text. */
 export interface Match extends Range {
 	id: string;
-	inName: boolean;
 }
 
-/** C-7: every match, in the order the view shows them: prompt by prompt, name first. The bar steps through these ("2 of 5"). */
+/** C-7: every match, in the order the view shows them, prompt by prompt. The bar steps through these ("2 of 5"). */
 export function listMatches(items: readonly Searchable[], query: Query): Match[] {
 	const out: Match[] = [];
 	for (const item of items) {
-		for (const r of findRanges(item.name, query)) out.push({ id: item.id, inName: true, ...r });
-		for (const r of findRanges(item.text, query)) out.push({ id: item.id, inName: false, ...r });
+		for (const r of findRanges(item.text, query)) out.push({ id: item.id, ...r });
 	}
 	return out;
 }
@@ -82,7 +79,7 @@ export function indexAfter(matches: readonly Match[], ids: readonly string[], id
 	const r = rank.get(id) ?? -1;
 	const k = matches.findIndex((m) => {
 		const mr = rank.get(m.id) ?? -1;
-		return mr > r || (mr === r && !m.inName && m.from >= pos);
+		return mr > r || (mr === r && m.from >= pos);
 	});
 	return k === -1 ? 0 : k;
 }

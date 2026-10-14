@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { filterVariables, type VariableInfo } from '../variables';
+	import SearchBox from './SearchBox.svelte';
 
 	interface Props {
 		vars: VariableInfo[];
@@ -17,15 +18,7 @@
 <div class="panel">
 	{#if vars.length}
 		<!-- T-7: looks like the library's search box. -->
-		<label class="search" class:narrow>
-			<svg width={narrow ? 16 : 15} height={narrow ? 16 : 15} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
-			<input type="text" placeholder="Search variables" aria-label="Search variables" bind:value={query} />
-			{#if query}
-				<div role="button" tabindex="0" class="clear" aria-label="Clear search" onclick={() => (query = '')}>
-					<svg width={narrow ? 14 : 13} height={narrow ? 14 : 13} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg>
-				</div>
-			{/if}
-		</label>
+		<div class="searchrow"><SearchBox bind:value={query} placeholder="Search variables" {narrow} /></div>
 	{/if}
 	<div class="vars">
 		{#each shown as v (v.name)}
@@ -81,60 +74,10 @@
 		display: flex;
 		flex-direction: column;
 	}
-	/* The library's search box (B2 mockups), with its field colour. */
-	.search {
-		--field: #f3f3f3;
+	.searchrow {
 		flex: none;
-		height: 34px;
-		box-sizing: border-box;
 		display: flex;
-		align-items: center;
-		gap: 8px;
 		margin: 2px 16px 6px;
-		padding: 0 6px 0 10px;
-		border-radius: 8px;
-		background: var(--field);
-		color: var(--text-muted);
-	}
-	:global(body.theme-dark) .search {
-		--field: #2a2a2a;
-	}
-	.search.narrow {
-		height: 40px;
-		padding: 0 6px 0 12px;
-		border-radius: 10px;
-	}
-	.search input,
-	.search input:hover,
-	.search input:focus {
-		flex: 1;
-		min-width: 0;
-		height: auto;
-		padding: 0;
-		border: 0;
-		background: transparent;
-		box-shadow: none;
-		outline: none;
-		color: var(--text-normal);
-		font: inherit;
-		font-size: 14px;
-	}
-	.search.narrow input {
-		font-size: 16px;
-	}
-	.clear {
-		width: 24px;
-		height: 24px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		border-radius: 5px;
-		color: var(--text-muted);
-		cursor: pointer;
-	}
-	.narrow .clear {
-		width: 32px;
-		height: 32px;
 	}
 	.nomatch {
 		padding: 16px 0;
