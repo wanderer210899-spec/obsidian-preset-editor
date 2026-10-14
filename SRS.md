@@ -1,6 +1,6 @@
 # Preset Editor: Software Requirements Specification
 
-Draft 0.15 · 14 October 2026
+Draft 0.16 · 14 October 2026
 
 Follows SRS standard principles: https://www.computer.org/resources/software-requirements-specifications#requirements-fundamentals
 
@@ -22,7 +22,7 @@ An Obsidian plugin to edit the prompts in SillyTavern Chat Completion preset fil
 
 ### 1.2 Versions
 
-Each version adds one feature on top of the last.
+Each version adds to the last. From 1.5.4, a version can hold a few small changes.
 
 | Version | Adds                                                                                      | Status      |
 | ------- | ----------------------------------------------------------------------------------------- | ----------- |
@@ -35,6 +35,8 @@ Each version adds one feature on top of the last.
 | 1.5.1   | Mobile: the last row in the Order panel and Variables panel clears Obsidian's bottom bar (I-5). | Done        |
 | 1.5.2   | Search in the Variables panel (T-7).                                                      | Done        |
 | 1.5.3   | Find and replace in Edit. Find steps match by match, with a Match case switch (C-7 to C-10). | Done        |
+| 1.5.4   | Order panel: a search box for prompt names (E-8), and no hint line (I-4). Find in prompts looks at prompt text only (C-4). | Planned     |
+| 1.6     | The plugin follows Obsidian's language: Simplified Chinese (3.11).                       | Planned     |
 
 **Not planned**
 
@@ -70,6 +72,7 @@ Each version adds one feature on top of the last.
 - Dragging (Q-1) was checked on a phone, through a test copy of Obsidian.
 - Real use: from 1.5, the plugin is ready for testing in real use, installed by hand from a GitHub release. Changes may come up from that.
 - Real use found four things (14 October 2026). They become 1.5.1 to 1.5.3, plus a note on a SillyTavern gap (V-13).
+- Next: 1.5.4 (Order panel search), then 1.6 (Simplified Chinese).
 - Not yet checked: a full test in the Obsidian phone app. This can only happen once the plugin can be installed. Scrolling, for example, feels different in the test copy.
 
 ### 1.4 Terms
@@ -122,7 +125,7 @@ Obsidian desktop and mobile. Both use the mockup's two layouts: wide and narrow.
 
 - **Separate pieces.** Each feature is its own module. Modules only connect through small, clear links. None relies on how another works inside.
 - **Replaceable.** Any module can be rewritten from scratch without touching the others. If a part doesn't behave as wanted, it gets replaced, not patched.
-- **One feature per version.** A version is finished and working before the next one starts.
+- **Small versions.** A version can hold a few small changes. It is finished and working before the next one starts.
 
 ### 2.4 Limits
 
@@ -165,6 +168,7 @@ The version each part arrives in is shown in brackets.
   - Desktop: Ctrl+Z to undo; Ctrl+Shift+Z or Ctrl+Y to redo (Cmd on Mac).
   - Mobile: Undo and Redo buttons in Obsidian's tab header, next to the panel button. Both show once either can be used; the one with nothing to do is greyed out. The buttons only show in the Obsidian mobile app (phones and tablets).
 - **E-7.** Clicking a prompt in the Order panel, Preview or Variables panel jumps to it in the editor. (1.0 only has the Order panel. The others come with their content.)
+- **E-8.** _(1.5.4)_ A search box at the top of the Order panel, laid out like the Variables panel's search (T-7), with Select on the same row. It looks at prompt names only. Prompts that don't match are hidden. No mockup for now.
 
 ### 3.3 What each kind of prompt allows (1.0, follows SillyTavern)
 
@@ -312,10 +316,10 @@ Long presets get a minimal view, so many prompts are easier to scan. The look fo
 - **C-6.** When a preset is opened, every prompt is folded.
 - **C-2.** ~~Empty prompts act as dividers.~~ Dropped: the new mockup replaces dividers.
 - **C-3.** ~~Dividers show in SillyTavern.~~ Dropped with C-2.
-- **C-4.** A "Find in prompts" search bar finds text in prompt names and text. It works in Edit and in Preview. Each searches what it shows: Edit the typed text, Preview the worked-out text.
+- **C-4.** A "Find in prompts" search bar finds text in prompts. _(1.5.4)_ It looks at prompt text only. (Until 1.5.4 it also looked at prompt names. Names are now searched in the Order panel, E-8.) It works in Edit and in Preview. Each searches what it shows: Edit the typed text, Preview the worked-out text.
 - **C-7.** _(1.5.3)_ Find steps through matches one at a time, in Edit and in Preview. "2 of 5" counts matches, not prompts. (Until 1.5.3 it stepped through prompts.)
   - The current match is a stronger orange. The other matches stay yellow.
-  - When the current match is in a prompt name, the prompt opens and scrolls into view. The name gets no mark.
+  - ~~When the current match is in a prompt name, the prompt opens and scrolls into view.~~ Dropped in 1.5.4: find no longer looks at names (C-4).
 - **C-8.** _(1.5.3)_ A "Match case" switch in the find bar. It works for find and replace. It starts off, so find ignores case as before. It's a small "Aa" button inside the find box, after the count. When it's on, it shows in the accent colour.
 - **C-9.** _(1.5.3)_ Replace, in Edit only. Preview shows worked-out text, so it can't be replaced there.
   - An arrow button below the find box shows or hides the replace box. The replace box starts hidden each time find opens.
@@ -325,11 +329,23 @@ Long presets get a minimal view, so many prompts are easier to scan. The look fo
   - The arrow sits under the find box. The replace box shows under the arrow, with two icon buttons, "Replace" and "Replace all", the same size as the find buttons.
 - **C-10.** _(1.5.3)_ What replace changes:
   - Prompt text only, never prompt names. Prompts that are off are included, as in find.
-  - While the replace box is open, find only looks in prompt text. Name matches aren't counted or lit up. Closing the replace box brings them back. So the count always equals what "Replace all" changes.
+  - Find only looks at prompt text (C-4), so the count always equals what "Replace all" changes. (Until 1.5.4, name matches were left out only while the replace box was open.)
   - "Replace" changes the current match, then jumps to the next one. Each press is its own Undo step.
   - "Replace all" changes every match. It's one Undo step.
 
 Details are in open item 8.
+
+### 3.11 Language (1.6)
+
+The plugin follows Obsidian's language, like other Obsidian plugins.
+
+- **N-1.** When Obsidian is set to Simplified Chinese, the plugin's text is in Simplified Chinese. Any other language gets English. Traditional Chinese is not planned.
+- **N-2.** All of the plugin's own text is translated: the editor, the panels, the library, messages, the settings page and command names.
+- **N-3.** What the user typed or the file holds stays as it is: prompt text, preset names and macros. Obsidian's own boxes, like the delete box (L-13), follow Obsidian's language by themselves.
+- **N-4.** Where SillyTavern has its own Simplified Chinese word for something, the plugin uses the same word.
+- **N-5.** The owner reviews every translation before 1.6 is released.
+
+Details are in open item 11.
 
 ---
 
@@ -346,6 +362,7 @@ Details are in open item 8.
   - Obsidian mobile: Undo and Redo buttons in the tab header (E-6). The mockup has none.
   - _(1.3)_ The editor follows the "Outline" design in `UI design mock/main editor tweak/`: folding prompts and a "Find in prompts" search bar (3.10).
   - _(1.3)_ Variables panel: no hint line at the top ("In the order they were first used…").
+  - _(1.5.4)_ Order panel: no hint line ("Drag a handle to reorder…"). The search box (E-8) and Select share the top row.
   - Preview: placeholders with settings show their role, not "Inserted" (V-9). Chat History is a shaded block that holds the in-chat prompts, and each in-chat prompt has a tag saying where it goes (V-7). This follows the owner's Chat History mockup. There is no engine switch and no "Not run by Legacy" note (V-6).
 
 - **I-5.** _(1.5.1)_ In the Obsidian mobile app, the Order panel, the Variables panel and the library list scroll far enough that the last row clears Obsidian's bottom bar, with about one prompt row of space to spare. Desktop stays as it is.
@@ -415,3 +432,10 @@ Details are in open item 8.
    - ~~How is replace opened?~~ Settled: an arrow below the find box, or Ctrl+H (C-9).
    - ~~What happens when the current match is in a prompt name and "Replace" is pressed?~~ Settled: while the replace box is open, names aren't searched (C-10).
 5. ~~**In-chat prompts in the Preview:** does "roughly where SillyTavern would put them" mean grouped around the Chat History placeholder, in SillyTavern's order?~~ Settled: see V-7. (1.1)
+10. **Order panel search:** (1.5.4)
+    - Can prompts be dragged while the list is filtered?
+    - Does "Select all" pick only the prompts that show?
+11. **Simplified Chinese:** (1.6)
+    - Do prompt names from the file, like "Main Prompt" or "Chat History", stay as typed in the file? (N-3)
+    - Which key words go on the word list, before anything else is translated? (N-4)
+    - What does the review table look like? (N-5)

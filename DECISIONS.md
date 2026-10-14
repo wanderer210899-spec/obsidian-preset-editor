@@ -4,6 +4,41 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-14 · Versions can hold more than one feature
+
+**Decision:** A version no longer has to be exactly one feature. The plugin is built, and the changes left are small. A few minor versions can hold them.
+
+**Context:** Came up while planning the translation and the closable hint.
+
+## 2026-10-14 · Order panel: name search, and find looks at text only (1.5.4)
+
+**Decision:**
+- The Order panel gets a search box. It looks at prompt names only. Prompts that don't match are hidden, like the Variables search (T-7).
+- The search box and Select sit together on the panel's top row, following the Variables panel's layout.
+- "Find in prompts" then looks at prompt text only, in Edit and in Preview. Prompt names no longer count.
+- Still open: dragging while the list is filtered, and what "Select all" picks then.
+
+**Context:** The owner wants each search to have one job: the Order panel finds prompts by name, and find steps through prompt text. This makes find and replace simpler too.
+
+## 2026-10-14 · The Order panel hint is removed (1.5.4)
+
+**Decision:**
+- The Order panel hint ("Drag a handle to reorder · click a name to jump to it") is removed.
+- The owner first chose a hint you could close for good. That idea was dropped: the panel is simple enough without it.
+- The Preview key, the library phone tip and the empty Variables panel note stay as they are.
+
+**Context:** The owner finds the plugin's features simple. Permanent hints clutter the screen.
+
+## 2026-10-14 · The plugin follows Obsidian's language: Simplified Chinese
+
+**Decision:**
+- The plugin shows its text in Simplified Chinese when Obsidian is set to Simplified Chinese. Every other language gets English.
+- Traditional Chinese is not planned.
+- Where SillyTavern has its own Chinese word for something, the plugin uses the same word.
+- The owner reads Chinese and reviews the translations personally.
+
+**Context:** The owner asked for a translation layer, like other Obsidian plugins that follow Obsidian's language.
+
 ## 2026-10-14 · Find and replace accepted; released as 1.5.3
 
 **Decision:**
