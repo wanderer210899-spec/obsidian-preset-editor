@@ -4,6 +4,53 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-14 · Find and replace (1.5.3)
+
+**Decision:**
+- Replace works in Edit only. Preview shows worked-out text, which can't be replaced.
+- Replace only changes prompt text, never prompt names.
+- "Replace" changes one match and jumps to the next. "Replace all" changes every match, as one Undo step.
+- Find steps through matches one at a time, in Edit and in Preview. "2 of 5" now counts matches, not prompts. This changes find as built in 1.3.
+- A "Match case" switch in the find bar, for find and replace. It starts off.
+- An arrow button below the find box shows or hides the replace box. The replace box starts hidden each time find opens. Ctrl+H opens find with the replace box showing. On a phone, one tap on the arrow shows it.
+- It looks exactly like the find bar, same theme and buttons. No designer mockup. If it gets messy, the owner will get one.
+- Proposed and not changed by the owner: "Replace" jumps to the next match afterwards. Prompts that are off are included, as in find.
+
+**Context:** Found in real use after 1.5. Only finding was possible. SRS C-7 to C-10.
+
+## 2026-10-14 · Search in the Variables panel (1.5.2)
+
+**Decision:**
+- The Variables panel gets a search box. It looks at variable names, values, and the prompt names under "Set in" and "Read in". The owner wants to see this first, and may narrow it later.
+- Variables that don't match are hidden.
+- No mockup for now. The search box looks like the library's.
+
+**Context:** Found in real use after 1.5. The panel was one long list with no way to find a variable. SRS T-7.
+
+## 2026-10-14 · Phone: space after the last row (1.5.1)
+
+**Decision:** On a phone, the Order panel, Variables panel and library list get extra space after the last row, about one prompt row tall. Desktop stays as it is for now. The owner will say if it becomes a problem there.
+
+**Context:** Found in real use after 1.5. On a phone, Obsidian's bottom bar covered the last prompt in the Order panel. SRS I-5.
+
+## 2026-10-14 · `{{if}}` inside `{{.name = …}}` follows SillyTavern
+
+**Decision:** An `{{if}}` block inside the short form `{{.name = …}}` is not worked out in the Preview, because SillyTavern's New engine doesn't do it either. The behaviour stays as it is, and the gap is noted in the SRS (V-13). If SillyTavern fixes it, the Preview follows. The `::` form, `{{setvar::name::…}}`, works in both.
+
+**Context:** Found in real use after 1.5. SillyTavern's code works out `{{if}}` blocks inside the `::` form, but works out each macro on its own in the short form. The Legacy engine has no `{{if}}` and no short form, so it can't be compared.
+
+## 2026-10-14 · Version history dropped
+
+**Decision:** Snapshots and version history are taken out of the plan. Copies of a preset, kept in a folder, do the same job.
+
+**Context:** The owner's call after real use. It was listed as "Later" in the SRS.
+
+## 2026-10-14 · Real-use fixes ship as 1.5.1, 1.5.2, 1.5.3
+
+**Decision:** Small things found in real use ship as small versions after 1.5, not as a 1.6. 1.5.1 adds the phone space, 1.5.2 the variable search, and 1.5.3 find and replace.
+
+**Context:** The owner sees them as small gaps that weren't thought of in the first design.
+
 ## 2026-10-12 · Select mode accepted after a first test; merges into 1.5
 
 **Decision:**
