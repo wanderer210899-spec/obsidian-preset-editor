@@ -345,7 +345,7 @@
 
 <div class="pl-vars pl-root" class:pl-narrow={narrow} bind:this={root}>
 	<div class="pl-scroll">
-		<div class="pl-page">
+		<div class="pl-page" class:pl-picking={selecting}>
 			{#if narrow}
 				<label class="pl-search">
 					<Icon name="search" size={16} stroke={2} />
@@ -591,6 +591,10 @@
 		max-width: none;
 		padding: 16px 0 140px;
 		gap: 18px;
+	}
+	/* I-5: on a phone, the last preset still scrolls clear of the raised select bar. */
+	:global(body.is-phone) .pl-narrow .pl-page.pl-picking {
+		padding-bottom: calc(140px + var(--view-bottom-spacing, 0px));
 	}
 	.pl-top {
 		display: flex;

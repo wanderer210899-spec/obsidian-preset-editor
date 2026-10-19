@@ -4,6 +4,21 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-19 · 1.6.1 accepted in a phone-sized view
+
+**Decision:** The owner checked 1.6.1 in a phone-sized view of the test copy, with Obsidian's floating bottom bar showing. Both select bars sit just above it. It merges into main as v1.6.1.
+
+**Context:** The test copy normally shows the tablet layout, which has no bottom bar. That is why the bar was only found on a real phone. The owner chose the phone-sized view to test this before a push.
+
+## 2026-10-19 · Phone: select bars sit above Obsidian's bottom bar (1.6.1)
+
+**Decision:**
+- I-5 now covers everything the plugin shows, not only the lists. In the Obsidian mobile app, nothing is covered by Obsidian's bottom bar.
+- The select bars in the Order panel and the library sit just above Obsidian's bottom bar. They look the same as before otherwise.
+- It ships as fix 1.6.1.
+
+**Context:** Found in real use after 1.6. On a phone, Obsidian's bottom bar covered the Order panel's Copy to… / Move to… / Delete bar, and hid the library's Move to… / Delete bar. 1.5.1 only fixed the lists. Every other phone screen was checked and is clear: the editor and Preview, the Copy to… and Move to… sheets, the library "⋯" and Move to… sheets. SRS I-5.
+
 ## 2026-10-14 · Simplified Chinese accepted; released as 1.6.0
 
 **Decision:**
