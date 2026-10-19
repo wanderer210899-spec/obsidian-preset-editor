@@ -37,7 +37,7 @@ Each version adds to the last. From 1.5.4, a version can hold a few small change
 | 1.5.3   | Find and replace in Edit. Find steps match by match, with a Match case switch (C-7 to C-10). | Done        |
 | 1.5.4   | Order panel: a search box for prompt names (E-8), and no hint line (I-4). Find in prompts looks at prompt text only (C-4). Dragging several prompts looks like a stack (M-3). | Done        |
 | 1.6     | The plugin follows Obsidian's language: Simplified Chinese (3.11).                       | Done        |
-| 1.6.1   | Mobile: the select bars in the Order panel and library sit just above Obsidian's bottom bar (I-5). | Planned     |
+| 1.6.1   | Mobile: the select bars in the Order panel and library sit just above Obsidian's bottom bar (I-5). | Done        |
 
 **Not planned**
 
@@ -49,7 +49,7 @@ Each version adds to the last. From 1.5.4, a version can hold a few small change
 - Any link to a SillyTavern install. The plugin only works on files in the Obsidian vault.
 - Global variables.
 
-### 1.3 Where things stand (14 October 2026)
+### 1.3 Where things stand (19 October 2026)
 
 **1.0 is done** (v1.0.0). A preset edited in the plugin was loaded into SillyTavern, and every change came across. Undo and Redo (E-6) were checked on a phone.
 
@@ -73,11 +73,13 @@ Each version adds to the last. From 1.5.4, a version can hold a few small change
 
 **1.6 is done** (v1.6.0). The plugin follows Obsidian's language: Simplified Chinese or English (3.11). The owner looked over the translations and said they look right. More checking comes with real use. A new preset is still called "Untitled preset" in Chinese (open item 11).
 
+**1.6.1 is done** (v1.6.1). On a phone, the select bars in the Order panel and the library sit just above Obsidian's bottom bar (I-5). Checked by the owner in a phone-sized view of the test copy.
+
 - Built: everything marked 1.0 to 1.6 below.
 - Dragging (Q-1) was checked on a phone, through a test copy of Obsidian.
 - Real use: from 1.5, the plugin is ready for testing in real use, installed by hand from a GitHub release. Changes may come up from that.
 - Real use found four things (14 October 2026). They become 1.5.1 to 1.5.3, plus a note on a SillyTavern gap (V-13).
-- Next: 1.6.1. Real use found that Obsidian's bottom bar covers the select bars in the Order panel and the library on a phone (19 October 2026).
+- Next: nothing planned yet. Real use of 1.6.1 may bring changes.
 - Not yet checked: a full test in the Obsidian phone app. This can only happen once the plugin can be installed. Scrolling, for example, feels different in the test copy.
 
 ### 1.4 Terms

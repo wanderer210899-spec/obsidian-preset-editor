@@ -4,6 +4,12 @@ Decisions the product owner has made about how the plugin behaves, with the date
 
 ---
 
+## 2026-10-19 · 1.6.1 accepted in a phone-sized view
+
+**Decision:** The owner checked 1.6.1 in a phone-sized view of the test copy, with Obsidian's floating bottom bar showing. Both select bars sit just above it. It merges into main as v1.6.1.
+
+**Context:** The test copy normally shows the tablet layout, which has no bottom bar. That is why the bar was only found on a real phone. The owner chose the phone-sized view to test this before a push.
+
 ## 2026-10-19 · Phone: select bars sit above Obsidian's bottom bar (1.6.1)
 
 **Decision:**
