@@ -1,6 +1,6 @@
 # Preset Editor: Software Requirements Specification
 
-Draft 0.17 · 14 October 2026
+Draft 0.18 · 19 October 2026
 
 Follows SRS standard principles: https://www.computer.org/resources/software-requirements-specifications#requirements-fundamentals
 
@@ -37,6 +37,7 @@ Each version adds to the last. From 1.5.4, a version can hold a few small change
 | 1.5.3   | Find and replace in Edit. Find steps match by match, with a Match case switch (C-7 to C-10). | Done        |
 | 1.5.4   | Order panel: a search box for prompt names (E-8), and no hint line (I-4). Find in prompts looks at prompt text only (C-4). Dragging several prompts looks like a stack (M-3). | Done        |
 | 1.6     | The plugin follows Obsidian's language: Simplified Chinese (3.11).                       | Done        |
+| 1.6.1   | Mobile: the select bars in the Order panel and library sit just above Obsidian's bottom bar (I-5). | Planned     |
 
 **Not planned**
 
@@ -76,7 +77,7 @@ Each version adds to the last. From 1.5.4, a version can hold a few small change
 - Dragging (Q-1) was checked on a phone, through a test copy of Obsidian.
 - Real use: from 1.5, the plugin is ready for testing in real use, installed by hand from a GitHub release. Changes may come up from that.
 - Real use found four things (14 October 2026). They become 1.5.1 to 1.5.3, plus a note on a SillyTavern gap (V-13).
-- Next: nothing planned yet. Real use of 1.6 may bring changes.
+- Next: 1.6.1. Real use found that Obsidian's bottom bar covers the select bars in the Order panel and the library on a phone (19 October 2026).
 - Not yet checked: a full test in the Obsidian phone app. This can only happen once the plugin can be installed. Scrolling, for example, feels different in the test copy.
 
 ### 1.4 Terms
@@ -380,7 +381,9 @@ Details are in open item 11.
   - _(1.5.4)_ Order panel: no hint line ("Drag a handle to reorder…"). The search box (E-8) and Select share the top row.
   - Preview: placeholders with settings show their role, not "Inserted" (V-9). Chat History is a shaded block that holds the in-chat prompts, and each in-chat prompt has a tag saying where it goes (V-7). This follows the owner's Chat History mockup. There is no engine switch and no "Not run by Legacy" note (V-6).
 
-- **I-5.** _(1.5.1)_ In the Obsidian mobile app, the Order panel, the Variables panel and the library list scroll far enough that the last row clears Obsidian's bottom bar, with about one prompt row of space to spare. Desktop stays as it is.
+- **I-5.** In the Obsidian mobile app, nothing the plugin shows is covered by Obsidian's bottom bar. Desktop stays as it is.
+  - _(1.5.1)_ The Order panel, the Variables panel and the library list scroll far enough that the last row clears the bar, with about one prompt row of space to spare.
+  - _(1.6.1)_ The select bars in the Order panel (M-2) and the library (L-9) sit just above the bar. The last row still scrolls clear of the select bar.
 
 ## 5. Quality
 
