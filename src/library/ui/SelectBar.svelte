@@ -104,6 +104,10 @@
 		box-shadow: none;
 		color: var(--text-normal);
 	}
+	/* I-5: on a phone, the buttons sit just above Obsidian's bottom bar. Obsidian sets the spacing; it is 0 when its bar doesn't float over the view. */
+	:global(body.is-phone) .pl-bar.pl-narrow {
+		padding-bottom: calc(6px + var(--view-bottom-spacing, 0px));
+	}
 	.pl-big {
 		height: 56px;
 		display: flex;

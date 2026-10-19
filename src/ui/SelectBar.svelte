@@ -76,6 +76,10 @@
 		padding: 8px 0 calc(8px + env(safe-area-inset-bottom, 0px));
 		background: var(--background-primary);
 	}
+	/* I-5: on a phone, the buttons sit just above Obsidian's bottom bar. Obsidian sets the spacing; it is 0 when its bar doesn't float over the view. */
+	:global(body.is-phone) .sb-bar.sb-narrow {
+		padding-bottom: calc(8px + var(--view-bottom-spacing, 0px));
+	}
 	.sb-narrow .sb-btn {
 		height: 56px;
 		flex-direction: column;
